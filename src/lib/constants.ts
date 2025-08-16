@@ -1,0 +1,220 @@
+import { Restaurant, Call, Order, OrderItem } from '@/types/global';
+
+// Sample restaurants data
+export const SAMPLE_RESTAURANTS: Restaurant[] = [
+  {
+    id: 'rest-001',
+    name: 'Mario\'s Italian Kitchen',
+    agentName: 'Sofia',
+    menuDetails: 'Traditional Italian cuisine including pasta, pizza, risotto, and seafood dishes. Daily specials available.',
+    specialInstructions: 'Always ask about dietary restrictions. Mention our gluten-free options. Take note of spice preferences.',
+    languagePreference: 'english',
+    virtualNumber: '5551234567'
+  },
+  {
+    id: 'rest-002',
+    name: 'Dragon Palace Chinese',
+    agentName: 'Chen',
+    menuDetails: 'Authentic Chinese dishes including dim sum, stir-fries, noodles, and traditional soups.',
+    specialInstructions: 'Confirm spice level for all dishes. Ask about nut allergies. Offer chopsticks or utensils.',
+    languagePreference: 'english',
+    virtualNumber: '5559876543'
+  }
+];
+
+// Sample order items
+export const SAMPLE_ORDER_ITEMS: OrderItem[] = [
+  {
+    id: 'item-001',
+    name: 'Margherita Pizza',
+    quantity: 1,
+    price: 18.99
+  },
+  {
+    id: 'item-002',
+    name: 'Caesar Salad',
+    quantity: 2,
+    price: 12.50
+  },
+  {
+    id: 'item-003',
+    name: 'Spaghetti Carbonara',
+    quantity: 1,
+    price: 22.95,
+    specialInstructions: 'Extra parmesan cheese'
+  },
+  {
+    id: 'item-004',
+    name: 'Kung Pao Chicken',
+    quantity: 1,
+    price: 16.75,
+    specialInstructions: 'Medium spice level'
+  },
+  {
+    id: 'item-005',
+    name: 'Vegetable Lo Mein',
+    quantity: 1,
+    price: 14.25
+  }
+];
+
+// Sample calls data
+export const SAMPLE_CALLS: Call[] = [
+  {
+    id: 'call-001',
+    phoneNumber: '(555) 123-4567',
+    duration: 180,
+    status: 'active',
+    liveTranscript: 'Customer: Hi, I\'d like to place an order for delivery...\nAgent: Of course! I\'d be happy to help you with that. What would you like to order today?',
+    orderId: 'order-001',
+    timestamp: new Date('2024-01-15T18:30:00')
+  },
+  {
+    id: 'call-002',
+    phoneNumber: '(555) 987-6543',
+    duration: 240,
+    status: 'completed',
+    transcript: 'Customer: Hello, do you have any vegetarian options?\nAgent: Yes, we have several vegetarian dishes. Would you like me to go through our vegetarian menu?\nCustomer: Yes, please...\n[Full conversation continues]',
+    orderId: 'order-002',
+    sentiment: 'positive',
+    timestamp: new Date('2024-01-15T17:45:00')
+  },
+  {
+    id: 'call-003',
+    phoneNumber: '(555) 456-7890',
+    duration: 120,
+    status: 'completed',
+    transcript: 'Customer: Hi, what are your hours?\nAgent: We\'re open from 11 AM to 10 PM Monday through Sunday.\nCustomer: Thank you, I\'ll call back later.',
+    sentiment: 'neutral',
+    reason: 'Information inquiry only',
+    timestamp: new Date('2024-01-15T16:20:00')
+  },
+  {
+    id: 'call-004',
+    phoneNumber: '(555) 321-0987',
+    duration: 90,
+    status: 'active',
+    liveTranscript: 'Customer: I need to cancel my order from earlier...\nAgent: I understand. Let me help you with that. Can you provide your order number?',
+    timestamp: new Date('2024-01-15T19:15:00')
+  }
+];
+
+// Sample orders data
+export const SAMPLE_ORDERS: Order[] = [
+  {
+    id: 'order-001',
+    callId: 'call-001',
+    phoneNumber: '(555) 123-4567',
+    customerName: 'John Smith',
+    items: [
+      SAMPLE_ORDER_ITEMS[0], // Margherita Pizza
+      SAMPLE_ORDER_ITEMS[1]  // Caesar Salad x2
+    ],
+    totalAmount: 43.99,
+    specialInstructions: 'Please ring doorbell twice. Leave at door if no answer.',
+    status: 'active',
+    timestamp: new Date('2024-01-15T18:35:00')
+  },
+  {
+    id: 'order-002',
+    callId: 'call-002',
+    phoneNumber: '(555) 987-6543',
+    customerName: 'Sarah Johnson',
+    items: [
+      SAMPLE_ORDER_ITEMS[2] // Spaghetti Carbonara
+    ],
+    totalAmount: 22.95,
+    status: 'completed',
+    timestamp: new Date('2024-01-15T17:50:00')
+  },
+  {
+    id: 'order-003',
+    phoneNumber: '(555) 654-3210',
+    customerName: 'Mike Chen',
+    items: [
+      SAMPLE_ORDER_ITEMS[3], // Kung Pao Chicken
+      SAMPLE_ORDER_ITEMS[4]  // Vegetable Lo Mein
+    ],
+    totalAmount: 30.00,
+    status: 'cancelled',
+    cancellationReason: 'Customer requested cancellation due to dietary restrictions discovered after ordering',
+    timestamp: new Date('2024-01-15T16:00:00')
+  },
+  {
+    id: 'order-004',
+    phoneNumber: '(555) 789-0123',
+    customerName: 'Lisa Wang',
+    items: [
+      { ...SAMPLE_ORDER_ITEMS[0], quantity: 2 }, // 2x Margherita Pizza
+      SAMPLE_ORDER_ITEMS[1] // Caesar Salad x2
+    ],
+    totalAmount: 62.48,
+    specialInstructions: 'Contactless delivery preferred',
+    status: 'completed',
+    timestamp: new Date('2024-01-15T15:30:00')
+  }
+];
+
+// Phone number patterns for generation
+export const PHONE_NUMBER_PATTERNS = [
+  '(555) ###-####',
+  '555-###-####',
+  '555.###.####'
+];
+
+// Language options
+export const LANGUAGE_OPTIONS = [
+  { value: 'english', label: 'English' },
+  { value: 'spanish', label: 'Spanish' },
+  { value: 'french', label: 'French' }
+];
+
+// Status display configurations
+export const CALL_STATUS_CONFIG = {
+  active: {
+    label: 'Active',
+    color: 'bg-green-100 text-green-800',
+    icon: '🟢'
+  },
+  completed: {
+    label: 'Completed',
+    color: 'bg-gray-100 text-gray-800',
+    icon: '✅'
+  }
+};
+
+export const ORDER_STATUS_CONFIG = {
+  active: {
+    label: 'Active',
+    color: 'bg-blue-100 text-blue-800',
+    icon: '🔵'
+  },
+  completed: {
+    label: 'Completed',
+    color: 'bg-green-100 text-green-800',
+    icon: '✅'
+  },
+  cancelled: {
+    label: 'Cancelled',
+    color: 'bg-red-100 text-red-800',
+    icon: '❌'
+  }
+};
+
+export const SENTIMENT_CONFIG = {
+  positive: {
+    label: 'Positive',
+    color: 'bg-green-100 text-green-800',
+    icon: '😊'
+  },
+  neutral: {
+    label: 'Neutral',
+    color: 'bg-gray-100 text-gray-800',
+    icon: '😐'
+  },
+  negative: {
+    label: 'Negative',
+    color: 'bg-red-100 text-red-800',
+    icon: '😞'
+  }
+};
