@@ -1,12 +1,19 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
+import { useMutation } from "convex/react";
 
 export default function Home() {
   const router = useRouter();
+  
+
+  const handleGetStarted = async () => {
+    // await deleteAllData();
+    router.push("/onboarding");
+  };
 
   return (
     <main className="min-h-screen bg-background-primary">
@@ -33,7 +40,7 @@ export default function Home() {
                       variant="primary"
                       size="lg"
                       className="w-full sm:w-auto cursor-pointer"
-                      onClick={() => router.push("/onboarding")}
+                      onClick={handleGetStarted}
                     >
                       Try Demo
                     </Button>

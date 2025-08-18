@@ -1,17 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useMutation } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Restaurant, LanguagePreference } from "@/types/global";
 import MenuDetails from "./menu-details";
+import { useRouter } from "next/navigation";
 
 export interface RestaurantSetupProps {
-  onComplete: (
-    restaurantData: Omit<Restaurant, "id" | "virtualNumber">
-  ) => Promise<void>;
-  loading?: boolean;
+  onComplete: () => void;
 }
 
 // FormData type
@@ -72,12 +72,12 @@ const LANGUAGE_OPTIONS: { value: LanguagePreference; label: string }[] = [
 ];
 
 // Main component
-const RestaurantSetup: React.FC<RestaurantSetupProps> = ({
-  onComplete,
-  loading = false,
-}) => {
+const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
+  // Navigation router
+  const router = useRouter();
+
   // The step number
-  const [currentStep, setCurrentStep] = useState(2);
+  const [currentStep, setCurrentStep] = useState(0);
   // Form data state
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -89,7 +89,36 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({
   const [errors, setErrors] = useState<FormErrors>({});
   // Loading state
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // page loading state
+  const [pageLoading, setPageLoading] = useState(true);
 
+  // Convex function
+  const deleteAllData = useMutation(api.restaurants.deleteAllData); // Deletes all the data from the convex storage
+  const createRestaurant = useMutation(api.restaurants.createRestaurant); // Adds the restaurant and menu data in the convex storage
+
+  // Deleting the previous data in the convex db
+  useEffect(() => {
+    async function deleteAllDataWrapper() {
+      console.log("Deleting the data");
+      try {
+        setPageLoading(true);
+        const deleteAllDataResponse = await deleteAllData();
+        if (!deleteAllDataResponse) {
+          throw new Error("Failed to reset previous data. Please try again.");
+        }
+        console.log(deleteAllDataResponse);
+      } catch (error) {
+        console.log(
+          "Error in deleting previous data",
+          (error as Error).message
+        );
+        router.push("/");
+      } finally {
+        setPageLoading(false);
+      }
+    }
+    deleteAllDataWrapper();
+  }, []);
   // Validates the input of the current step
   const validateCurrentStep = (): boolean => {
     const newErrors: FormErrors = {};
@@ -113,7 +142,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({
         break;
 
       case "menu-details":
-        if (!!formData.menuDetails.length) {
+        if (!formData.menuDetails.length) {
           newErrors.menuDetails = "Menu details are required";
         }
         break;
@@ -177,7 +206,8 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({
 
     setIsSubmitting(true);
     try {
-      await onComplete(formData);
+      await createRestaurant(formData);
+      onComplete();
     } catch (error) {
       setErrors({
         general:
@@ -206,7 +236,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({
             placeholder="Enter your restaurant name"
             required
             autoFocus
-            disabled={isSubmitting || loading}
+            disabled={isSubmitting}
           />
         );
 
@@ -223,7 +253,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({
             helperText="This is how your AI agent will introduce itself to customers"
             required
             autoFocus
-            disabled={isSubmitting || loading}
+            disabled={isSubmitting}
           />
         );
 
@@ -287,7 +317,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({
                   : "border-gray-300 focus:ring-blue-500"
               }`}
               autoFocus
-              disabled={isSubmitting || loading}
+              disabled={isSubmitting}
               aria-invalid={Boolean(errors.specialInstructions)}
               aria-describedby={
                 errors.specialInstructions
@@ -344,7 +374,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({
                         )
                       }
                       className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                      disabled={isSubmitting || loading}
+                      disabled={isSubmitting}
                     />
                     <span className="ml-3 text-sm text-gray-700">
                       {option.label}
@@ -367,6 +397,14 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({
   };
 
   const isLastStep = currentStep === STEPS.length - 1;
+
+  if (pageLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50/50">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -424,7 +462,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({
               <Button
                 variant="outline"
                 onClick={handlePrevious}
-                disabled={currentStep === 0 || isSubmitting || loading}
+                disabled={currentStep === 0 || isSubmitting}
               >
                 Previous
               </Button>
@@ -433,16 +471,16 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({
                 <Button
                   variant="primary"
                   onClick={handleSubmit}
-                  loading={isSubmitting || loading}
-                  disabled={isSubmitting || loading}
+                  loading={isSubmitting}
+                  disabled={isSubmitting}
                 >
-                  {isSubmitting || loading ? "Setting up..." : "Complete Setup"}
+                  {isSubmitting ? "Setting up..." : "Complete Setup"}
                 </Button>
               ) : (
                 <Button
                   variant="primary"
                   onClick={handleNext}
-                  disabled={isSubmitting || loading}
+                  disabled={isSubmitting}
                 >
                   Next
                 </Button>

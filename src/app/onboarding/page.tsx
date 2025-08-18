@@ -15,23 +15,14 @@ type OnboardingStep =
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const [currentStep, setCurrentStep] =
-    useState<OnboardingStep>("restaurant-setup");
+  const [currentStep, setCurrentStep] = useState<OnboardingStep>("login");
   const [restaurantData, setRestaurantData] = useState<Partial<Restaurant>>({});
 
-  const handleRestaurantSetup = async (
-    data: Omit<Restaurant, "id" | "virtualNumber">
-  ) => {
-    // Simulate API call to save restaurant data
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    setRestaurantData(data);
-    console.log("Restaurant setup completed:", data);
+  const handleRestaurantSetup = async () => {
     setCurrentStep("virtual-number");
   };
 
-  const handleVirtualNumberComplete = async (virtualNumber: string) => {
-    // Simulate API call to save virtual number
+  const OnboardingComplete = async (virtualNumber: string) => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const completeRestaurantData = {
@@ -59,9 +50,7 @@ export default function OnboardingPage() {
         return <RestaurantSetup onComplete={handleRestaurantSetup} />;
 
       case "virtual-number":
-        return (
-          <VirtualNumberGenerator onComplete={handleVirtualNumberComplete} />
-        );
+        return <VirtualNumberGenerator onComplete={OnboardingComplete} />;
 
       case "complete":
         return (

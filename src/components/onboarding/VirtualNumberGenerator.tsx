@@ -13,36 +13,17 @@ const VirtualNumberGenerator: React.FC<VirtualNumberGeneratorProps> = ({
   onComplete,
   loading = false,
 }) => {
+  const VIRTUAL_NUMBER = process.env.NEXT_PUBLIC_VIRTUAL_NUMBER;
   const [virtualNumber, setVirtualNumber] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isProceeding, setIsProceeding] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const generateVirtualNumber = (): string => {
-    // Generate a random 10-digit phone number
-    // Format: (XXX) XXX-XXXX
-    const areaCode = Math.floor(Math.random() * 900) + 100; // 100-999
-    const exchange = Math.floor(Math.random() * 900) + 100; // 100-999
-    const number = Math.floor(Math.random() * 9000) + 1000; // 1000-9999
-
-    return `(${areaCode}) ${exchange}-${number}`;
-  };
-
   const handleGenerate = async () => {
     setIsGenerating(true);
-    setError(null);
-
-    try {
-      // Simulate API call delay for better UX
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      const newNumber = generateVirtualNumber();
-      setVirtualNumber(newNumber);
-    } catch (err) {
-      setError("Failed to generate virtual number. Please try again.");
-    } finally {
-      setIsGenerating(false);
-    }
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setVirtualNumber(VIRTUAL_NUMBER);
+    setIsGenerating(false);
   };
 
   const handleProceed = async () => {
@@ -62,11 +43,6 @@ const VirtualNumberGenerator: React.FC<VirtualNumberGeneratorProps> = ({
     } finally {
       setIsProceeding(false);
     }
-  };
-
-  const handleRegenerateNumber = () => {
-    setVirtualNumber(null);
-    handleGenerate();
   };
 
   return (
@@ -164,12 +140,7 @@ const VirtualNumberGenerator: React.FC<VirtualNumberGeneratorProps> = ({
                         <p className="text-sm text-blue-700 mb-2">
                           Your Virtual Number
                         </p>
-                        <p
-                          className="text-2xl font-mono font-bold text-primary-900"
-                          aria-label={`Virtual phone number: ${virtualNumber
-                            .replace(/[()]/g, "")
-                            .replace(/-/g, "")}`}
-                        >
+                        <p className="text-2xl font-mono font-bold text-primary-900">
                           {virtualNumber}
                         </p>
                       </div>
@@ -191,14 +162,6 @@ const VirtualNumberGenerator: React.FC<VirtualNumberGeneratorProps> = ({
                     </div>
 
                     <div className="flex space-x-3">
-                      <Button
-                        variant="outline"
-                        onClick={handleRegenerateNumber}
-                        disabled={isGenerating || isProceeding || loading}
-                        className="flex-1"
-                      >
-                        Generate New Number
-                      </Button>
                       <Button
                         variant="primary"
                         onClick={handleProceed}

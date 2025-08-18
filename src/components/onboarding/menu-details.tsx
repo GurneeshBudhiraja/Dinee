@@ -61,18 +61,29 @@ function NoMenuDetails({
   };
 
   return (
-    <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
+    <div
+      className={cn("w-full grid grid-cols-1 md:grid-cols-2 gap-6 p-4", {
+        "pointer-events-none": loading,
+      })}
+    >
       {/* AI */}
       <div
         className="group relative flex flex-col justify-center items-center h-full w-full bg-primary-50 border-2 border-primary rounded-lg cursor-pointer hover:bg-primary-100 hover:border-primary-600 transition-colors duration-300 ease-in-out p-8 text-center"
-        onClick={() => inputRef.current?.click()}
+        onClick={() => !loading && inputRef.current?.click()}
       >
+        {loading && (
+          <div className="absolute inset-0 bg-white/80 flex flex-col justify-center items-center rounded-lg">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <p className="text-primary font-semibold mt-4">Extracting...</p>
+          </div>
+        )}
         <input
           type="file"
           ref={inputRef}
           className="hidden"
           accept="application/pdf, image/*"
           onChange={handleFileChange}
+          disabled={loading}
         />
         <div className="absolute top-2 right-2 bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full">
           AI Extraction
@@ -89,7 +100,7 @@ function NoMenuDetails({
       {/* Manual entry */}
       <div
         className="group flex flex-col justify-center items-center h-full w-full bg-background-surface border border-border-default rounded-lg cursor-pointer hover:bg-background-muted hover:border-border-dark transition-colors duration-300 ease-in-out p-8 text-center"
-        onClick={() => setShowManualEntry(true)}
+        onClick={() => !loading && setShowManualEntry(true)}
       >
         <BadgePlus className="text-text-secondary h-10 w-10 mb-4" />
         <h3 className="text-lg font-semibold text-text-primary">
@@ -204,7 +215,7 @@ function MenuItem({
   onDelete: () => void;
 }) {
   return (
-    <div className="flex justify-between items-start p-3 bg-background-surface rounded-md border border-border-light">
+    <div className="flex justify-between items-start p-3 bg-background-surface rounded-md border border-gray-300">
       <div>
         <p className="font-semibold text-text-primary">{item.name}</p>
         {item.description && (
@@ -250,14 +261,14 @@ function MenuDetails({
   const hasItems = menuDetails.length > 0;
 
   return (
-    <div className="w-full min-h-40 flex">
+    <div className="w-full min-h-40 flex ">
       {showManualEntry ? (
         <ManualEntryForm
           onAddItem={handleAddItem}
           onCancel={() => setShowManualEntry(false)}
         />
       ) : hasItems ? (
-        <div className="w-full p-4 bg-background-muted/50 rounded-lg border border-border-default space-y-3">
+        <div className="w-full p-4 bg-background-muted/50 rounded-lg border border-border-default space-y-3 ">
           <div className="flex justify-between items-center pb-2 border-b border-border-light">
             <h3 className="text-lg font-semibold text-text-primary">
               Menu Items
@@ -272,13 +283,15 @@ function MenuDetails({
               Add Item
             </Button>
           </div>
-          {menuDetails.map((item, index) => (
-            <MenuItem
-              key={index}
-              item={item}
-              onDelete={() => handleDeleteItem(index)}
-            />
-          ))}
+          <div className="max-h-112 overflow-scroll flex flex-col gap-2 px-1">
+            {menuDetails.map((item, index) => (
+              <MenuItem
+                key={index}
+                item={item}
+                onDelete={() => handleDeleteItem(index)}
+              />
+            ))}
+          </div>
         </div>
       ) : (
         <NoMenuDetails
