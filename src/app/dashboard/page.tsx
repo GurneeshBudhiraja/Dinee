@@ -7,13 +7,11 @@ import {
   OrdersSection,
   SettingsSection,
 } from "@/components/dashboard";
-import { useRestaurant } from "@/contexts";
+import { useRestaurantStorage } from "@/hooks/useRestaurantStorage";
 
 export default function DashboardPage() {
-  const {
-    state: { currentRestaurant },
-  } = useRestaurant();
-  const restaurantName = currentRestaurant?.name || "Restaurant Dashboard";
+  const { restaurantData } = useRestaurantStorage();
+  const restaurantName = restaurantData?.name || "Restaurant Dashboard";
 
   return (
     <DashboardLayout restaurantName={restaurantName}>

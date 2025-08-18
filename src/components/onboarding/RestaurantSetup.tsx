@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Restaurant, LanguagePreference } from "@/types/global";
 import MenuDetails from "./menu-details";
 import { useRouter } from "next/navigation";
+import { useRestaurantStorage } from "@/hooks/useRestaurantStorage";
 
 export interface RestaurantSetupProps {
   onComplete: () => void;
@@ -75,6 +76,7 @@ const LANGUAGE_OPTIONS: { value: LanguagePreference; label: string }[] = [
 const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
   // Navigation router
   const router = useRouter();
+  const { saveRestaurantData } = useRestaurantStorage();
 
   // The step number
   const [currentStep, setCurrentStep] = useState(0);
@@ -92,32 +94,8 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
   // page loading state
   const [pageLoading, setPageLoading] = useState(true);
 
-  // Convex function
-  const deleteAllData = useMutation(api.restaurants.deleteAllData); // Deletes all the data from the convex storage
-  const createRestaurant = useMutation(api.restaurants.createRestaurant); // Adds the restaurant and menu data in the convex storage
-
-  // Deleting the previous data in the convex db
   useEffect(() => {
-    async function deleteAllDataWrapper() {
-      console.log("Deleting the data");
-      try {
-        setPageLoading(true);
-        const deleteAllDataResponse = await deleteAllData();
-        if (!deleteAllDataResponse) {
-          throw new Error("Failed to reset previous data. Please try again.");
-        }
-        console.log(deleteAllDataResponse);
-      } catch (error) {
-        console.log(
-          "Error in deleting previous data",
-          (error as Error).message
-        );
-        router.push("/");
-      } finally {
-        setPageLoading(false);
-      }
-    }
-    deleteAllDataWrapper();
+    setPageLoading(false);
   }, []);
   // Validates the input of the current step
   const validateCurrentStep = (): boolean => {
@@ -206,7 +184,24 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
 
     setIsSubmitting(true);
     try {
-      await createRestaurant(formData);
+      // Create a unique ID for the restaurant
+      const restaurantId = `res_${new Date().getTime()}`;
+
+      // Create unique IDs for each menu item
+      const menuDetailsWithIds = formData.menuDetails.map((item) => ({
+        ...item,
+        id: `menu_${new Date().getTime()}_${Math.random()
+          .toString(36)
+          .substring(2, 9)}`,
+      }));
+
+      const restaurantData = {
+        ...formData,
+        id: restaurantId,
+        menuDetails: menuDetailsWithIds,
+      };
+
+      saveRestaurantData(restaurantData);
       onComplete();
     } catch (error) {
       setErrors({

@@ -1,9 +1,9 @@
 "use client";
 
 import React, { ReactNode } from "react";
-import { RestaurantProvider } from "./RestaurantContext";
 import { CallsProvider } from "./CallsContext";
 import { OrdersProvider } from "./OrdersContext";
+import { Toaster } from "@/components/ui/sonner";
 
 interface AppProviderProps {
   children: ReactNode;
@@ -15,15 +15,21 @@ interface AppProviderProps {
  */
 export function AppProvider({ children }: AppProviderProps) {
   return (
-    <RestaurantProvider>
-      <CallsProvider>
-        <OrdersProvider>{children}</OrdersProvider>
-      </CallsProvider>
-    </RestaurantProvider>
+    <CallsProvider>
+      <OrdersProvider>
+        {children}
+        <Toaster
+          closeButton={true}
+          richColors={true}
+          duration={2000}
+          theme="system"
+          position="bottom-right"
+        />
+      </OrdersProvider>
+    </CallsProvider>
   );
 }
 
 // Export all hooks for easy access
-export { useRestaurant } from "./RestaurantContext";
 export { useCalls } from "./CallsContext";
 export { useOrders } from "./OrdersContext";

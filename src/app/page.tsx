@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { useMutation } from "convex/react";
+import { useShowToast } from "@/hooks/useShowToast";
+import { toast } from "sonner";
 
 export default function Home() {
   const router = useRouter();
-  
+  const { showToast } = useShowToast();
 
   const handleGetStarted = async () => {
     // await deleteAllData();

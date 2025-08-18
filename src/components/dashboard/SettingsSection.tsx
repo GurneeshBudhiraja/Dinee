@@ -3,17 +3,15 @@ import { Restaurant } from "@/types/global";
 import { LANGUAGE_OPTIONS } from "@/lib/constants";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
-import { useRestaurant } from "@/contexts";
+import { useRestaurantStorage } from "@/hooks/useRestaurantStorage";
 
 export interface SettingsSectionProps {
   tabId: "settings";
 }
 
 const SettingsSection: React.FC<SettingsSectionProps> = () => {
-  const {
-    state: { currentRestaurant, loading, error },
-    actions,
-  } = useRestaurant();
+  const { restaurantData, loading, saveRestaurantData } =
+    useRestaurantStorage();
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
   const [isLoading, setSaveLoading] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{
@@ -23,12 +21,15 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
 
   // Initialize local state with current restaurant data
   useEffect(() => {
-    if (currentRestaurant) {
-      setRestaurant(currentRestaurant);
+    if (restaurantData) {
+      setRestaurant(restaurantData);
     }
-  }, [currentRestaurant]);
+  }, [restaurantData]);
 
-  const handleInputChange = (field: keyof Restaurant, value: string) => {
+  const handleInputChange = (
+    field: keyof Restaurant,
+    value: string | Restaurant["menuDetails"]
+  ) => {
     if (restaurant) {
       setRestaurant((prev) =>
         prev
@@ -53,10 +54,10 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
 
     try {
       // Update the restaurant in the context
-      actions.updateRestaurant(restaurant);
+      saveRestaurantData(restaurant);
 
       // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 400));
 
       setSaveMessage({
         type: "success",
@@ -76,14 +77,6 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
     return (
       <div className="text-center py-12">
         <div className="text-gray-400 mb-4">Loading restaurant settings...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="text-center py-12">
-        <div className="text-red-500 mb-4">Error loading settings: {error}</div>
       </div>
     );
   }
@@ -119,7 +112,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
             />
             <Input
               label="Virtual Phone Number"
-              value={restaurant.virtualNumber || ""}
+              value={process.env.NEXT_PUBLIC_VIRTUAL_NUMBER}
               disabled
               helperText="This number was generated during setup and cannot be changed"
             />
@@ -179,8 +172,14 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
               </span>
             </label>
             <textarea
-              value={restaurant.menuDetails}
-              onChange={(e) => handleInputChange("menuDetails", e.target.value)}
+              value={JSON.stringify(restaurant.menuDetails, null, 2)}
+              onChange={(e) => {
+                try {
+                  handleInputChange("menuDetails", JSON.parse(e.target.value));
+                } catch (e) {
+                  console.error("Invalid JSON in menu details");
+                }
+              }}
               placeholder="Describe your menu items, specialties, and offerings..."
               rows={4}
               className="flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
