@@ -14,27 +14,6 @@ export const PROMPT_READ_MENU = `{"about_you":"You are the smart AI assistant wh
   "}`
 
 
-// Sample restaurants data
-export const SAMPLE_RESTAURANTS: Restaurant[] = [
-  {
-    id: 'rest-001',
-    name: 'Mario\'s Italian Kitchen',
-    agentName: 'Sofia',
-    menuDetails: 'Traditional Italian cuisine including pasta, pizza, risotto, and seafood dishes. Daily specials available.',
-    specialInstructions: 'Always ask about dietary restrictions. Mention our gluten-free options. Take note of spice preferences.',
-    languagePreference: 'english',
-    virtualNumber: '5551234567'
-  },
-  {
-    id: 'rest-002',
-    name: 'Dragon Palace Chinese',
-    agentName: 'Chen',
-    menuDetails: 'Authentic Chinese dishes including dim sum, stir-fries, noodles, and traditional soups.',
-    specialInstructions: 'Confirm spice level for all dishes. Ask about nut allergies. Offer chopsticks or utensils.',
-    languagePreference: 'english',
-    virtualNumber: '5559876543'
-  }
-];
 
 // Sample order items
 export const SAMPLE_ORDER_ITEMS: OrderItem[] = [

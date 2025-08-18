@@ -2,11 +2,9 @@
 
 import React, { createContext, useContext, useReducer, ReactNode } from "react";
 import { Restaurant } from "@/types/global";
-import { SAMPLE_RESTAURANTS } from "@/lib/constants";
 
 // State interface
 interface RestaurantState {
-  restaurants: Restaurant[];
   currentRestaurant: Restaurant | null;
   loading: boolean;
   error: string | null;
@@ -23,8 +21,7 @@ type RestaurantAction =
 
 // Initial state
 const initialState: RestaurantState = {
-  restaurants: SAMPLE_RESTAURANTS,
-  currentRestaurant: SAMPLE_RESTAURANTS[0] || null,
+  currentRestaurant: null,
   loading: false,
   error: null,
 };
@@ -41,38 +38,12 @@ function restaurantReducer(
     case "SET_ERROR":
       return { ...state, error: action.payload, loading: false };
 
-    case "SET_RESTAURANTS":
-      return {
-        ...state,
-        restaurants: action.payload,
-        loading: false,
-        error: null,
-      };
-
     case "SET_CURRENT_RESTAURANT":
       return { ...state, currentRestaurant: action.payload };
-
-    case "UPDATE_RESTAURANT":
-      const updatedRestaurants = state.restaurants.map((restaurant) =>
-        restaurant.id === action.payload.id ? action.payload : restaurant
-      );
-      const updatedCurrent =
-        state.currentRestaurant?.id === action.payload.id
-          ? action.payload
-          : state.currentRestaurant;
-
-      return {
-        ...state,
-        restaurants: updatedRestaurants,
-        currentRestaurant: updatedCurrent,
-        loading: false,
-        error: null,
-      };
 
     case "CREATE_RESTAURANT":
       return {
         ...state,
-        restaurants: [...state.restaurants, action.payload],
         currentRestaurant: action.payload,
         loading: false,
         error: null,

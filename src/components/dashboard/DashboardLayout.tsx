@@ -94,21 +94,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     },
   ];
 
-  const handleTabChange = (tabId: TabType) => {
-    setActiveTab(tabId);
-    // Announce tab change to screen readers
-    const announcement = `Switched to ${
-      tabs.find((t) => t.id === tabId)?.label
-    } tab`;
-    const announcer = document.createElement("div");
-    announcer.setAttribute("aria-live", "polite");
-    announcer.setAttribute("aria-atomic", "true");
-    announcer.className = "sr-only";
-    announcer.textContent = announcement;
-    document.body.appendChild(announcer);
-    setTimeout(() => document.body.removeChild(announcer), 1000);
-  };
-
   const handleKeyDown = (event: React.KeyboardEvent, tabId: TabType) => {
     const currentIndex = tabs.findIndex((tab) => tab.id === tabId);
     let nextIndex = currentIndex;
@@ -192,8 +177,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 ref={(el) => {
                   tabRefs.current[tab.id] = el;
                 }}
-                onClick={() => handleTabChange(tab.id)}
-                onKeyDown={(e) => handleKeyDown(e, tab.id)}
+                onClick={() => {
+                  setActiveTab(tab.id);
+                }}
                 className={cn(
                   "flex items-center space-x-2 py-3 sm:py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 whitespace-nowrap",
                   "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white",
