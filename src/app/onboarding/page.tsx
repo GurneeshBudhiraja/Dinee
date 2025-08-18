@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import LoginForm from "@/components/onboarding/LoginForm";
 import RestaurantSetup from "@/components/onboarding/RestaurantSetup";
@@ -15,17 +15,9 @@ type OnboardingStep =
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState<OnboardingStep>("login");
+  const [currentStep, setCurrentStep] =
+    useState<OnboardingStep>("restaurant-setup");
   const [restaurantData, setRestaurantData] = useState<Partial<Restaurant>>({});
-
-  const handleLogin = async (email: string, password: string) => {
-    // Simulate login API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // For demo purposes, accept any email/password
-    console.log("Login successful:", { email });
-    setCurrentStep("restaurant-setup");
-  };
 
   const handleRestaurantSetup = async (
     data: Omit<Restaurant, "id" | "virtualNumber">
@@ -50,13 +42,8 @@ export default function OnboardingPage() {
 
     console.log("Onboarding completed:", completeRestaurantData);
 
-    // Store in localStorage for demo purposes
-    localStorage.setItem(
-      "restaurantData",
-      JSON.stringify(completeRestaurantData)
-    );
-    localStorage.setItem("isOnboarded", "true");
-
+    // TODO: update to Convex db
+    console.log(completeRestaurantData);
     setCurrentStep("complete");
 
     // Redirect to dashboard after a short delay
@@ -68,8 +55,6 @@ export default function OnboardingPage() {
   const renderCurrentStep = () => {
     switch (currentStep) {
       case "login":
-        return <LoginForm onLogin={handleLogin} />;
-
       case "restaurant-setup":
         return <RestaurantSetup onComplete={handleRestaurantSetup} />;
 

@@ -88,7 +88,7 @@ const CallbackModal: React.FC<CallbackModalProps> = ({
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             placeholder="Please provide a detailed reason for the callback (minimum 100 characters)..."
-            className="w-full h-32 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+            className="w-full h-32 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
             disabled={isSubmitting}
             required
           />

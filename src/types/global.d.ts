@@ -10,7 +10,14 @@ export interface Restaurant {
   id: string;
   name: string;
   agentName: string;
-  menuDetails: string;
+  menuDetails: Array<{
+    // Menu item name
+    name: string;
+    // Menu item price
+    price: string;
+    // Menu item description
+    description?: string;
+  }>;
   specialInstructions: string;
   languagePreference: string;
   virtualNumber?: string;

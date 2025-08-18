@@ -7,71 +7,36 @@ import { Card, CardContent } from "@/components/ui/Card";
 
 export default function Home() {
   const router = useRouter();
-  const [isOnboarded, setIsOnboarded] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    // Check if user has completed onboarding
-    const onboardingStatus = localStorage.getItem("isOnboarded");
-    setIsOnboarded(onboardingStatus === "true");
-  }, []);
-
-  const handleGetStarted = () => {
-    router.push("/onboarding");
-  };
-
-  const handleGoToDashboard = () => {
-    router.push("/dashboard");
-  };
-
-  if (isOnboarded === null) {
-    // Loading state
-    return (
-      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-      </main>
-    );
-  }
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-background-primary">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <div className="relative z-10 pb-8 bg-gray-50 sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
+          <div className="relative z-10 pb-8 bg-background-primary sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
             <div className="pt-10 mx-auto max-w-7xl px-4 sm:pt-12 sm:px-6 md:pt-16 lg:pt-20 lg:px-8 xl:pt-28">
               <div className="sm:text-center lg:text-left">
-                <h1 className="text-4xl tracking-tight font-bold text-gray-900 sm:text-5xl md:text-6xl">
+                <h1 className="text-4xl tracking-tight font-bold text-text-primary sm:text-5xl md:text-6xl">
                   <span className="block xl:inline">Restaurant Call</span>{" "}
-                  <span className="block text-primary-600 xl:inline">
+                  <span className="block text-primary xl:inline">
                     Management
                   </span>
                 </h1>
-                <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
+                <p className="mt-3 text-base text-text-secondary sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
                   Automate your restaurant&apos;s phone orders with AI. Let your
                   intelligent agent handle customer calls, take orders, and
                   manage callbacks while you focus on cooking.
                 </p>
                 <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
                   <div className="rounded-md shadow">
-                    {isOnboarded ? (
-                      <Button
-                        variant="primary"
-                        size="lg"
-                        onClick={handleGoToDashboard}
-                        className="w-full sm:w-auto"
-                      >
-                        Go to Dashboard
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="primary"
-                        size="lg"
-                        onClick={handleGetStarted}
-                        className="w-full sm:w-auto"
-                      >
-                        Get Started
-                      </Button>
-                    )}
+                    <Button
+                      variant="primary"
+                      size="lg"
+                      className="w-full sm:w-auto cursor-pointer"
+                      onClick={() => router.push("/onboarding")}
+                    >
+                      Try Demo
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -79,7 +44,7 @@ export default function Home() {
           </div>
         </div>
         <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
-          <div className="h-56 w-full bg-gradient-to-br from-primary-400 to-primary-600 sm:h-72 md:h-96 lg:w-full lg:h-full flex items-center justify-center">
+          <div className="h-56 w-full bg-gradient-to-br from-primary to-primary-hover sm:h-72 md:h-96 lg:w-full lg:h-full flex items-center justify-center">
             <div className="text-center text-white">
               <svg
                 className="mx-auto h-24 w-24 mb-4 opacity-80"
@@ -104,16 +69,16 @@ export default function Home() {
       </div>
 
       {/* Features Section */}
-      <div className="py-12 bg-white">
+      <div className="py-12 bg-background-surface">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:text-center">
-            <h2 className="text-base text-primary-600 font-semibold tracking-wide uppercase">
+            <h2 className="text-base text-primary font-semibold tracking-wide uppercase">
               Features
             </h2>
-            <p className="mt-2 text-3xl leading-8 font-bold tracking-tight text-gray-900 sm:text-4xl">
+            <p className="mt-2 text-3xl leading-8 font-bold tracking-tight text-text-primary sm:text-4xl">
               Everything you need to manage calls
             </p>
-            <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+            <p className="mt-4 max-w-2xl text-xl text-text-secondary lg:mx-auto">
               Our AI agent handles your restaurant calls professionally,
               ensuring no order is missed.
             </p>
@@ -125,7 +90,7 @@ export default function Home() {
                 <CardContent className="pt-6">
                   <div className="flex">
                     <div className="flex-shrink-0">
-                      <div className="flex items-center justify-center h-12 w-12 rounded-md bg-primary-500 text-white">
+                      <div className="flex items-center justify-center h-12 w-12 rounded-md bg-primary text-white">
                         <svg
                           className="h-6 w-6"
                           fill="none"
@@ -143,10 +108,10 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="ml-4">
-                      <h3 className="text-lg leading-6 font-medium text-gray-900">
+                      <h3 className="text-lg leading-6 font-medium text-text-primary">
                         Automated Order Taking
                       </h3>
-                      <p className="mt-2 text-base text-gray-500">
+                      <p className="mt-2 text-base text-text-secondary">
                         Your AI agent takes orders accurately, asks clarifying
                         questions, and handles special requests.
                       </p>
@@ -159,7 +124,7 @@ export default function Home() {
                 <CardContent className="pt-6">
                   <div className="flex">
                     <div className="flex-shrink-0">
-                      <div className="flex items-center justify-center h-12 w-12 rounded-md bg-primary-500 text-white">
+                      <div className="flex items-center justify-center h-12 w-12 rounded-md bg-primary text-white">
                         <svg
                           className="h-6 w-6"
                           fill="none"
@@ -177,10 +142,10 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="ml-4">
-                      <h3 className="text-lg leading-6 font-medium text-gray-900">
+                      <h3 className="text-lg leading-6 font-medium text-text-primary">
                         Real-time Dashboard
                       </h3>
-                      <p className="mt-2 text-base text-gray-500">
+                      <p className="mt-2 text-base text-text-secondary">
                         Monitor all calls, orders, and customer interactions
                         from a comprehensive dashboard.
                       </p>
@@ -193,7 +158,7 @@ export default function Home() {
                 <CardContent className="pt-6">
                   <div className="flex">
                     <div className="flex-shrink-0">
-                      <div className="flex items-center justify-center h-12 w-12 rounded-md bg-primary-500 text-white">
+                      <div className="flex items-center justify-center h-12 w-12 rounded-md bg-primary text-white">
                         <svg
                           className="h-6 w-6"
                           fill="none"
@@ -211,10 +176,10 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="ml-4">
-                      <h3 className="text-lg leading-6 font-medium text-gray-900">
+                      <h3 className="text-lg leading-6 font-medium text-text-primary">
                         Smart Callbacks
                       </h3>
-                      <p className="mt-2 text-base text-gray-500">
+                      <p className="mt-2 text-base text-text-secondary">
                         Automatically schedule and manage customer callbacks for
                         busy periods or follow-ups.
                       </p>
@@ -227,7 +192,7 @@ export default function Home() {
                 <CardContent className="pt-6">
                   <div className="flex">
                     <div className="flex-shrink-0">
-                      <div className="flex items-center justify-center h-12 w-12 rounded-md bg-primary-500 text-white">
+                      <div className="flex items-center justify-center h-12 w-12 rounded-md bg-primary text-white">
                         <svg
                           className="h-6 w-6"
                           fill="none"
@@ -251,10 +216,10 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="ml-4">
-                      <h3 className="text-lg leading-6 font-medium text-gray-900">
+                      <h3 className="text-lg leading-6 font-medium text-text-primary">
                         Customizable Settings
                       </h3>
-                      <p className="mt-2 text-base text-gray-500">
+                      <p className="mt-2 text-base text-text-secondary">
                         Configure your AI agent with your menu, special
                         instructions, and business preferences.
                       </p>

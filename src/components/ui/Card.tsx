@@ -48,14 +48,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
     };
 
     return (
-      <div
-        className={cn(
-          "rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md",
-          className
-        )}
-        ref={ref}
-        {...props}
-      >
+      <div className={cn("card", className)} ref={ref} {...props}>
         {React.Children.map(children, (child) => {
           if (React.isValidElement(child)) {
             if (child.type === CardHeader) {
@@ -103,7 +96,7 @@ const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
     return (
       <div
         className={cn(
-          "flex items-center justify-between px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-200",
+          "card-header",
           expandable &&
             "cursor-pointer hover:bg-gray-50 focus:bg-gray-50 transition-colors duration-200",
           className
@@ -161,11 +154,7 @@ const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
 const CardContent = React.forwardRef<HTMLDivElement, CardContentProps>(
   ({ className, children, ...props }, ref) => {
     return (
-      <div
-        className={cn("px-4 py-3 sm:px-6 sm:py-4", className)}
-        ref={ref}
-        {...props}
-      >
+      <div className={cn("card-content", className)} ref={ref} {...props}>
         {children}
       </div>
     );
@@ -175,14 +164,7 @@ const CardContent = React.forwardRef<HTMLDivElement, CardContentProps>(
 const CardFooter = React.forwardRef<HTMLDivElement, CardFooterProps>(
   ({ className, children, ...props }, ref) => {
     return (
-      <div
-        className={cn(
-          "px-4 py-3 sm:px-6 sm:py-4 border-t border-gray-200 bg-gray-50",
-          className
-        )}
-        ref={ref}
-        {...props}
-      >
+      <div className={cn("card-footer", className)} ref={ref} {...props}>
         {children}
       </div>
     );

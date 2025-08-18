@@ -5,26 +5,37 @@ import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Restaurant, LanguagePreference } from "@/types/global";
+import MenuDetails from "./menu-details";
 
-interface RestaurantSetupProps {
+export interface RestaurantSetupProps {
   onComplete: (
     restaurantData: Omit<Restaurant, "id" | "virtualNumber">
   ) => Promise<void>;
   loading?: boolean;
 }
 
-interface FormData {
+// FormData type
+export interface FormData {
   name: string;
   agentName: string;
-  menuDetails: string;
+  menuDetails: Array<{
+    // Menu item name
+    name: string;
+    // Menu item price
+    price: string;
+    // Menu item description
+    description?: string;
+  }>;
   specialInstructions: string;
   languagePreference: LanguagePreference;
 }
 
-interface FormErrors {
+// Formerrors type
+export interface FormErrors {
   [key: string]: string | undefined;
 }
 
+// Onboarding steps
 const STEPS = [
   {
     id: "restaurant-name",
@@ -53,27 +64,33 @@ const STEPS = [
   },
 ];
 
+// Agent supported language
 const LANGUAGE_OPTIONS: { value: LanguagePreference; label: string }[] = [
   { value: "english", label: "English" },
   { value: "spanish", label: "Spanish" },
   { value: "french", label: "French" },
 ];
 
+// Main component
 const RestaurantSetup: React.FC<RestaurantSetupProps> = ({
   onComplete,
   loading = false,
 }) => {
-  const [currentStep, setCurrentStep] = useState(0);
+  // The step number
+  const [currentStep, setCurrentStep] = useState(2);
+  // Form data state
   const [formData, setFormData] = useState<FormData>({
     name: "",
     agentName: "",
-    menuDetails: "",
+    menuDetails: [],
     specialInstructions: "",
     languagePreference: "english",
   });
   const [errors, setErrors] = useState<FormErrors>({});
+  // Loading state
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Validates the input of the current step
   const validateCurrentStep = (): boolean => {
     const newErrors: FormErrors = {};
     const currentStepId = STEPS[currentStep].id;
@@ -96,11 +113,8 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({
         break;
 
       case "menu-details":
-        if (!formData.menuDetails.trim()) {
+        if (!!formData.menuDetails.length) {
           newErrors.menuDetails = "Menu details are required";
-        } else if (formData.menuDetails.trim().length < 10) {
-          newErrors.menuDetails =
-            "Please provide more detailed menu information (at least 10 characters)";
         }
         break;
 
@@ -126,7 +140,16 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleInputChange = (field: keyof FormData, value: string) => {
+  const handleInputChange = (
+    field: keyof FormData,
+    value: string | FormData["menuDetails"]
+  ) => {
+    if (field === "menuDetails" && typeof value === "object") {
+      setFormData((prev) => ({
+        ...prev,
+        menuDetails: { ...prev.menuDetails, ...value },
+      }));
+    }
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
@@ -212,34 +235,18 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({
               className="block text-sm font-medium text-gray-700 mb-2"
             >
               Menu Details
-              <span className="text-error-500 ml-1" aria-label="required">
+              <span className="text-red-500 ml-1" aria-label="required">
                 *
               </span>
             </label>
-            <textarea
-              id="menu-details"
-              value={formData.menuDetails}
-              onChange={(e) => handleInputChange("menuDetails", e.target.value)}
-              placeholder="Describe your menu items, prices, and categories..."
-              className={`w-full h-32 px-3 py-2 border rounded-md text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:border-transparent resize-none ${
-                errors.menuDetails
-                  ? "border-error-500 focus:ring-error-500"
-                  : "border-gray-300 focus:ring-primary-500"
-              }`}
-              required
-              autoFocus
-              disabled={isSubmitting || loading}
-              aria-invalid={Boolean(errors.menuDetails)}
-              aria-describedby={
-                errors.menuDetails
-                  ? "menu-details-error"
-                  : "menu-details-helper"
-              }
+            <MenuDetails
+              menuDetails={formData.menuDetails}
+              handleInputChange={handleInputChange}
             />
             {errors.menuDetails && (
               <p
                 id="menu-details-error"
-                className="mt-2 text-sm text-error-500"
+                className="mt-2 text-sm text-red-500"
                 role="alert"
               >
                 {errors.menuDetails}
@@ -276,8 +283,8 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({
               placeholder="Any special handling instructions for your AI agent..."
               className={`w-full h-32 px-3 py-2 border rounded-md text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:border-transparent resize-none ${
                 errors.specialInstructions
-                  ? "border-error-500 focus:ring-error-500"
-                  : "border-gray-300 focus:ring-primary-500"
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 focus:ring-blue-500"
               }`}
               autoFocus
               disabled={isSubmitting || loading}
@@ -291,7 +298,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({
             {errors.specialInstructions && (
               <p
                 id="special-instructions-error"
-                className="mt-2 text-sm text-error-500"
+                className="mt-2 text-sm text-red-500"
                 role="alert"
               >
                 {errors.specialInstructions}
@@ -315,7 +322,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({
             <fieldset>
               <legend className="block text-sm font-medium text-gray-700 mb-4">
                 Language Preference
-                <span className="text-error-500 ml-1" aria-label="required">
+                <span className="text-red-500 ml-1" aria-label="required">
                   *
                 </span>
               </legend>
@@ -336,7 +343,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({
                           e.target.value as LanguagePreference
                         )
                       }
-                      className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
                       disabled={isSubmitting || loading}
                     />
                     <span className="ml-3 text-sm text-gray-700">
@@ -347,7 +354,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({
               </div>
             </fieldset>
             {errors.languagePreference && (
-              <p className="mt-2 text-sm text-error-500" role="alert">
+              <p className="mt-2 text-sm text-red-500" role="alert">
                 {errors.languagePreference}
               </p>
             )}
@@ -383,7 +390,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div
-              className="bg-primary-600 h-2 rounded-full transition-all duration-300"
+              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
               style={{ width: `${((currentStep + 1) / STEPS.length) * 100}%` }}
             />
           </div>

@@ -118,11 +118,11 @@ const Modal: React.FC<ModalProps> = ({
       >
         {/* Header */}
         {(title || description) && (
-          <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-200">
+          <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-border-default">
             {title && (
               <h2
                 id="modal-title"
-                className="text-base sm:text-lg font-semibold text-gray-900 pr-8"
+                className="text-base sm:text-lg font-semibold text-text-primary pr-8"
               >
                 {title}
               </h2>
@@ -130,7 +130,10 @@ const Modal: React.FC<ModalProps> = ({
             {description && (
               <p
                 id="modal-description"
-                className={cn("text-sm text-gray-600 pr-8", title && "mt-2")}
+                className={cn(
+                  "text-sm text-text-secondary pr-8",
+                  title && "mt-2"
+                )}
               >
                 {description}
               </p>
@@ -146,7 +149,7 @@ const Modal: React.FC<ModalProps> = ({
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md transition-colors min-h-44 min-w-44"
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md transition-colors min-h-44 min-w-44"
           aria-label="Close modal"
         >
           <svg

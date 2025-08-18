@@ -150,7 +150,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Language Preference
-                <span className="text-error-500 ml-1" aria-label="required">
+                <span className="text-red-500 ml-1" aria-label="required">
                   *
                 </span>
               </label>
@@ -159,7 +159,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
                 onChange={(e) =>
                   handleInputChange("languagePreference", e.target.value)
                 }
-                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
               >
                 {LANGUAGE_OPTIONS.map((option) => (
@@ -174,7 +174,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Menu Details
-              <span className="text-error-500 ml-1" aria-label="required">
+              <span className="text-red-500 ml-1" aria-label="required">
                 *
               </span>
             </label>
@@ -183,7 +183,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
               onChange={(e) => handleInputChange("menuDetails", e.target.value)}
               placeholder="Describe your menu items, specialties, and offerings..."
               rows={4}
-              className="flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+              className="flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
               required
             />
             <p className="mt-2 text-sm text-gray-500">
@@ -203,7 +203,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
               }
               placeholder="Any special instructions for the AI agent when handling calls..."
               rows={4}
-              className="flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+              className="flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
             />
             <p className="mt-2 text-sm text-gray-500">
               Include any specific guidelines, policies, or procedures the AI

@@ -1,5 +1,19 @@
 import { Restaurant, Call, Order, OrderItem } from '@/types/global';
 
+// Gemini 2.5 flash model
+export const GEMINI_MODEL_2POINT5_FlASH = "gemini-2.5-flash	"
+
+
+// LLM prompts
+export const PROMPT_READ_MENU = `{"about_you":"You are the smart AI assistant whose primary task is to extract name, price, and description from the provided input.",
+  "output_instructions":"
+  * If the provided image/pdf does not have the information related to the menu items and price you will return the empty array. 
+  * If the provided image/pdf does not contain the description of the items, in that case you will not generate the description from your end and will just return the empty string for the description.
+  * Make sure to properly extract data related to the menu items and price.
+  * Do not add the currency symbol in the price.
+  "}`
+
+
 // Sample restaurants data
 export const SAMPLE_RESTAURANTS: Restaurant[] = [
   {

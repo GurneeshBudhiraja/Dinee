@@ -148,7 +148,7 @@ const VirtualNumberGenerator: React.FC<VirtualNumberGeneratorProps> = ({
                     <div className="bg-primary-50 rounded-lg p-6 border border-primary-200">
                       <div className="text-center">
                         <svg
-                          className="mx-auto h-8 w-8 text-primary-600 mb-3"
+                          className="mx-auto h-8 w-8 text-blue-600 mb-3"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -161,7 +161,7 @@ const VirtualNumberGenerator: React.FC<VirtualNumberGeneratorProps> = ({
                             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                           />
                         </svg>
-                        <p className="text-sm text-primary-700 mb-2">
+                        <p className="text-sm text-blue-700 mb-2">
                           Your Virtual Number
                         </p>
                         <p

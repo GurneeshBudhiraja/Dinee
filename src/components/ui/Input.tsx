@@ -33,11 +33,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="block text-sm font-medium text-gray-900 mb-2"
           >
             {label}
             {props.required && (
-              <span className="text-error-500 ml-1" aria-label="required">
+              <span className="text-red-500 ml-1" aria-label="required">
                 *
               </span>
             )}
@@ -60,15 +60,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             type={type}
             id={inputId}
             className={cn(
-              "flex h-10 w-full rounded-md border bg-white px-3 py-2 text-sm placeholder:text-gray-500",
-              "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:border-transparent transition-colors duration-200",
-              "disabled:cursor-not-allowed disabled:opacity-50",
-              "sm:h-11 sm:px-4 sm:text-base",
+              "input",
               leftIcon && "pl-9 sm:pl-10",
               rightIcon && "pr-9 sm:pr-10",
-              hasError
-                ? "border-error-500 focus:ring-error-500"
-                : "border-gray-300 focus:ring-primary-500",
+              hasError && "input-error",
               className
             )}
             ref={ref}
@@ -98,7 +93,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {error && (
           <p
             id={`${inputId}-error`}
-            className="mt-2 text-sm text-error-500"
+            className="mt-2 text-sm text-red-500"
             role="alert"
           >
             {error}
