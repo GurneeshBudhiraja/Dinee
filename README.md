@@ -1,4 +1,3 @@
 ### TODO
 
-[X] Error and success toast
-[X] Store the user configuration in the local storage
+[] Go through the Twilio docs and create the system design for the Kiro to implement
