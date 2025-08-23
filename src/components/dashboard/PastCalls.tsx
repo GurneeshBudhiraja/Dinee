@@ -3,6 +3,7 @@ import { Card, CardHeader, CardContent } from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import { SENTIMENT_CONFIG } from "@/lib/constants";
 import { useCalls } from "@/contexts";
+import { cn } from "@/lib/utils";
 
 const PastCalls: React.FC = () => {
   const {
@@ -29,28 +30,30 @@ const PastCalls: React.FC = () => {
 
   if (pastCalls.length === 0) {
     return (
-      <div className="text-center py-12">
-        <div className="text-gray-400 mb-4">
-          <svg
-            className="mx-auto h-12 w-12"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1}
-              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 sm:p-12">
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-6 bg-gray-50 rounded-full flex items-center justify-center">
+            <svg
+              className="w-8 h-8 text-gray-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            No Call History
+          </h3>
+          <p className="text-gray-600 max-w-md mx-auto">
+            Completed calls and their transcripts will appear here.
+          </p>
         </div>
-        <h3 className="text-lg font-medium text-gray-900 mb-2">
-          No Past Calls
-        </h3>
-        <p className="text-gray-500">
-          Completed calls and their transcripts will appear here.
-        </p>
       </div>
     );
   }

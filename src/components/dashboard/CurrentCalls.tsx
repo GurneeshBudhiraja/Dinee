@@ -32,41 +32,49 @@ const CurrentCalls: React.FC = () => {
 
   if (calls.length === 0) {
     return (
-      <div className="text-center py-8 sm:py-12">
-        <div className="text-gray-400 mb-4">
-          <svg
-            className="mx-auto h-10 w-10 sm:h-12 sm:w-12"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1}
-              d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-            />
-          </svg>
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 sm:p-12">
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-6 bg-blue-50 rounded-full flex items-center justify-center">
+            <svg
+              className="w-8 h-8 text-blue-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+              />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            No Active Calls
+          </h3>
+          <p className="text-gray-600 max-w-md mx-auto mb-6">
+            Your AI agent is ready to handle customer calls. Active
+            conversations will appear here.
+          </p>
+          <div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <span>System is online</span>
+          </div>
         </div>
-        <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">
-          No Current Calls
-        </h3>
-        <p className="text-sm sm:text-base text-gray-500 max-w-md mx-auto">
-          When customers call your AI agent, active calls will appear here.
-        </p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3 sm:space-y-4">
+    <div className="space-y-4">
       {calls.map((call) => (
         <Card key={call.id} expandable>
           <CardHeader>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between w-full space-y-2 sm:space-y-0">
-              <div className="flex items-center space-x-2 sm:space-x-4">
+              <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                   <Badge variant="success" size="sm">
                     <span className="flex items-center space-x-1">
                       <span aria-hidden="true">
@@ -98,7 +106,7 @@ const CurrentCalls: React.FC = () => {
                   Live Transcript
                 </h4>
                 <div
-                  className="bg-gray-50 rounded-lg p-3 sm:p-4 max-h-48 sm:max-h-64 overflow-y-auto"
+                  className="bg-gray-50 rounded-lg p-4 max-h-48 sm:max-h-64 overflow-y-auto border border-gray-200"
                   role="log"
                   aria-live="polite"
                   aria-label="Live call transcript"
@@ -109,7 +117,7 @@ const CurrentCalls: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="responsive-grid-2 gap-3 sm:gap-4 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                 <div>
                   <span className="font-medium text-gray-900 block">
                     Call Started:

@@ -162,7 +162,9 @@
     background-color: var(--color-background-primary);
     color: var(--color-text-primary);
     font-family: var(--font-sans);
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
     line-height: 1.5;
   }
 
@@ -281,6 +283,33 @@
       font-size: 16px; /* Prevent zoom on iOS */
     }
   }
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Backdrop blur support */
+  .backdrop-blur-sm {
+    backdrop-filter: blur(4px);
+  }
+
+  /* Gradient backgrounds */
+  .bg-gradient-to-br {
+    background-image: linear-gradient(
+      to bottom right,
+      var(--tw-gradient-stops)
+    );
+  }
+
+  .bg-gradient-to-r {
+    background-image: linear-gradient(to right, var(--tw-gradient-stops));
+  }
 }
 
 @utility btn {
@@ -294,7 +323,9 @@
 
   &:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px var(--color-primary), 0 0 0 4px rgba(37, 99, 235, 0.1);
+    box-shadow:
+      0 0 0 2px var(--color-primary),
+      0 0 0 4px rgba(37, 99, 235, 0.1);
   }
 
   &:disabled {
@@ -314,7 +345,9 @@
 
   &:hover {
     background-color: var(--color-primary-hover);
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1);
   }
 
   &:active {
@@ -329,7 +362,9 @@
 
   &:hover {
     background-color: var(--color-gray-200);
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1);
   }
 
   &:active {
@@ -345,7 +380,9 @@
 
   &:hover {
     background-color: var(--color-background-muted);
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1);
   }
 
   &:active {
@@ -372,7 +409,9 @@
 
   &:hover {
     background-color: var(--color-danger-600);
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1);
   }
 
   &:active {
@@ -428,7 +467,9 @@
   transition: box-shadow 0.2s;
 
   &:hover {
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1);
   }
 }
 

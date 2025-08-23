@@ -89,10 +89,65 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
     );
   }
 
+  // Helper function to render menu details as readable options
+  const renderMenuDetails = (menuDetails: Restaurant["menuDetails"]) => {
+    if (typeof menuDetails === "string") {
+      return menuDetails;
+    }
+
+    if (Array.isArray(menuDetails)) {
+      return menuDetails
+        .map((item, index) => {
+          if (typeof item === "string") {
+            return `${index + 1}. ${item}`;
+          }
+          if (typeof item === "object" && item !== null) {
+            const name = item.name || item.title || "Menu Item";
+            const price = item.price ? ` - $${item.price}` : "";
+            const description = item.description
+              ? ` (${item.description})`
+              : "";
+            return `${index + 1}. ${name}${price}${description}`;
+          }
+          return `${index + 1}. ${String(item)}`;
+        })
+        .join("\n");
+    }
+
+    if (typeof menuDetails === "object" && menuDetails !== null) {
+      return Object.entries(menuDetails)
+        .map(([key, value]) => {
+          if (Array.isArray(value)) {
+            return `${key}:\n${value.map((item, i) => `  ${i + 1}. ${typeof item === "object" ? item.name || String(item) : String(item)}`).join("\n")}`;
+          }
+          return `${key}: ${String(value)}`;
+        })
+        .join("\n\n");
+    }
+
+    return String(menuDetails);
+  };
+
+  const handleMenuDetailsChange = (value: string) => {
+    // Try to parse as structured data, fallback to string
+    try {
+      // If it looks like JSON, parse it
+      if (value.trim().startsWith("{") || value.trim().startsWith("[")) {
+        handleInputChange("menuDetails", JSON.parse(value));
+      } else {
+        // Otherwise, treat as plain text
+        handleInputChange("menuDetails", value);
+      }
+    } catch (e) {
+      // If parsing fails, store as string
+      handleInputChange("menuDetails", value);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Restaurant Information Section */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
           <h2 className="text-lg font-medium text-gray-900">
             Restaurant Information
@@ -112,7 +167,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
             />
             <Input
               label="Virtual Phone Number"
-              value={process.env.NEXT_PUBLIC_VIRTUAL_NUMBER}
+              value={process.env.NEXT_PUBLIC_VIRTUAL_NUMBER || "Not configured"}
               disabled
               helperText="This number was generated during setup and cannot be changed"
             />
@@ -121,7 +176,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
       </div>
 
       {/* AI Agent Configuration Section */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
           <h2 className="text-lg font-medium text-gray-900">
             AI Agent Configuration
@@ -152,7 +207,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
                 onChange={(e) =>
                   handleInputChange("languagePreference", e.target.value)
                 }
-                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="input"
                 required
               >
                 {LANGUAGE_OPTIONS.map((option) => (
@@ -172,22 +227,16 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
               </span>
             </label>
             <textarea
-              value={JSON.stringify(restaurant.menuDetails, null, 2)}
-              onChange={(e) => {
-                try {
-                  handleInputChange("menuDetails", JSON.parse(e.target.value));
-                } catch (e) {
-                  console.error("Invalid JSON in menu details");
-                }
-              }}
-              placeholder="Describe your menu items, specialties, and offerings..."
-              rows={4}
-              className="flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              value={renderMenuDetails(restaurant.menuDetails)}
+              onChange={(e) => handleMenuDetailsChange(e.target.value)}
+              placeholder="List your menu items, one per line:&#10;1. Margherita Pizza - $12.99&#10;2. Caesar Salad - $8.99&#10;3. Chicken Parmesan - $15.99"
+              rows={8}
+              className="input resize-none"
               required
             />
             <p className="mt-2 text-sm text-gray-500">
-              Provide details about your menu to help the AI agent answer
-              customer questions accurately.
+              List your menu items with prices. The AI agent will use this
+              information to help customers place orders.
             </p>
           </div>
 
@@ -202,7 +251,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
               }
               placeholder="Any special instructions for the AI agent when handling calls..."
               rows={4}
-              className="flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              className="input resize-none"
             />
             <p className="mt-2 text-sm text-gray-500">
               Include any specific guidelines, policies, or procedures the AI
@@ -213,7 +262,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
       </div>
 
       {/* Save Section */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div>

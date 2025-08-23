@@ -135,29 +135,45 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Skip to content link for accessibility */}
-      <a
-        ref={skipLinkRef}
-        href="#main-content"
-        className="skip-link"
-        onClick={handleSkipToContent}
-      >
-        Skip to main content
-      </a>
-
       {/* Header */}
       <header className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14 sm:h-16">
+          <div className="flex items-center justify-between h-16">
             <div className="flex items-center min-w-0 flex-1">
-              <h1 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">
-                {restaurantName}
-              </h1>
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <svg
+                    className="w-5 h-5 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h1 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">
+                    {restaurantName}
+                  </h1>
+                  <p className="text-xs text-gray-500 hidden sm:block">
+                    Call Management Dashboard
+                  </p>
+                </div>
+              </div>
             </div>
             <div className="hidden sm:flex items-center space-x-4">
-              <span className="text-sm text-gray-500">
-                Call Management Dashboard
-              </span>
+              <div className="flex items-center space-x-2 px-3 py-1.5 bg-green-50 border border-green-200 rounded-md">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span className="text-sm font-medium text-green-700">
+                  Online
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -170,8 +186,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         aria-label="Dashboard navigation"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mobile-nav space-x-6 sm:space-x-8">
-            {tabs.map((tab, index) => (
+          <div className="flex space-x-8 overflow-x-auto">
+            {tabs.map((tab) => (
               <button
                 key={tab.id}
                 ref={(el) => {
@@ -181,9 +197,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                   setActiveTab(tab.id);
                 }}
                 className={cn(
-                  "flex items-center space-x-2 py-3 sm:py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 whitespace-nowrap",
-                  "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white",
-                  "min-h-44 min-w-44", // Ensure minimum touch target size
+                  "flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap",
+                  "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
+                  "min-h-[44px]",
                   activeTab === tab.id
                     ? "border-blue-500 text-blue-600"
                     : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
@@ -193,16 +209,17 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 aria-controls={`${tab.id}-panel`}
                 id={`${tab.id}-tab`}
                 tabIndex={activeTab === tab.id ? 0 : -1}
+                onKeyDown={(e) => handleKeyDown(e, tab.id)}
               >
                 <span
                   className={cn(
-                    "transition-colors duration-200 flex-shrink-0",
+                    "flex-shrink-0",
                     activeTab === tab.id ? "text-blue-600" : "text-gray-400"
                   )}
                 >
                   {tab.icon}
                 </span>
-                <span className="text-xs sm:text-sm">{tab.label}</span>
+                <span>{tab.label}</span>
               </button>
             ))}
           </div>
@@ -212,14 +229,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       {/* Content Area */}
       <main
         id="main-content"
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8"
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
         tabIndex={-1}
       >
         <div
           id={`${activeTab}-panel`}
           role="tabpanel"
           aria-labelledby={`${activeTab}-tab`}
-          className="focus:outline-none animate-fade-in"
+          className="focus:outline-none"
         >
           {React.Children.map(children, (child) => {
             if (
