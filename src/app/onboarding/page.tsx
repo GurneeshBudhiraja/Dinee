@@ -2,64 +2,63 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import LoginForm from "@/components/onboarding/LoginForm";
 import RestaurantSetup from "@/components/onboarding/RestaurantSetup";
-import VirtualNumberGenerator from "@/components/onboarding/VirtualNumberGenerator";
+import RestaurantIdDisplay from "@/components/onboarding/VirtualNumberGenerator";
+import { useRestaurantStorage } from "@/hooks/useRestaurantStorage";
 import { Restaurant } from "@/types/global";
 
-type OnboardingStep =
-  | "login"
-  | "restaurant-setup"
-  | "virtual-number"
-  | "complete";
+type OnboardingStep = "restaurant-setup" | "restaurant-id" | "complete";
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState<OnboardingStep>("login");
-  const [restaurantData, setRestaurantData] = useState<Partial<Restaurant>>({});
+  const { restaurantId } = useRestaurantStorage();
+  const [currentStep, setCurrentStep] =
+    useState<OnboardingStep>("restaurant-setup");
+  const [generatedRestaurantId, setGeneratedRestaurantId] =
+    useState<string>("");
 
-  const handleRestaurantSetup = async () => {
-    setCurrentStep("virtual-number");
+  // Check if user already has a restaurant ID and redirect to dashboard
+  useEffect(() => {
+    if (restaurantId) {
+      router.push("/dashboard");
+    }
+  }, [restaurantId, router]);
+
+  const handleRestaurantSetup = async (restaurantId: string) => {
+    setGeneratedRestaurantId(restaurantId);
+    setCurrentStep("restaurant-id");
   };
 
-  const OnboardingComplete = async (virtualNumber: string) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    const completeRestaurantData = {
-      ...restaurantData,
-      virtualNumber,
-      id: `restaurant_${Date.now()}`, // Generate a simple ID
-    };
-
-    console.log("Onboarding completed:", completeRestaurantData);
-
-    // TODO: update to Convex db
-    console.log(completeRestaurantData);
+  const handleComplete = async () => {
     setCurrentStep("complete");
 
     // Redirect to dashboard after a short delay
     setTimeout(() => {
       router.push("/dashboard");
-    }, 2000);
+    }, 1500);
   };
 
   const renderCurrentStep = () => {
     switch (currentStep) {
-      case "login":
       case "restaurant-setup":
         return <RestaurantSetup onComplete={handleRestaurantSetup} />;
 
-      case "virtual-number":
-        return <VirtualNumberGenerator onComplete={OnboardingComplete} />;
+      case "restaurant-id":
+        return (
+          <RestaurantIdDisplay
+            restaurantId={generatedRestaurantId}
+            onComplete={handleComplete}
+          />
+        );
 
       case "complete":
         return (
           <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full text-center space-y-8">
-              <div className="animate-fade-in">
-                <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-success-100 mb-6">
+              <div>
+                <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-6">
                   <svg
-                    className="h-8 w-8 text-success-600"
+                    className="h-8 w-8 text-green-600"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -81,7 +80,7 @@ export default function OnboardingPage() {
                   Redirecting you to the dashboard...
                 </p>
                 <div className="flex justify-center">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
                 </div>
               </div>
             </div>

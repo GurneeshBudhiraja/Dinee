@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import { useRestaurantStorage } from "@/hooks/useRestaurantStorage";
 
 export interface RestaurantSetupProps {
-  onComplete: () => void;
+  onComplete: (restaurantId: string) => void;
 }
 
 // FormData type
@@ -184,25 +184,17 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
 
     setIsSubmitting(true);
     try {
-      // Create a unique ID for the restaurant
-      const restaurantId = `res_${new Date().getTime()}`;
+      const result = await saveRestaurantData({
+        name: formData.name,
+        agentName: formData.agentName,
+        menuDetails: formData.menuDetails,
+        specialInstructions: formData.specialInstructions,
+        languagePreference: formData.languagePreference,
+      });
 
-      // Create unique IDs for each menu item
-      const menuDetailsWithIds = formData.menuDetails.map((item) => ({
-        ...item,
-        id: `menu_${new Date().getTime()}_${Math.random()
-          .toString(36)
-          .substring(2, 9)}`,
-      }));
-
-      const restaurantData = {
-        ...formData,
-        id: restaurantId,
-        menuDetails: menuDetailsWithIds,
-      };
-
-      saveRestaurantData(restaurantData);
-      onComplete();
+      // The saveRestaurantData function now returns the restaurant ID from Convex
+      // and saves it to localStorage automatically
+      onComplete(result?.restaurantId || "");
     } catch (error) {
       setErrors({
         general:

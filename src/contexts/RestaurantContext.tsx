@@ -19,7 +19,7 @@ export const RestaurantProvider = ({ children }: { children: ReactNode }) => {
   const { restaurantId, loading: storageLoading } = useRestaurantStorage();
 
   const restaurantData = useQuery(
-    api.restaurants.getRestaurantByRestaurantId,
+    api.restaurants.getRestaurant,
     restaurantId ? { restaurantId } : "skip"
   );
 

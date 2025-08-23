@@ -1,8 +1,16 @@
 "use client";
 
-import React, { createContext, useContext, useReducer, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  ReactNode,
+  useEffect,
+} from "react";
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 import { Call } from "@/types/global";
-import { SAMPLE_CALLS } from "@/lib/constants";
+import { useRestaurantStorage } from "@/hooks/useRestaurantStorage";
 
 // State interface
 interface CallsState {
@@ -34,14 +42,11 @@ function categorizeCalls(calls: Call[]) {
 }
 
 // Initial state
-const initialCalls = SAMPLE_CALLS;
-const { activeCalls, pastCalls } = categorizeCalls(initialCalls);
-
 const initialState: CallsState = {
-  calls: initialCalls,
-  activeCalls,
-  pastCalls,
-  loading: false,
+  calls: [],
+  activeCalls: [],
+  pastCalls: [],
+  loading: true,
   error: null,
 };
 
@@ -159,6 +164,36 @@ interface CallsProviderProps {
 
 export function CallsProvider({ children }: CallsProviderProps) {
   const [state, dispatch] = useReducer(callsReducer, initialState);
+  const { restaurantId } = useRestaurantStorage();
+
+  // Fetch calls from Convex
+  const convexCalls = useQuery(
+    api.calls.getCallsByRestaurant,
+    restaurantId ? { restaurantId } : "skip"
+  );
+
+  // Convert Convex calls to our Call type
+  useEffect(() => {
+    if (convexCalls) {
+      const calls: Call[] = convexCalls.map((call) => ({
+        id: call._id,
+        phoneNumber: call.phoneNumber,
+        duration: call.duration,
+        status: call.status,
+        transcript: call.transcript,
+        liveTranscript: call.liveTranscript,
+        orderId: call.orderId,
+        sentiment: call.sentiment,
+        reason: call.reason,
+        timestamp: new Date(call.timestamp),
+      }));
+      dispatch({ type: "SET_CALLS", payload: calls });
+    } else if (restaurantId && convexCalls === undefined) {
+      dispatch({ type: "SET_LOADING", payload: true });
+    } else if (restaurantId && convexCalls === null) {
+      dispatch({ type: "SET_CALLS", payload: [] });
+    }
+  }, [convexCalls, restaurantId]);
 
   const actions = {
     setLoading: (loading: boolean) =>

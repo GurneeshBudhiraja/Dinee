@@ -1,44 +1,149 @@
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+
+// Generate a 5-digit uppercase restaurant ID
+function generateRestaurantId(): string {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let result = '';
+  for (let i = 0; i < 5; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
 
 export const createRestaurant = mutation({
   args: {
     name: v.string(),
     agentName: v.string(),
-    menuDetails: v.array(
-      v.object({
-        name: v.string(),
-        price: v.string(),
-        description: v.optional(v.string()),
-      })
-    ),
     specialInstructions: v.string(),
     languagePreference: v.union(
       v.literal("english"),
       v.literal("spanish"),
       v.literal("french")
     ),
+    menuDetails: v.optional(v.array(v.object({
+      name: v.string(),
+      price: v.string(),
+      description: v.optional(v.string()),
+    }))),
+    virtualNumber: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const restaurantId = await ctx.db.insert("restaurants", {
+    // Generate unique restaurant ID
+    let restaurantId: string;
+    let existingRestaurant;
+
+    do {
+      restaurantId = generateRestaurantId();
+      existingRestaurant = await ctx.db
+        .query("restaurants")
+        .withIndex("by_restaurant_id", (q) => q.eq("restaurantId", restaurantId))
+        .first();
+    } while (existingRestaurant);
+
+    const docId = await ctx.db.insert("restaurants", {
+      restaurantId,
       name: args.name,
       agentName: args.agentName,
       specialInstructions: args.specialInstructions,
       languagePreference: args.languagePreference,
+      menuDetails: args.menuDetails,
+      virtualNumber: args.virtualNumber,
+      createdAt: Date.now(),
     });
 
-    for (const item of args.menuDetails) {
-      await ctx.db.insert("menuItems", {
-        restaurantId,
-        name: item.name,
-        price: parseFloat(item.price),
-        description: item.description,
-      });
-    }
-
-    return restaurantId;
+    return { restaurantId, docId };
   },
 });
+
+export const getRestaurant = query({
+  args: { restaurantId: v.string() },
+  handler: async (ctx, args) => {
+    const restaurant = await ctx.db
+      .query("restaurants")
+      .withIndex("by_restaurant_id", (q) => q.eq("restaurantId", args.restaurantId))
+      .first();
+
+    return restaurant;
+  },
+});
+
+export const updateRestaurant = mutation({
+  args: {
+    restaurantId: v.string(),
+    name: v.optional(v.string()),
+    agentName: v.optional(v.string()),
+    specialInstructions: v.optional(v.string()),
+    languagePreference: v.optional(v.union(
+      v.literal("english"),
+      v.literal("spanish"),
+      v.literal("french")
+    )),
+    menuDetails: v.optional(v.array(v.object({
+      name: v.string(),
+      price: v.string(),
+      description: v.optional(v.string()),
+    }))),
+    virtualNumber: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const restaurant = await ctx.db
+      .query("restaurants")
+      .withIndex("by_restaurant_id", (q) => q.eq("restaurantId", args.restaurantId))
+      .first();
+
+    if (!restaurant) {
+      throw new Error("Restaurant not found");
+    }
+
+    // Only update fields that are provided
+    const updates: any = {};
+    if (args.name !== undefined) updates.name = args.name;
+    if (args.agentName !== undefined) updates.agentName = args.agentName;
+    if (args.specialInstructions !== undefined) updates.specialInstructions = args.specialInstructions;
+    if (args.languagePreference !== undefined) updates.languagePreference = args.languagePreference;
+    if (args.menuDetails !== undefined) updates.menuDetails = args.menuDetails;
+    if (args.virtualNumber !== undefined) updates.virtualNumber = args.virtualNumber;
+
+    await ctx.db.patch(restaurant._id, updates);
+
+    return restaurant._id;
+  },
+});
+
+export const deleteRestaurantData = mutation({
+  args: { restaurantId: v.string() },
+  handler: async (ctx, args) => {
+    try {
+      // Delete restaurant
+      const restaurant = await ctx.db
+        .query("restaurants")
+        .withIndex("by_restaurant_id", (q) => q.eq("restaurantId", args.restaurantId))
+        .first();
+
+      if (restaurant) {
+        await ctx.db.delete(restaurant._id);
+      }
+
+      // Delete all menu items for this restaurant
+      const menuItems = await ctx.db
+        .query("menuItems")
+        .withIndex("by_restaurant_id", (q) => q.eq("restaurantId", args.restaurantId))
+        .collect();
+
+      for (const item of menuItems) {
+        await ctx.db.delete(item._id);
+      }
+
+      return true;
+    } catch (error) {
+      console.log("Error in `deleteRestaurantData`", (error as Error).message);
+      return false;
+    }
+  },
+});
+
+
 
 export const deleteAllData = mutation({
   handler: async (ctx) => {
@@ -52,10 +157,11 @@ export const deleteAllData = mutation({
       for (const item of allMenuItems) {
         await ctx.db.delete(item._id);
       }
-      return true
+
+      return true;
     } catch (error) {
-      console.log("Error in `deleteAllData`", (error as Error).message)
-      return false
+      console.log("Error in `deleteAllData`", (error as Error).message);
+      return false;
     }
   },
 });

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Restaurant } from "@/types/global";
 import { LANGUAGE_OPTIONS } from "@/lib/constants";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
+import ConfirmationModal from "@/components/ui/ConfirmationModal";
 import { useRestaurantStorage } from "@/hooks/useRestaurantStorage";
 
 export interface SettingsSectionProps {
@@ -10,10 +12,18 @@ export interface SettingsSectionProps {
 }
 
 const SettingsSection: React.FC<SettingsSectionProps> = () => {
-  const { restaurantData, loading, saveRestaurantData } =
-    useRestaurantStorage();
+  const router = useRouter();
+  const {
+    restaurantId,
+    restaurantData,
+    loading,
+    saveRestaurantData,
+    deleteAllData,
+  } = useRestaurantStorage();
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
   const [isLoading, setSaveLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{
     type: "success" | "error";
     text: string;
@@ -53,11 +63,13 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
     setSaveMessage(null);
 
     try {
-      // Update the restaurant in the context
-      saveRestaurantData(restaurant);
-
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 400));
+      await saveRestaurantData({
+        name: restaurant.name,
+        agentName: restaurant.agentName,
+        menuDetails: restaurant.menuDetails,
+        specialInstructions: restaurant.specialInstructions,
+        languagePreference: restaurant.languagePreference,
+      });
 
       setSaveMessage({
         type: "success",
@@ -70,6 +82,30 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
       });
     } finally {
       setSaveLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const success = await deleteAllData();
+      if (success) {
+        // Redirect to home page after successful deletion
+        router.push("/");
+      } else {
+        setSaveMessage({
+          type: "error",
+          text: "Failed to delete restaurant data. Please try again.",
+        });
+      }
+    } catch (error) {
+      setSaveMessage({
+        type: "error",
+        text: "Failed to delete restaurant data. Please try again.",
+      });
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteModal(false);
     }
   };
 
@@ -102,7 +138,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
             return `${index + 1}. ${item}`;
           }
           if (typeof item === "object" && item !== null) {
-            const name = item.name || item.title || "Menu Item";
+            const name = item.name || "Menu Item";
             const price = item.price ? ` - $${item.price}` : "";
             const description = item.description
               ? ` (${item.description})`
@@ -166,10 +202,18 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
               required
             />
             <Input
-              label="Virtual Phone Number"
+              label="Restaurant ID"
+              value={restaurantId || "Not available"}
+              disabled
+              helperText="Customers need this ID when calling your AI agent"
+            />
+          </div>
+          <div className="grid grid-cols-1 gap-6">
+            <Input
+              label="AI Agent Phone Number"
               value={process.env.NEXT_PUBLIC_VIRTUAL_NUMBER || "Not configured"}
               disabled
-              helperText="This number was generated during setup and cannot be changed"
+              helperText="Customers call this number and provide your Restaurant ID"
             />
           </div>
         </div>
@@ -226,17 +270,69 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
                 *
               </span>
             </label>
-            <textarea
-              value={renderMenuDetails(restaurant.menuDetails)}
-              onChange={(e) => handleMenuDetailsChange(e.target.value)}
-              placeholder="List your menu items, one per line:&#10;1. Margherita Pizza - $12.99&#10;2. Caesar Salad - $8.99&#10;3. Chicken Parmesan - $15.99"
-              rows={8}
-              className="input resize-none"
-              required
-            />
+            <div className="min-h-96 max-h-96 overflow-y-auto border border-gray-300 rounded-md p-4 bg-gray-50">
+              {Array.isArray(restaurant.menuDetails) &&
+              restaurant.menuDetails.length > 0 ? (
+                <div className="space-y-3">
+                  {restaurant.menuDetails.map((item, index) => (
+                    <div
+                      key={index}
+                      className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <h4 className="font-medium text-gray-900">
+                            {typeof item === "object" && item !== null
+                              ? item.name
+                              : String(item)}
+                          </h4>
+                          {typeof item === "object" &&
+                            item !== null &&
+                            item.description && (
+                              <p className="text-sm text-gray-600 mt-1">
+                                {item.description}
+                              </p>
+                            )}
+                        </div>
+                        <div className="ml-4 text-right">
+                          <span className="text-lg font-semibold text-green-600">
+                            {typeof item === "object" && item !== null
+                              ? item.price
+                              : ""}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="text-gray-400 mb-4">
+                    <svg
+                      className="mx-auto h-12 w-12"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+                      />
+                    </svg>
+                  </div>
+                  <p className="text-gray-500">No menu items available</p>
+                  <p className="text-sm text-gray-400 mt-1">
+                    Menu items will appear here once you complete the onboarding
+                    process
+                  </p>
+                </div>
+              )}
+            </div>
             <p className="mt-2 text-sm text-gray-500">
-              List your menu items with prices. The AI agent will use this
-              information to help customers place orders.
+              Your menu items are displayed here. To update them, you can
+              re-upload your menu through the onboarding process.
             </p>
           </div>
 
@@ -257,6 +353,46 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
               Include any specific guidelines, policies, or procedures the AI
               agent should follow.
             </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Customer Instructions */}
+      <div className="bg-amber-50 rounded-lg shadow-sm border border-amber-200">
+        <div className="px-6 py-4">
+          <h3 className="text-lg font-medium text-amber-900 mb-3 flex items-center">
+            <svg
+              className="w-5 h-5 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            Instructions for Your Customers
+          </h3>
+          <div className="text-sm text-amber-800 space-y-2">
+            <p className="font-medium">Tell your customers to:</p>
+            <ol className="list-decimal list-inside space-y-1 ml-2">
+              <li>
+                Call{" "}
+                <span className="font-mono font-bold">
+                  {process.env.NEXT_PUBLIC_VIRTUAL_NUMBER || "(555) 123-4567"}
+                </span>
+              </li>
+              <li>
+                When prompted, provide Restaurant ID:{" "}
+                <span className="font-mono font-bold bg-amber-100 px-1 rounded">
+                  {restaurantId}
+                </span>
+              </li>
+              <li>Place their order with the AI agent</li>
+            </ol>
           </div>
         </div>
       </div>
@@ -340,6 +476,49 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
           )}
         </div>
       </div>
+
+      {/* Danger Zone */}
+      <div className="bg-white rounded-lg shadow-sm border border-red-200">
+        <div className="px-6 py-4 border-b border-red-200">
+          <h2 className="text-lg font-medium text-red-900">Danger Zone</h2>
+          <p className="text-sm text-red-600 mt-1">
+            Permanently delete your restaurant data and reset the system.
+          </p>
+        </div>
+        <div className="px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-gray-900">
+                Delete Restaurant Data
+              </h3>
+              <p className="text-sm text-gray-500 mt-1">
+                This will permanently delete all your restaurant data, calls,
+                and orders. This action cannot be undone.
+              </p>
+            </div>
+            <Button
+              variant="destructive"
+              onClick={() => setShowDeleteModal(true)}
+              disabled={isDeleting}
+            >
+              Delete All Data
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDelete}
+        title="Delete Restaurant Data"
+        message={`Are you sure you want to delete all data for restaurant ID "${restaurantId}"? This will permanently delete your restaurant information, all calls, and orders. This action cannot be undone.`}
+        confirmText="Delete Everything"
+        cancelText="Cancel"
+        variant="danger"
+        loading={isDeleting}
+      />
     </div>
   );
 };

@@ -1,7 +1,8 @@
 // Export all context providers and hooks
-export { AppProvider, useCalls, useOrders } from './AppProvider';
+export { AppProvider, useCalls, useOrders, useRestaurant } from './AppProvider';
 export { CallsProvider } from './CallsContext';
 export { OrdersProvider } from './OrdersContext';
+export { RestaurantProvider } from './RestaurantContext';
 
 
 // Export types for external use
