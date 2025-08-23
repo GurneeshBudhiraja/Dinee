@@ -38,7 +38,7 @@ function NoMenuDetails({
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const response = await fetch("/api/v1/extract-menu-data", {
+      const response = await fetch("/client/api/v1/extract-menu-data", {
         method: "POST",
         body: formData,
       });

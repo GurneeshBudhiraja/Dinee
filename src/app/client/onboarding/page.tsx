@@ -20,7 +20,7 @@ export default function OnboardingPage() {
   // Check if user already has a restaurant ID and redirect to dashboard
   useEffect(() => {
     if (restaurantId) {
-      router.push("/dashboard");
+      router.push("/client/dashboard");
     }
   }, [restaurantId, router]);
 
@@ -34,7 +34,7 @@ export default function OnboardingPage() {
 
     // Redirect to dashboard after a short delay
     setTimeout(() => {
-      router.push("/dashboard");
+      router.push("/client/dashboard");
     }, 1500);
   };
 

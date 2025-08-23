@@ -3,7 +3,7 @@ import { v } from "convex/values";
 
 export default defineSchema({
   restaurants: defineTable({
-    restaurantId: v.string(), // 5-digit uppercase restaurant ID
+    restaurantId: v.string(), // 5-digit numeric restaurant ID
     name: v.string(),
     agentName: v.string(),
     specialInstructions: v.string(),

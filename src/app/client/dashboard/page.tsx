@@ -18,7 +18,7 @@ export default function DashboardPage() {
   // Redirect to onboarding if no restaurant ID is found
   useEffect(() => {
     if (!loading && !restaurantId) {
-      router.push("/onboarding");
+      router.push("/client/onboarding");
     }
   }, [loading, restaurantId, router]);
 

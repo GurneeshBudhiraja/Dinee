@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Restaurant } from "@/types/global";
 import { LANGUAGE_OPTIONS } from "@/lib/constants";
@@ -28,11 +28,13 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
     type: "success" | "error";
     text: string;
   } | null>(null);
+  const hasInitialized = useRef(false);
 
   // Initialize local state with current restaurant data
   useEffect(() => {
-    if (restaurantData) {
+    if (restaurantData && !hasInitialized.current) {
       setRestaurant(restaurantData);
+      hasInitialized.current = true;
     }
   }, [restaurantData]);
 
@@ -91,7 +93,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
       const success = await deleteAllData();
       if (success) {
         // Redirect to home page after successful deletion
-        router.push("/");
+        router.push("/client");
       } else {
         setSaveMessage({
           type: "error",

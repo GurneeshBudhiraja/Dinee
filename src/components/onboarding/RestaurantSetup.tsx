@@ -151,13 +151,10 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
     field: keyof FormData,
     value: string | FormData["menuDetails"]
   ) => {
-    if (field === "menuDetails" && typeof value === "object") {
-      setFormData((prev) => ({
-        ...prev,
-        menuDetails: { ...prev.menuDetails, ...value },
-      }));
-    }
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { AppProvider } from "@/contexts/AppProvider";
 import { ConvexClientProvider } from "@/components/providers/ConvexClientProvider";
-import "../globals.css";
+import "../../globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 

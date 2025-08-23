@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { useMutation } from "convex/react";
 import { useShowToast } from "@/hooks/useShowToast";
 import { toast } from "sonner";
+import twilio from "twilio";
 
 export default function Home() {
   const router = useRouter();
@@ -14,7 +15,7 @@ export default function Home() {
 
   const handleGetStarted = async () => {
     // await deleteAllData();
-    router.push("/onboarding");
+    router.push("/client/onboarding");
   };
 
   return (

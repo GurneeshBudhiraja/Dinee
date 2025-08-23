@@ -1,14 +1,12 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
-// Generate a 5-digit uppercase restaurant ID
+// Generate a 5-digit numeric restaurant ID
 function generateRestaurantId(): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  let result = '';
-  for (let i = 0; i < 5; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
+  // Generate a random 5-digit number (10000-99999)
+  const min = 10000;
+  const max = 99999;
+  return Math.floor(Math.random() * (max - min + 1) + min).toString();
 }
 
 export const createRestaurant = mutation({
