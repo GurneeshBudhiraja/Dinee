@@ -444,6 +444,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
 
             <div className="flex justify-between pt-6 mt-6 border-t border-gray-200">
               <Button
+                className="cursor-pointer"
                 variant="outline"
                 onClick={handlePrevious}
                 disabled={currentStep === 0 || isSubmitting}
@@ -465,6 +466,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
                   variant="primary"
                   onClick={handleNext}
                   disabled={isSubmitting}
+                  className="bg-blue-600 cursor-pointer"
                 >
                   Next
                 </Button>

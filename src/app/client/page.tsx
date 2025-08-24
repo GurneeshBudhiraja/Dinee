@@ -42,7 +42,7 @@ export default function Home() {
                     <Button
                       variant="primary"
                       size="lg"
-                      className="w-full sm:w-auto cursor-pointer"
+                      className="w-full sm:w-auto cursor-pointer bg-blue-600"
                       onClick={handleGetStarted}
                     >
                       Try Demo
