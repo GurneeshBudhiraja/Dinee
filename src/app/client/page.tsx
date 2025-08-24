@@ -4,14 +4,15 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
-import { useMutation } from "convex/react";
+import { useConvex, useMutation, useQuery } from "convex/react";
 import { useShowToast } from "@/hooks/useShowToast";
 import { toast } from "sonner";
-import twilio from "twilio";
+import { api } from "../../../convex/_generated/api";
 
 export default function Home() {
   const router = useRouter();
   const { showToast } = useShowToast();
+  const convexClient = useConvex();
 
   const handleGetStarted = async () => {
     // await deleteAllData();
@@ -39,6 +40,22 @@ export default function Home() {
                 </p>
                 <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
                   <div className="rounded-md shadow">
+                    <Button
+                      variant="primary"
+                      size="lg"
+                      className="w-full sm:w-auto cursor-pointer bg-blue-600"
+                      onClick={async () => {
+                        const result = await convexClient.query(
+                          api.internal.getRestaurantAndMenuDetailsUsingId,
+                          {
+                            restaurantId: "67126",
+                          }
+                        );
+                        console.log(result);
+                      }}
+                    >
+                      testing convex functions
+                    </Button>
                     <Button
                       variant="primary"
                       size="lg"

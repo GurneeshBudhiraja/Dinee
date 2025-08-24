@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import fastifyFormBody from "@fastify/formbody";
 import fastifyWs from "@fastify/websocket";
 import { LOG_EVENT_TYPES, SHOW_TIMING_MATH, SYSTEM_PROMPT, VOICE } from "./server-constants.ts";
-
+import { wrapperGetRestaurantDetails } from "./tools.ts";
 
 dotenv.config({ path: ".env.local" });
 // Server port
@@ -12,13 +12,10 @@ const PORT = (process.env.NEXT_BACKEND_PORT || 8000) as number | undefined;
 // OpenAI key
 const { NEXT_OPENAI_KEY } = process.env;
 
-
-
 if (!NEXT_OPENAI_KEY) {
   console.error("Missing OpenAI API key. Please set it in the .env file.");
   process.exit(1);
 }
-
 
 const fastify = Fastify({
   logger: true,
@@ -28,13 +25,14 @@ fastify.register(fastifyFormBody);
 fastify.register(fastifyWs);
 
 fastify.all("/testing", async (request, reply) => {
-  reply.send("Hello World!");
+  const response = await wrapperGetRestaurantDetails()
+  reply.send(response);
 });
 
 // Handles all the incoming calls from Twilio
-fastify.all("/incoming-call", async (request, reply) => {
+fastify.all("/incoming-call", async (request: any, reply) => {
   // Get the CallSid from Twilio's request
-  const callSid = request.body?.CallSid || request.query?.CallSid;
+  const callSid = request.body.CallSid || request.query?.CallSid;
 
   const twimlResponse = `<?xml version="1.0" encoding="UTF-8"?>
                         <Response>
@@ -83,6 +81,24 @@ fastify.register(async (fastify) => {
           instructions: SYSTEM_PROMPT,
           modalities: ["text", "audio"],
           temperature: 0.8,
+          tools: [
+            {
+              type: "function",
+              name: "get_restaurant_details",
+              description: "Get restaurant details and menu items for a given restaurant ID",
+              parameters: {
+                type: "object",
+                properties: {
+                  restaurant_id: {
+                    type: "string",
+                    description: "The restaurant ID to fetch details for"
+                  }
+                },
+                required: ["restaurant_id"]
+              }
+            }
+          ],
+          tool_choice: "auto"
         },
       };
 
@@ -110,14 +126,6 @@ fastify.register(async (fastify) => {
       openAiWs.send(JSON.stringify(initialConversationItem));
       openAiWs.send(JSON.stringify({ type: 'response.create' }));
     };
-
-    // Open event for OpenAI WebSocket
-    openAiWs.on("open", () => {
-      console.log("Connected to the OpenAI Realtime API");
-      setTimeout(initializeSession, 100);
-      // Let the AI speak first
-      setTimeout(sendInitialConversationItem, 250);
-    });
 
     // Utility to Handle interruptions
     const handleSpeechStartedEvent = () => {
@@ -172,7 +180,7 @@ fastify.register(async (fastify) => {
     };
 
     // Listen for messages from Twilio WebSocket
-    connection.on("message", (data: string | Buffer) => {
+    connection.on("message", async (data: string | Buffer) => {
       try {
         const message = JSON.parse(data.toString());
 
@@ -222,12 +230,58 @@ fastify.register(async (fastify) => {
     });
 
     // Listen for messages from the OpenAI WebSocket
-    openAiWs.on("message", (data) => {
+    openAiWs.on("message", async (data) => {
       try {
         const response = JSON.parse(data.toString());
 
         if (LOG_EVENT_TYPES.includes(response.type)) {
           console.log(`Received event: ${response.type}`, response);
+        }
+
+        // Handle function calls from OpenAI
+        if (response.type === "response.function_call_arguments.done") {
+          console.log("Function call detected:", response);
+
+          if (response.name === "get_restaurant_details") {
+            const args = JSON.parse(response.arguments);
+            console.log("Calling restaurant function with args:", args);
+
+            try {
+              const restaurantData = await wrapperGetRestaurantDetails(args.restaurant_id);
+
+              // Send function result back to OpenAI
+              const functionResult = {
+                type: "conversation.item.create",
+                item: {
+                  type: "function_call_output",
+                  call_id: response.call_id,
+                  output: JSON.stringify(restaurantData)
+                }
+              };
+
+              console.log("Sending function result:", functionResult);
+              openAiWs.send(JSON.stringify(functionResult));
+
+              // Continue the response
+              openAiWs.send(JSON.stringify({ type: 'response.create' }));
+
+            } catch (error) {
+              console.error("Error calling restaurant function:", error);
+
+              // Send error result
+              const errorResult = {
+                type: "conversation.item.create",
+                item: {
+                  type: "function_call_output",
+                  call_id: response.call_id,
+                  output: JSON.stringify({ success: false, error: "Failed to fetch restaurant details" })
+                }
+              };
+
+              openAiWs.send(JSON.stringify(errorResult));
+              openAiWs.send(JSON.stringify({ type: 'response.create' }));
+            }
+          }
         }
 
         if (response.type === "response.audio.delta" && response.delta) {
@@ -272,6 +326,14 @@ fastify.register(async (fastify) => {
           data
         );
       }
+    });
+
+    // Open event for OpenAI WebSocket
+    openAiWs.on("open", () => {
+      console.log("Connected to the OpenAI Realtime API");
+      setTimeout(initializeSession, 100);
+      // Let the AI speak first
+      setTimeout(sendInitialConversationItem, 250);
     });
 
     // On connection close
