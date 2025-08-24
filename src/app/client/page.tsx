@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { useConvex, useMutation, useQuery } from "convex/react";
 import { useShowToast } from "@/hooks/useShowToast";
 import { toast } from "sonner";
-import { api } from "../../../convex/_generated/api";
+import { Doc } from "../../../convex/_generated/dataModel";
 
 export default function Home() {
   const router = useRouter();
@@ -45,13 +45,37 @@ export default function Home() {
                       size="lg"
                       className="w-full sm:w-auto cursor-pointer bg-blue-600"
                       onClick={async () => {
-                        const result = await convexClient.query(
-                          api.internal.getRestaurantAndMenuDetailsUsingId,
-                          {
+                        // const result = await convexClient.query(
+                        //   api.internal.getRestaurantAndMenuDetailsUsingId,
+                        //   {
+                        //     restaurantId: "67126",
+                        //   }
+                        // );
+                        // console.log(result);
+                        const response = await fetch("/api/v1/upsert-order", {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({
+                            callId: "Tesitng order id",
+                            customerName: "Testing customer name",
+                            items: [
+                              {
+                                name: "Testing name",
+                                price: 200,
+                                quantity: 2,
+                              },
+                            ],
+                            orderId: "testing-order-id",
                             restaurantId: "67126",
-                          }
-                        );
-                        console.log(result);
+                            totalAmount: 200,
+                            status:"active",
+                            cancellationReason: "Meri marzi"
+                          } as Doc<"orders">),
+                        });
+                        const data = await response.json();
+                        console.log(data);
                       }}
                     >
                       testing convex functions

@@ -1,46 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
-// Create a new order
-export const createOrder = mutation({
-  args: {
-    restaurantId: v.string(),
-    callId: v.optional(v.string()),
-    phoneNumber: v.string(),
-    customerName: v.string(),
-    items: v.array(v.object({
-      id: v.string(),
-      name: v.string(),
-      quantity: v.number(),
-      price: v.number(),
-      specialInstructions: v.optional(v.string()),
-    })),
-    totalAmount: v.number(),
-    specialInstructions: v.optional(v.string()),
-    status: v.union(
-      v.literal("active"),
-      v.literal("completed"),
-      v.literal("cancelled")
-    ),
-    cancellationReason: v.optional(v.string()),
-  },
-  handler: async (ctx, args) => {
-    const orderId = await ctx.db.insert("orders", {
-      restaurantId: args.restaurantId,
-      callId: args.callId,
-      phoneNumber: args.phoneNumber,
-      customerName: args.customerName,
-      items: args.items,
-      totalAmount: args.totalAmount,
-      specialInstructions: args.specialInstructions,
-      status: args.status,
-      timestamp: Date.now(),
-      cancellationReason: args.cancellationReason,
-    });
-
-    return orderId;
-  },
-});
 
 // Get all orders for a restaurant
 export const getOrdersByRestaurant = query({
