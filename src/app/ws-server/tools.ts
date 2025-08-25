@@ -11,7 +11,9 @@ export async function wrapperGetRestaurantDetails(restaurantId: string = "67126"
 
 
 // Inserts or updates the call in the table
-export async function wrapperUpsertCallData(callData: Partial<Doc<"calls">>) {
+export async function wrapperUpsertCallData(callData) {
+  console.log("🍬 wrapper call data")
+  console.log(callData)
   const response = await fetch(`${NEXT_APP_URL}/api/v1/upsert-call`, {
     method: "POST",
     headers: {
@@ -25,7 +27,7 @@ export async function wrapperUpsertCallData(callData: Partial<Doc<"calls">>) {
 
 
 // Add dialogues for the final transcript
-export async function wrapperAddTranscriptDialogues(dialogueData: Doc<"transcripts">) {
+export async function wrapperAddTranscriptDialogues(dialogueData) {
   const response = await fetch(`${NEXT_APP_URL}/api/v1/add-transcript-dialogue`, {
     method: "POST",
     headers: {
@@ -38,7 +40,7 @@ export async function wrapperAddTranscriptDialogues(dialogueData: Doc<"transcrip
 }
 
 
-export async function wrapperUpsertOrders(orderData: Doc<"orders">) {
+export async function wrapperUpsertOrders(orderData) {
   const response = await fetch(`${NEXT_APP_URL}/api/v1/upsert-order`, {
     method: "POST",
     headers: {
@@ -52,5 +54,6 @@ export async function wrapperUpsertOrders(orderData: Doc<"orders">) {
 
 
 export function generateOrderId() {
+  console.log("🆔 Generating order id")
   return otpGenerator.generate(4, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false });
 }

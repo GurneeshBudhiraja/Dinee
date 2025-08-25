@@ -7,16 +7,16 @@ export async function POST(request: NextRequest) {
   const body = await request.json()
   const {
     callId,
-    phoneNumber,
-    restaurantId,
     status,
   } = body as Doc<"calls">
 
+  console.log("🛣️ Upserting call data")
+  console.log(body)
   // Validate the request body
-  if (!callId?.trim() || !phoneNumber?.trim() || !restaurantId?.trim() || !status?.trim()) {
+  if (!callId?.trim()) {
     return new Response(JSON.stringify({
       success: false,
-      error: "`callId`, `phoneNumber`, `restaurantId`, `status` are required fields."
+      error: "`callId` are required fields."
     }), {
       status: 400,
       headers: {
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Validate the status value
-  if (status !== "completed" && status !== "active") {
+  if (status?.trim() && status !== "completed" && status !== "active") {
     return new Response(JSON.stringify({
       success: false,
       error: "`status` must be either `completed` or `active`."
@@ -40,6 +40,8 @@ export async function POST(request: NextRequest) {
 
   const convexClient = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL)
   const convexResponse = await convexClient.mutation(api.internal.upsertCallData, { data: body })
+  console.log("🔎 UPSERTING convex response")
+  console.log(convexResponse)
   return new Response(JSON.stringify(convexResponse), {
     headers: {
       "Content-Type": "application/json",

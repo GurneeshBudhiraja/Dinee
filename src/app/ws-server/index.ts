@@ -38,11 +38,14 @@ fastify.all("/testing", async (_req, reply) => {
 /* Twilio entry-point */
 fastify.all("/incoming-call", async (request: any, reply) => {
   const callSid = request.body.CallSid || request.query?.CallSid;
+  const fromNumber = request.body.From || request.query?.From;
+  console.log(fromNumber)
+  // <Stream url="wss://${request.headers.host}/media-stream?callSid=${callSid}&from=${encodeURIComponent(fromNumber || '')}" />
   const twiml = `<?xml version="1.0" encoding="UTF-8"?>
   <Response>
     <Pause length="1"/>
     <Connect>
-      <Stream url="wss://${request.headers.host}/media-stream?callSid=${callSid}" />
+      <Stream url="wss://${request.headers.host}/media-stream?callSid=${callSid}&amp;from=${fromNumber || ''}" />
     </Connect>
   </Response>`;
   reply.type("text/xml").send(twiml);
@@ -56,7 +59,10 @@ fastify.register(async (fastify) => {
     // Extract callSid from query parameters
     const urlParams = new URLSearchParams(req.url?.split('?')[1]);
     const callSid = urlParams.get('callSid') ?? generateOrderId(); // fallback
-    console.log("CallSid from URL:", callSid);
+    const fromNumber = urlParams.get('from') || 'Unknown';
+
+    console.log("📱 Phone Number:", fromNumber);
+    console.log("📞 CallSid from URL:", callSid);
 
     // Connection-specific state
     let streamSid: string | null = null;
@@ -111,64 +117,61 @@ fastify.register(async (fastify) => {
                 parameters: {
                   type: "object",
                   properties: {
-                    callId: { type: "string", description: "Twilio CallSid" },
-                    restaurantId: { type: "string", description: "5-digit restaurant ID" },
-                    phoneNumber: { type: "string", description: "Customer's phone number" },
-                    status: { type: "string", enum: ["active", "completed"] },
-                    sentiment: { type: "string", enum: ["positive", "neutral", "negative"] },
-                    orderId: { type: "string", description: "Optional orderId linked to this call." }
+                    restaurantId: { type: "string", description: "5-digit restaurant ID. This will be the same restaurant id provided by the user." },
+                    orderId: { type: "string", description: "The generated order id." },
                   },
-                  required: ["callId", "restaurantId", "phoneNumber", "status"]
+                  required: ["restaurantId"]
                 }
               },
-              // Add transcription dialogue tool
-              {
-                type: "function",
-                name: "add_transcript_dialogue",
-                description: "Append a transcript line (human or AI) to the Convex `transcripts` table",
-                parameters: {
-                  type: "object",
-                  properties: {
-                    callId: { type: "string", description: "Twilio CallSid for this call" },
-                    dialogue: { type: "string", description: "The spoken words to store" },
-                    speaker: { type: "string", enum: ["human", "ai"] }
-                  },
-                  required: ["callId", "dialogue", "speaker"]
-                }
-              },
-              // Upsert the order tool
-              {
-                type: "function",
-                name: "upsert_order",
-                description: "Insert or update a food order in the Convex `orders` table",
-                parameters: {
-                  type: "object",
-                  properties: {
-                    orderId: { type: "string", description: "4-digit ID you gave to the caller" },
-                    restaurantId: { type: "string", description: "Restaurant ID" },
-                    callId: { type: "string", description: "Twilio CallSid" },
-                    customerName: { type: "string", description: "Customer's name" },
-                    items: {
-                      type: "array",
-                      description: "One row per menu item",
-                      items: {
-                        type: "object",
-                        properties: {
-                          name: { type: "string" },
-                          quantity: { type: "integer" },
-                          price: { type: "number" }
-                        },
-                        required: ["name", "quantity", "price"]
-                      }
-                    },
-                    specialInstructions: { type: "string" },
-                    totalAmount: { type: "number", description: "Sum of (price × quantity)" },
-                    status: { type: "string", enum: ["active", "completed", "cancelled"] },
-                    cancellationReason: { type: "string" }
-                  },
-                  required: ["orderId", "restaurantId", "callId", "customerName", "items", "totalAmount", "status"]
-                }
-              },
+              // // Add transcription dialogue tool
+              // {
+              //   type: "function",
+              //   name: "add_transcript_dialogue",
+              //   description: "Append a transcript line (human or AI) to the Convex `transcripts` table",
+              //   parameters: {
+              //     type: "object",
+              //     properties: {
+              //       callId: { type: "string", description: "Twilio CallSid for this call" },
+              //       dialogue: { type: "string", description: "The spoken words to store" },
+              //       speaker: { type: "string", enum: ["human", "ai"] }
+              //     },
+              //     required: ["callId", "dialogue", "speaker"]
+              //   }
+              // },
+              // // Upsert the order tool
+              // {
+              //   type: "function",
+              //   name: "upsert_order",
+              //   description: "Insert or update a food order in the Convex `orders` table",
+              //   parameters: {
+              //     type: "object",
+              //     properties: {
+              //       orderId: { type: "string", description: "4-digit ID you gave to the caller" },
+              //       restaurantId: { type: "string", description: "Restaurant ID" },
+              //       callId: { type: "string", description: "Twilio CallSid" },
+              //       customerName: { type: "string", description: "Customer's name" },
+              //       items: {
+              //         type: "array",
+              //         description: "One row per menu item",
+              //         items: {
+              //           type: "object",
+              //           properties: {
+              //             name: { type: "string" },
+              //             quantity: { type: "integer" },
+              //             price: { type: "number" }
+              //           },
+              //           required: ["name", "quantity", "price"]
+              //         }
+              //       },
+              //       specialInstructions: { type: "string" },
+              //       totalAmount: { type: "number", description: "Sum of (price × quantity)" },
+              //       status: { type: "string", enum: ["active", "completed", "cancelled"] },
+              //       cancellationReason: { type: "string" }
+              //     },
+              //     required: ["orderId", "restaurantId", "callId", "customerName", "items", "totalAmount", "status"]
+              //   }
+              // },
+              // Generate unique order id
               {
                 type: "function",
                 name: "generate_order_id",
@@ -317,13 +320,6 @@ fastify.register(async (fastify) => {
               console.log("👨‍🍳 Getting restaurant details")
               output = await wrapperGetRestaurantDetails(args.restaurant_id);
               break;
-            case "upsert_call_data":
-              console.log("📲 Upserting call data")
-              output = await wrapperUpsertCallData({
-                ...args,
-                callId: callSid,
-              });
-              break;
             case "add_transcript_dialogue":
               console.log("🗣️ Adding transcript dialogue")
               output = await wrapperAddTranscriptDialogues({
@@ -332,12 +328,18 @@ fastify.register(async (fastify) => {
               });
               break;
             case "upsert_order":
-              console.log("📝 Upserting order")
               output = await wrapperUpsertOrders({
                 ...args,
                 callId: callSid // Call id from Twilio
               });
               break;
+            // Update the call data
+            case "upsert_call_data":
+              output = await wrapperUpsertCallData({
+                ...args,
+                callId: callSid,
+              });
+              break
             case "generate_order_id":
               output = { order_id: generateOrderId() };
               break;
@@ -401,13 +403,25 @@ fastify.register(async (fastify) => {
     });
 
     // OpenAI socket lifecycle
-    oaWs.on("open", () => {
+    oaWs.on("open", async () => {
       console.log("Connected to the OpenAI Realtime API");
+      console.log("Upserting the data")
+      await wrapperUpsertCallData({
+        callId: callSid,
+        phoneNumber: fromNumber,
+        status: "active",
+        restaurantId: "unknown"
+      });
       initializeSession();
       setTimeout(greet, 200);
     });
-    oaWs.on("close", (code, reason) => {
+    oaWs.on("close", async (code, reason) => {
       console.log("🤖 OpenAI socket closed:", code, reason.toString());
+      // Update the call status to completed
+      await wrapperUpsertCallData({
+        callId: callSid,
+        status: "completed",
+      });
     });
     oaWs.on("error", err => {
       console.error("😵 OpenAI socket error:", err);

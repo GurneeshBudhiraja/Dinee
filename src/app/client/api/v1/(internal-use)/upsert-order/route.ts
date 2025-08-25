@@ -5,6 +5,8 @@ import { ConvexHttpClient } from "convex/browser";
 
 export async function POST(request: NextRequest) {
   const body = await request.json()
+  console.log("🛣️ Body in the route")
+  console.log(body)
   const {
     callId,
     customerName,
@@ -35,6 +37,8 @@ export async function POST(request: NextRequest) {
   const convexResponse = await convexClient.mutation(api.internal.upsertOrders, {
     data: body
   })
+  console.log("🔎 convexResponse")
+  console.log(convexResponse)
   return new Response(JSON.stringify(convexResponse), {
     headers: {
       "Content-Type": "application/json",

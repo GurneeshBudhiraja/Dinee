@@ -84,15 +84,10 @@ export const upsertCallData = mutation({
   args: {
     data: v.object({
       callId: v.string(),
-      restaurantId: v.string(),
-      phoneNumber: v.string(),
-      status: v.union(v.literal("active"), v.literal("completed")),
-      sentiment: v.optional(v.union(
-        v.literal("positive"),
-        v.literal("neutral"),
-        v.literal("negative")
-      )),
-      orderId: v.optional(v.string()),
+      restaurantId: v.optional(v.string()),
+      phoneNumber: v.optional(v.string()),
+      status: v.optional(v.union(v.literal("active"), v.literal("completed"))),
+      orderId: v.optional(v.optional(v.string())),
     })
   },
   handler: async (ctx, args) => {
@@ -100,6 +95,8 @@ export const upsertCallData = mutation({
       const {
         callId
       } = args.data
+      console.log("📞 Upserting data")
+      console.log(args.data)
       const callDataResponse = await ctx.db.query("calls")
         .withIndex("by_call_and_order_id", (q) => q.eq("callId", callId))
         .unique()
@@ -183,6 +180,8 @@ export const upsertOrders = mutation({
       const {
         orderId
       } = args.data
+      console.log("💬 Args.data")
+      console.log(args.data)
       // checks for the existing order id
       const orderResponse = await ctx.db.query("orders")
         .withIndex("by_order_and_restaurant_id", (q) => q.eq("orderId", orderId))

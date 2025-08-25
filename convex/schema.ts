@@ -34,15 +34,10 @@ export default defineSchema({
   calls: defineTable({
     callId: v.string(), // callSid from Twilio
     orderId: v.optional(v.string()), // order id
-    restaurantId: v.string(),
-    phoneNumber: v.string(),
+    restaurantId: v.optional(v.string()),
+    phoneNumber: v.optional(v.string()),
     callStartTime: v.optional(v.number()),
-    status: v.union(v.literal("active"), v.literal("completed")),
-    sentiment: v.optional(v.union(
-      v.literal("positive"),
-      v.literal("neutral"),
-      v.literal("negative")
-    )),
+    status: v.optional(v.union(v.literal("active"), v.literal("completed"))),
   })
     .index("by_restaurant_id", ["restaurantId"])
     .index("by_call_and_order_id", ["callId", "orderId"]),
