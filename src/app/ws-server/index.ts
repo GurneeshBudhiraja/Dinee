@@ -71,6 +71,11 @@ fastify.register(async (fastify) => {
     let markQueue: string[] = [];
     let responseStartTimestampTwilio: number | null = null;
 
+    // Transcription state
+    let restaurantIdConfirmed = false;
+    let currentRestaurantId: string | null = null;
+    let currentAITranscript = "";
+
     // OpenAI socket
     const oaWs = new WebSocket(
       "wss://api.openai.com/v1/realtime?model=gpt-4o-mini-realtime-preview-2024-12-17",
@@ -94,6 +99,13 @@ fastify.register(async (fastify) => {
             instructions: SYSTEM_PROMPT,
             modalities: ["text", "audio"],
             temperature: 0.8,
+            // Enable input transcription only
+            input_audio_transcription: {
+              model: "gpt-4o-mini-transcribe",
+              prompt: "Expect words related to restaurant orders, food items, phone numbers, and customer service.",
+              language: "en"
+            },
+            // Remove output_audio_transcription to fix audio quality issues
             tools: [
               // Get restaurant details tool
               {
@@ -123,21 +135,20 @@ fastify.register(async (fastify) => {
                   required: ["restaurantId"]
                 }
               },
-              // // Add transcription dialogue tool
-              // {
-              //   type: "function",
-              //   name: "add_transcript_dialogue",
-              //   description: "Append a transcript line (human or AI) to the Convex `transcripts` table",
-              //   parameters: {
-              //     type: "object",
-              //     properties: {
-              //       callId: { type: "string", description: "Twilio CallSid for this call" },
-              //       dialogue: { type: "string", description: "The spoken words to store" },
-              //       speaker: { type: "string", enum: ["human", "ai"] }
-              //     },
-              //     required: ["callId", "dialogue", "speaker"]
-              //   }
-              // },
+              // Add transcription dialogue tool
+              {
+                type: "function",
+                name: "add_transcript_dialogue",
+                description: `Use this tool always for appending the ai message. This ai message is the one that you speak to the user. Take a moment, think what to speak and then use this tool to add the response that you provided to the user. Make sure to use this tool. Once the restaurant id is confirmed and validated use this tool to update the messages you convey to the user.`,
+                parameters: {
+                  type: "object",
+                  properties: {
+                    dialogue: { type: "string", description: "Make sure not to change anything in the dialogues, direct as it is said to the user." },
+                    speaker: { type: "string", enum: ["ai"] }
+                  },
+                  required: ["dialogue", "speaker"]
+                }
+              },
               // // Upsert the order tool
               // {
               //   type: "function",
@@ -253,6 +264,24 @@ fastify.register(async (fastify) => {
         }),
       );
 
+    // Helper function to save transcript if restaurant ID is confirmed
+    const saveTranscriptIfConfirmed = async (dialogue: string, speaker: 'human' | 'ai') => {
+      if (restaurantIdConfirmed && currentRestaurantId) {
+        try {
+          console.log(`📝 Saving transcript: ${speaker}: ${dialogue}`);
+          await wrapperAddTranscriptDialogues({
+            dialogue,
+            speaker,
+            callId: callSid
+          });
+        } catch (error) {
+          console.error("Error saving transcript:", error);
+        }
+      } else {
+        console.log(`📝 Transcript not saved (restaurant ID not confirmed): ${speaker}: ${dialogue}`);
+      }
+    };
+
     // Listen for messages from Twilio WebSocket
     connection.on("message", (data: string | Buffer) => {
       try {
@@ -308,6 +337,19 @@ fastify.register(async (fastify) => {
 
       if (LOG_EVENT_TYPES.includes(res.type)) console.log(res);
 
+      // Handle real-time transcription events for human input
+      if (res.type === "conversation.item.input_audio_transcription.delta") {
+        console.log("🎤 Human speaking (delta):", res);
+        console.log("🎤 Human speaking (delta):", res.delta);
+        // You can use delta for real-time display if needed
+      }
+
+      if (res.type === "conversation.item.input_audio_transcription.completed") {
+        console.log("🎤 Human transcript completed:", res.transcript);
+        // Save the completed human transcript
+        await saveTranscriptIfConfirmed(res.transcript, 'human');
+      }
+
       // Function call from the model
       if (res.type === "response.function_call_arguments.done") {
         const args = JSON.parse(res.arguments);
@@ -319,12 +361,18 @@ fastify.register(async (fastify) => {
             case "get_restaurant_details":
               console.log("👨‍🍳 Getting restaurant details")
               output = await wrapperGetRestaurantDetails(args.restaurant_id);
+              // If restaurant details are successfully retrieved, mark as confirmed
+              if (output.success) {
+                restaurantIdConfirmed = true;
+                currentRestaurantId = args.restaurant_id;
+                console.log("✅ Restaurant ID confirmed:", args.restaurant_id);
+              }
               break;
             case "add_transcript_dialogue":
               console.log("🗣️ Adding transcript dialogue")
               output = await wrapperAddTranscriptDialogues({
                 ...args,
-                callId: callSid // From Twilio
+                callId: callSid
               });
               break;
             case "upsert_order":
@@ -391,12 +439,29 @@ fastify.register(async (fastify) => {
         handleSpeechStartedEvent();
       }
 
-      // Log completed text responses for debugging
+      // Capture AI responses from text content for transcription
       if (res.type === "response.content.done") {
         if (res.content && Array.isArray(res.content)) {
           const textContent = res.content.find((item: any) => item.type === 'text');
-          if (textContent) {
+          if (textContent && textContent.text) {
             console.log("💬 AI Response Text:", textContent.text);
+            // Save the AI response transcript
+            await saveTranscriptIfConfirmed(textContent.text, 'ai');
+          }
+        }
+      }
+
+      // Fallback: capture any response that completes without text content
+      if (res.type === "response.done" && res.response) {
+        // Try to extract text from the response output
+        if (res.response.output && res.response.output.length > 0) {
+          const output = res.response.output[0];
+          if (output.content && output.content.length > 0) {
+            const textContent = output.content.find((item: any) => item.type === 'text');
+            if (textContent && textContent.text) {
+              console.log("💬 AI Response (fallback):", textContent.text);
+              await saveTranscriptIfConfirmed(textContent.text, 'ai');
+            }
           }
         }
       }
