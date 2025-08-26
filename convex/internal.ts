@@ -166,7 +166,7 @@ export const upsertOrders = mutation({
         price: v.number(),
       })),
       specialInstructions: v.optional(v.string()),
-      totalAmount: v.number(),
+      totalAmount: v.optional(v.number()),
       status: v.union(
         v.literal("active"),
         v.literal("completed"),

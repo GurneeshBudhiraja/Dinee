@@ -149,39 +149,36 @@ fastify.register(async (fastify) => {
                   required: ["dialogue", "speaker"]
                 }
               },
-              // // Upsert the order tool
-              // {
-              //   type: "function",
-              //   name: "upsert_order",
-              //   description: "Insert or update a food order in the Convex `orders` table",
-              //   parameters: {
-              //     type: "object",
-              //     properties: {
-              //       orderId: { type: "string", description: "4-digit ID you gave to the caller" },
-              //       restaurantId: { type: "string", description: "Restaurant ID" },
-              //       callId: { type: "string", description: "Twilio CallSid" },
-              //       customerName: { type: "string", description: "Customer's name" },
-              //       items: {
-              //         type: "array",
-              //         description: "One row per menu item",
-              //         items: {
-              //           type: "object",
-              //           properties: {
-              //             name: { type: "string" },
-              //             quantity: { type: "integer" },
-              //             price: { type: "number" }
-              //           },
-              //           required: ["name", "quantity", "price"]
-              //         }
-              //       },
-              //       specialInstructions: { type: "string" },
-              //       totalAmount: { type: "number", description: "Sum of (price × quantity)" },
-              //       status: { type: "string", enum: ["active", "completed", "cancelled"] },
-              //       cancellationReason: { type: "string" }
-              //     },
-              //     required: ["orderId", "restaurantId", "callId", "customerName", "items", "totalAmount", "status"]
-              //   }
-              // },
+              // Upsert the order tool
+              {
+                type: "function",
+                name: "upsert_order",
+                description: "Insert or update a food order in the Convex `orders` table",
+                parameters: {
+                  type: "object",
+                  properties: {
+                    orderId: { type: "string", description: "4-digit ID you gave to the caller" },
+                    restaurantId: { type: "string", description: "Restaurant ID" },
+                    customerName: { type: "string", description: "Customer's name" },
+                    items: {
+                      type: "array",
+                      description: "One row per menu item",
+                      items: {
+                        type: "object",
+                        properties: {
+                          name: { type: "string" },
+                          quantity: { type: "integer" },
+                          price: { type: "number" }
+                        },
+                        required: ["name", "quantity", "price"]
+                      }
+                    },
+                    specialInstructions: { type: "string", description: "Overall instructions about a dish/order/anything that is extra and needs restaurant's attention to complete the order with ease."},
+                    status: { type: "string", enum: ["active", "completed", "cancelled"] }
+                  },
+                  required: ["orderId", "restaurantId", "customerName", "items", "status"]
+                }
+              },
               // Generate unique order id
               {
                 type: "function",
@@ -378,7 +375,7 @@ fastify.register(async (fastify) => {
             case "upsert_order":
               output = await wrapperUpsertOrders({
                 ...args,
-                callId: callSid // Call id from Twilio
+                callId: callSid, // Call id from Twilio,
               });
               break;
             // Update the call data
