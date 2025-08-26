@@ -43,6 +43,19 @@ export const getPastCallsByRestaurant = query({
   },
 });
 
+export const getTranscriptsByCallId = query({
+  args: { callId: v.string() },
+  handler: async (ctx, args) => {
+    const transcripts = await ctx.db
+      .query("transcripts")
+      .withIndex("by_call_id", (q) => q.eq("callId", args.callId))
+      .order("asc")
+      .collect();
+
+    return transcripts;
+  },
+});
+
 export const updateCall = mutation({
   args: {
     callId: v.id("calls"),

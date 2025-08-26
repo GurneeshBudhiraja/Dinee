@@ -1,5 +1,7 @@
 // Global type definitions for the restaurant call management application
 
+import { Doc } from "convex/_generated/dataModel";
+
 export interface User {
   id: string;
   email: string;
@@ -23,18 +25,7 @@ export interface Restaurant {
   virtualNumber?: string;
 }
 
-export interface Call {
-  id: string;
-  phoneNumber: string;
-  duration: number; // in seconds
-  status: "active" | "completed";
-  transcript?: string;
-  liveTranscript?: string;
-  orderId?: string;
-  sentiment?: "positive" | "neutral" | "negative";
-  reason?: string; // if no order placed
-  timestamp: Date;
-}
+export type Call  = Doc<"calls">
 
 export interface OrderItem {
   id: string;

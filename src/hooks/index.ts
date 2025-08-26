@@ -1,0 +1,1 @@
+export { useTranscripts } from './useTranscripts';

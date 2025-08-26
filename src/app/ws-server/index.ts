@@ -59,7 +59,7 @@ fastify.register(async (fastify) => {
     // Extract callSid from query parameters
     const urlParams = new URLSearchParams(req.url?.split('?')[1]);
     const callSid = urlParams.get('callSid') ?? generateOrderId(); // fallback
-    const fromNumber = urlParams.get('from') || 'Unknown';
+    const fromNumber = urlParams.get('from') || '';
 
     console.log("📱 Phone Number:", fromNumber);
     console.log("📞 CallSid from URL:", callSid);
@@ -173,7 +173,7 @@ fastify.register(async (fastify) => {
                         required: ["name", "quantity", "price"]
                       }
                     },
-                    specialInstructions: { type: "string", description: "Overall instructions about a dish/order/anything that is extra and needs restaurant's attention to complete the order with ease."},
+                    specialInstructions: { type: "string", description: "Overall instructions about a dish/order/anything that is extra and needs restaurant's attention to complete the order with ease." },
                     status: { type: "string", enum: ["active", "completed", "cancelled"] }
                   },
                   required: ["orderId", "restaurantId", "customerName", "items", "status"]

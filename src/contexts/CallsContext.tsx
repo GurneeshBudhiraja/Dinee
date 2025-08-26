@@ -11,6 +11,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Call } from "@/types/global";
 import { useRestaurantStorage } from "@/hooks/useRestaurantStorage";
+import { Doc } from "convex/_generated/dataModel";
 
 // State interface
 interface CallsState {
@@ -86,7 +87,7 @@ function callsReducer(state: CallsState, action: CallsAction): CallsState {
 
     case "UPDATE_CALL": {
       const updatedCalls = state.calls.map((call) =>
-        call.id === action.payload.id ? action.payload : call
+        call._id === action.payload._id ? action.payload : call
       );
       const { activeCalls, pastCalls } = categorizeCalls(updatedCalls);
       return {
@@ -101,7 +102,7 @@ function callsReducer(state: CallsState, action: CallsAction): CallsState {
 
     case "DELETE_CALL": {
       const updatedCalls = state.calls.filter(
-        (call) => call.id !== action.payload
+        (call) => call._id !== action.payload
       );
       const { activeCalls, pastCalls } = categorizeCalls(updatedCalls);
       return {
@@ -116,7 +117,7 @@ function callsReducer(state: CallsState, action: CallsAction): CallsState {
 
     case "UPDATE_LIVE_TRANSCRIPT": {
       const updatedCalls = state.calls.map((call) =>
-        call.id === action.payload.callId
+        call.callId === action.payload.callId
           ? { ...call, liveTranscript: action.payload.transcript }
           : call
       );
@@ -148,7 +149,6 @@ interface CallsContextType {
     completeCall: (
       callId: string,
       transcript?: string,
-      sentiment?: Call["sentiment"],
       orderId?: string,
       reason?: string
     ) => void;
@@ -176,16 +176,11 @@ export function CallsProvider({ children }: CallsProviderProps) {
   useEffect(() => {
     if (convexCalls) {
       const calls: Call[] = convexCalls.map((call) => ({
-        id: call._id,
+        ...call,
         phoneNumber: call.phoneNumber,
-        duration: call.duration,
         status: call.status,
-        transcript: call.transcript,
-        liveTranscript: call.liveTranscript,
         orderId: call.orderId,
-        sentiment: call.sentiment,
-        reason: call.reason,
-        timestamp: new Date(call.timestamp),
+        callId: call.callId,
       }));
       dispatch({ type: "SET_CALLS", payload: calls });
     } else if (restaurantId && convexCalls === undefined) {
@@ -213,23 +208,13 @@ export function CallsProvider({ children }: CallsProviderProps) {
         payload: { callId, transcript },
       }),
 
-    completeCall: (
-      callId: string,
-      transcript?: string,
-      sentiment?: Call["sentiment"],
-      orderId?: string,
-      reason?: string
-    ) => {
-      const call = state.calls.find((c) => c.id === callId);
+    completeCall: (callId: string, orderId?: string) => {
+      const call = state.calls.find((c) => c.callId === callId);
       if (call) {
         const updatedCall: Call = {
           ...call,
           status: "completed",
-          transcript: transcript || call.liveTranscript || "",
-          sentiment,
           orderId,
-          reason,
-          liveTranscript: undefined, // Clear live transcript when completed
         };
         dispatch({ type: "UPDATE_CALL", payload: updatedCall });
       }
