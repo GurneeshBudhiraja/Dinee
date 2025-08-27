@@ -1,8 +1,17 @@
 "use client";
 
-import React, { createContext, useContext, useReducer, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  ReactNode,
+  useEffect,
+} from "react";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
 import { Order, OrderItem } from "@/types/global";
-import { SAMPLE_ORDERS } from "@/lib/constants";
+import { useRestaurantStorage } from "@/hooks/useRestaurantStorage";
+import { Doc, Id } from "convex/_generated/dataModel";
 
 // State interface
 interface OrdersState {
@@ -34,14 +43,11 @@ function categorizeOrders(orders: Order[]) {
 }
 
 // Initial state
-const initialOrders = SAMPLE_ORDERS;
-const { activeOrders, pastOrders } = categorizeOrders(initialOrders);
-
 const initialState: OrdersState = {
-  orders: initialOrders,
-  activeOrders,
-  pastOrders,
-  loading: false,
+  orders: [],
+  activeOrders: [],
+  pastOrders: [],
+  loading: true,
   error: null,
 };
 
@@ -177,6 +183,91 @@ interface OrdersProviderProps {
 
 export function OrdersProvider({ children }: OrdersProviderProps) {
   const [state, dispatch] = useReducer(ordersReducer, initialState);
+  const { restaurantId } = useRestaurantStorage();
+
+  // Convex queries and mutations
+  const convexActiveOrders = useQuery(
+    api.orders.getActiveOrdersByRestaurant,
+    restaurantId ? { restaurantId } : "skip"
+  );
+  const convexPastOrders = useQuery(
+    api.orders.getPastOrdersByRestaurant,
+    restaurantId ? { restaurantId } : "skip"
+  );
+  const convexCalls = useQuery(
+    api.calls.getCallsByRestaurant,
+    restaurantId ? { restaurantId } : "skip"
+  );
+  const updateOrderMutation = useMutation(api.orders.updateOrder);
+  const cancelOrderMutation = useMutation(api.orders.cancelOrder);
+  const completeOrderMutation = useMutation(api.orders.completeOrder);
+
+  // Helper function to convert Convex order to our Order type
+  const convertOrder = (order: any, calls: any[]) => {
+    const associatedCall = calls.find((call) => call.callId === order.callId);
+
+    return {
+      id: order.orderId,
+      callId: order.callId,
+      phoneNumber: associatedCall?.phoneNumber || "Unknown",
+      customerName: order.customerName,
+      items: order.items.map((item: any, index: number) => ({
+        id: `${order.orderId}-${index}`,
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+        specialInstructions: undefined, // Not in Convex schema yet
+      })),
+      totalAmount:
+        order.totalAmount ||
+        order.items.reduce(
+          (sum: number, item: any) => sum + item.price * item.quantity,
+          0
+        ),
+      specialInstructions: order.specialInstructions,
+      status: order.status,
+      timestamp: new Date(order.orderPlacementTime || order._creationTime),
+      cancellationReason: order.cancellationReason,
+    };
+  };
+
+  // Convert Convex orders to our Order type
+  useEffect(() => {
+    if (convexActiveOrders && convexPastOrders && convexCalls) {
+      const activeOrders: Order[] = convexActiveOrders.map((order) =>
+        convertOrder(order, convexCalls)
+      );
+      const pastOrders: Order[] = convexPastOrders.map((order) =>
+        convertOrder(order, convexCalls)
+      );
+      const allOrders = [...activeOrders, ...pastOrders];
+
+      dispatch({ type: "SET_ORDERS", payload: allOrders });
+    } else if (
+      restaurantId &&
+      (convexActiveOrders === undefined ||
+        convexPastOrders === undefined ||
+        convexCalls === undefined)
+    ) {
+      dispatch({ type: "SET_LOADING", payload: true });
+    } else if (
+      restaurantId &&
+      convexActiveOrders !== undefined &&
+      convexPastOrders !== undefined &&
+      convexCalls !== undefined
+    ) {
+      // All queries have returned, even if some are empty
+      const activeOrders: Order[] = (convexActiveOrders || []).map((order) =>
+        convertOrder(order, convexCalls || [])
+      );
+      const pastOrders: Order[] = (convexPastOrders || []).map((order) =>
+        convertOrder(order, convexCalls || [])
+      );
+      const allOrders = [...activeOrders, ...pastOrders];
+
+      dispatch({ type: "SET_ORDERS", payload: allOrders });
+    }
+  }, [convexActiveOrders, convexPastOrders, convexCalls, restaurantId]);
 
   const actions = {
     setLoading: (loading: boolean) =>
@@ -190,10 +281,55 @@ export function OrdersProvider({ children }: OrdersProviderProps) {
       dispatch({ type: "UPDATE_ORDER", payload: order }),
     deleteOrder: (orderId: string) =>
       dispatch({ type: "DELETE_ORDER", payload: orderId }),
-    cancelOrder: (orderId: string, reason: string) =>
-      dispatch({ type: "CANCEL_ORDER", payload: { orderId, reason } }),
-    completeOrder: (orderId: string) =>
-      dispatch({ type: "COMPLETE_ORDER", payload: orderId }),
+
+    cancelOrder: async (orderId: string, reason: string) => {
+      try {
+        dispatch({ type: "SET_LOADING", payload: true });
+
+        // Find the Convex order ID from active orders (since we're cancelling an active order)
+        const convexOrder = convexActiveOrders?.find(
+          (order) => order.orderId === orderId
+        );
+        if (convexOrder) {
+          await cancelOrderMutation({
+            orderId: convexOrder._id,
+            cancellationReason: reason,
+          });
+        }
+
+        // Update local state
+        dispatch({ type: "CANCEL_ORDER", payload: { orderId, reason } });
+      } catch (error) {
+        console.error("Failed to cancel order:", error);
+        dispatch({ type: "SET_ERROR", payload: "Failed to cancel order" });
+      } finally {
+        dispatch({ type: "SET_LOADING", payload: false });
+      }
+    },
+
+    completeOrder: async (orderId: string) => {
+      try {
+        dispatch({ type: "SET_LOADING", payload: true });
+
+        // Find the Convex order ID from active orders (since we're completing an active order)
+        const convexOrder = convexActiveOrders?.find(
+          (order) => order.orderId === orderId
+        );
+        if (convexOrder) {
+          await completeOrderMutation({
+            orderId: convexOrder._id,
+          });
+        }
+
+        // Update local state
+        dispatch({ type: "COMPLETE_ORDER", payload: orderId });
+      } catch (error) {
+        console.error("Failed to complete order:", error);
+        dispatch({ type: "SET_ERROR", payload: "Failed to complete order" });
+      } finally {
+        dispatch({ type: "SET_LOADING", payload: false });
+      }
+    },
 
     createOrder: (orderData: Omit<Order, "id" | "timestamp">) => {
       const newOrder: Order = {

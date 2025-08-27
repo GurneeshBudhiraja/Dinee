@@ -16,6 +16,7 @@ const CallbackModal: React.FC<CallbackModalProps> = ({
   order,
   onConfirm,
 }) => {
+  const TOTAL_CHAR_COUNT = 10
   const [reason, setReason] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -95,14 +96,14 @@ const CallbackModal: React.FC<CallbackModalProps> = ({
           <div className="flex justify-between items-center mt-2">
             <p
               className={`text-sm ${
-                characterCount < 100 ? "text-red-500" : "text-green-600"
+                characterCount < TOTAL_CHAR_COUNT ? "text-red-500" : "text-green-600"
               }`}
             >
-              {characterCount}/100 characters minimum
+              {characterCount}/{TOTAL_CHAR_COUNT} characters minimum
             </p>
-            {characterCount > 0 && characterCount < 100 && (
+            {characterCount > 0 && characterCount < TOTAL_CHAR_COUNT && (
               <p className="text-sm text-red-500">
-                {100 - characterCount} more characters needed
+                {TOTAL_CHAR_COUNT - characterCount} more characters needed
               </p>
             )}
           </div>

@@ -133,6 +133,30 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     }
   };
 
+  // Handle navigation to call details
+  useEffect(() => {
+    const handleNavigateToCall = (event: CustomEvent) => {
+      const { callId } = event.detail;
+      if (callId) {
+        setActiveTab("calls");
+        // You can add additional logic here to highlight the specific call
+        console.log("Navigating to call:", callId);
+      }
+    };
+
+    window.addEventListener(
+      "navigateToCall",
+      handleNavigateToCall as EventListener
+    );
+
+    return () => {
+      window.removeEventListener(
+        "navigateToCall",
+        handleNavigateToCall as EventListener
+      );
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
