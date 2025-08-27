@@ -45,8 +45,6 @@ export const createRestaurant = mutation({
       agentName: args.agentName,
       specialInstructions: args.specialInstructions,
       languagePreference: args.languagePreference,
-      menuDetails: args.menuDetails,
-      virtualNumber: args.virtualNumber,
       createdAt: Date.now(),
     });
 

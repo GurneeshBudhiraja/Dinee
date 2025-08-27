@@ -13,12 +13,6 @@ export default defineSchema({
       v.literal("spanish"),
       v.literal("french")
     ),
-    menuDetails: v.optional(v.array(v.object({
-      name: v.string(),
-      price: v.string(),
-      description: v.optional(v.string()),
-    }))),
-    virtualNumber: v.optional(v.string()),
     createdAt: v.number(),
   }).index("by_restaurant_id", ["restaurantId"]),
 

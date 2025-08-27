@@ -349,7 +349,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
               }
               placeholder="Any special instructions for the AI agent when handling calls..."
               rows={4}
-              className="input resize-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none transition-colors duration-200 text-sm"
             />
             <p className="mt-2 text-sm text-gray-500">
               Include any specific guidelines, policies, or procedures the AI

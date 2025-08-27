@@ -25,6 +25,11 @@ if (!NEXT_OPENAI_KEY) {
   process.exit(1);
 }
 
+
+// Keeps the track of the call sid and the phone number
+let FROM_NUMBER: string | null = "";
+let CALL_SID: string | null = "";
+
 const fastify = Fastify({ logger: true });
 fastify.register(fastifyFormBody);
 fastify.register(fastifyWs);
@@ -39,6 +44,8 @@ fastify.all("/testing", async (_req, reply) => {
 fastify.all("/incoming-call", async (request: any, reply) => {
   const callSid = request.body.CallSid || request.query?.CallSid;
   const fromNumber = request.body.From || request.query?.From;
+  CALL_SID = callSid;
+  FROM_NUMBER = fromNumber;
   console.log(fromNumber)
   // <Stream url="wss://${request.headers.host}/media-stream?callSid=${callSid}&from=${encodeURIComponent(fromNumber || '')}" />
   const twiml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -56,13 +63,13 @@ fastify.register(async (fastify) => {
   fastify.get("/media-stream", { websocket: true }, (connection, req) => {
     console.log("🔗 WebSocket connected");
 
-    // Extract callSid from query parameters
-    const urlParams = new URLSearchParams(req.url?.split('?')[1]);
-    const callSid = urlParams.get('callSid') ?? generateOrderId(); // fallback
-    const fromNumber = urlParams.get('from') || '';
+    // // Extract callSid from query parameters
+    // const urlParams = new URLSearchParams(req.url?.split('?')[1]);
+    // const callSid = urlParams.get('callSid') ?? generateOrderId(); // fallback
+    // const fromNumber = urlParams.get('from') || '';
 
-    console.log("📱 Phone Number:", fromNumber);
-    console.log("📞 CallSid from URL:", callSid);
+    // console.log("📱 Phone Number:", fromNumber);
+    // console.log("📞 CallSid from URL:", callSid);
 
     // Connection-specific state
     let streamSid: string | null = null;
@@ -269,7 +276,7 @@ fastify.register(async (fastify) => {
           await wrapperAddTranscriptDialogues({
             dialogue,
             speaker,
-            callId: callSid
+            callId: CALL_SID
           });
         } catch (error) {
           console.error("Error saving transcript:", error);
@@ -369,20 +376,20 @@ fastify.register(async (fastify) => {
               console.log("🗣️ Adding transcript dialogue")
               output = await wrapperAddTranscriptDialogues({
                 ...args,
-                callId: callSid
+                callId: CALL_SID
               });
               break;
             case "upsert_order":
               output = await wrapperUpsertOrders({
                 ...args,
-                callId: callSid, // Call id from Twilio,
+                callId: CALL_SID, // Call id from Twilio,
               });
               break;
             // Update the call data
             case "upsert_call_data":
               output = await wrapperUpsertCallData({
                 ...args,
-                callId: callSid,
+                callId: CALL_SID,
               });
               break
             case "generate_order_id":
@@ -469,8 +476,8 @@ fastify.register(async (fastify) => {
       console.log("Connected to the OpenAI Realtime API");
       console.log("Upserting the data")
       await wrapperUpsertCallData({
-        callId: callSid,
-        phoneNumber: fromNumber,
+        callId: CALL_SID,
+        phoneNumber: FROM_NUMBER,
         status: "active",
         restaurantId: "unknown"
       });
@@ -481,7 +488,7 @@ fastify.register(async (fastify) => {
       console.log("🤖 OpenAI socket closed:", code, reason.toString());
       // Update the call status to completed
       await wrapperUpsertCallData({
-        callId: callSid,
+        callId: CALL_SID,
         status: "completed",
       });
     });
