@@ -26,7 +26,7 @@ export default defineSchema({
 
   // Calls
   calls: defineTable({
-    callId: v.string(), // callSid from Twilio
+    callId: (v.string()), // callSid from Twilio
     orderId: v.optional(v.string()), // order id
     restaurantId: v.optional(v.string()),
     phoneNumber: v.optional(v.string()),
@@ -41,7 +41,7 @@ export default defineSchema({
     // This order id is given to the cx and used to track the order 
     orderId: v.string(),
     restaurantId: v.string(),
-    callId: v.string(), // callSid from Twilio
+    callId: v.optional(v.string()), // callSid from Twilio
     customerName: v.string(),
     items: v.array(v.object({
       name: v.string(),

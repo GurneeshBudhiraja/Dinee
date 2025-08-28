@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Order } from "@/types/global";
 import { Modal } from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
+import { NGROK_URL } from "@/lib/constants";
+import { useRestaurantStorage } from "@/hooks/useRestaurantStorage";
 
 export interface CallbackModalProps {
   isOpen: boolean;
@@ -16,20 +18,40 @@ const CallbackModal: React.FC<CallbackModalProps> = ({
   order,
   onConfirm,
 }) => {
-  const TOTAL_CHAR_COUNT = 10
+  const TOTAL_CHAR_COUNT = 10;
+  const { restaurantData } = useRestaurantStorage();
   const [reason, setReason] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!order || reason.trim().length < 100) {
+    if (!order || reason.trim().length < TOTAL_CHAR_COUNT) {
       return;
     }
 
     setIsSubmitting(true);
     try {
       onConfirm(order.id, reason.trim());
+      const requestBody = {
+        phoneNumber: order.phoneNumber,
+        data: `<agent_name>${restaurantData.agentName}</agent_name>
+        <restaurant_name>${restaurantData.name}</restaurant_name>
+        <restaurant_id>${restaurantData.id}</restaurant_id>
+        <order_details>${order.items}</order_details>
+        <order_id>${order.id}</order_id>
+        <customer_name>${order.customerName}</customer_name>
+        <reason>${reason}</reason>`,
+        reason: "followup",
+      };
+      console.log("Making a callback");
+      await fetch(`${NGROK_URL}/callback`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
       handleClose();
     } catch (error) {
       console.error("Error submitting callback:", error);
@@ -44,7 +66,7 @@ const CallbackModal: React.FC<CallbackModalProps> = ({
     onClose();
   };
 
-  const isReasonValid = reason.trim().length >= 100;
+  const isReasonValid = reason.trim().length >= TOTAL_CHAR_COUNT;
   const characterCount = reason.trim().length;
 
   if (!order) return null;
@@ -96,7 +118,9 @@ const CallbackModal: React.FC<CallbackModalProps> = ({
           <div className="flex justify-between items-center mt-2">
             <p
               className={`text-sm ${
-                characterCount < TOTAL_CHAR_COUNT ? "text-red-500" : "text-green-600"
+                characterCount < TOTAL_CHAR_COUNT
+                  ? "text-red-500"
+                  : "text-green-600"
               }`}
             >
               {characterCount}/{TOTAL_CHAR_COUNT} characters minimum

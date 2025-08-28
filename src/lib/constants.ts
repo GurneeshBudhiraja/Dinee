@@ -14,6 +14,11 @@ export const PROMPT_READ_MENU = `{"about_you":"You are the smart AI assistant wh
   "}`
 
 
+// Websocket server URL
+
+export const SERVER_URL = `http://localhost:${process.env.NEXT_PUBLIC_BACKEND_PORT}`
+// TODO: change this to the updated ngrok URL
+export const NGROK_URL = "https://126e03895ab2.ngrok-free.app"
 
 // Sample order items
 export const SAMPLE_ORDER_ITEMS: OrderItem[] = [

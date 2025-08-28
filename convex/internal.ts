@@ -158,7 +158,7 @@ export const upsertOrders = mutation({
     data: v.object({
       orderId: v.string(),
       restaurantId: v.string(),
-      callId: v.string(), // callSid from Twilio
+      callId: v.optional(v.string()), // callSid from Twilio
       customerName: v.string(),
       items: v.array(v.object({
         name: v.string(),

@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     totalAmount,
   } = body as Doc<"orders">
 
-  if (!callId || !customerName || !items || !orderId || !restaurantId || !status) {
+  if (!customerName || !items || !orderId || !restaurantId || !status) {
     return new Response(JSON.stringify({ success: false, message: "Missing required fields" }), {
       status: 400,
       headers: {

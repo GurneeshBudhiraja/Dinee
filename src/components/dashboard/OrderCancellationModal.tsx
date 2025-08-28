@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { Order } from "@/types/global";
 import { Modal } from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
+import { NGROK_URL, SERVER_URL } from "@/lib/constants";
+import { useRestaurant } from "@/contexts";
+import { useRestaurantStorage } from "@/hooks/useRestaurantStorage";
 
 export interface OrderCancellationModalProps {
   isOpen: boolean;
@@ -16,6 +19,8 @@ export interface OrderCancellationModalProps {
 
 type CancellationStep = "confirm" | "reason";
 
+const CHARS_COUNT = 10;
+
 const OrderCancellationModal: React.FC<OrderCancellationModalProps> = ({
   isOpen,
   onClose,
@@ -28,6 +33,7 @@ const OrderCancellationModal: React.FC<OrderCancellationModalProps> = ({
   );
   const [reason, setReason] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { restaurantData } = useRestaurantStorage();
 
   const handleClose = () => {
     setStep("confirm");
@@ -50,11 +56,29 @@ const OrderCancellationModal: React.FC<OrderCancellationModalProps> = ({
   const handleReasonSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (reason.trim().length < 100) {
+    if (reason.trim().length < CHARS_COUNT) {
       return;
     }
-
     await handleFinalConfirmation(true, reason.trim());
+    const requestBody = {
+      phoneNumber: order.phoneNumber,
+      data: `<agent_name>${restaurantData.agentName}</agent_name>
+      <restaurant_name>${restaurantData.name}</restaurant_name>
+      <restaurant_id>${restaurantData.id}</restaurant_id>
+      <order_details>${order.items}</order_details>
+      <order_id>${order.id}</order_id>
+      <customer_name>${order.customerName}</customer_name>
+      <reason>${reason}</reason>`,
+      reason: "cancellation",
+    };
+    console.log("Sending the request to the ");
+    await fetch(`${NGROK_URL}/callback`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestBody),
+    });
   };
 
   const handleFinalConfirmation = async (
@@ -74,7 +98,7 @@ const OrderCancellationModal: React.FC<OrderCancellationModalProps> = ({
     }
   };
 
-  const isReasonValid = reason.trim().length >= 100;
+  const isReasonValid = reason.trim().length >= CHARS_COUNT;
   const characterCount = reason.trim().length;
 
   if (!order) return null;
@@ -196,14 +220,16 @@ const OrderCancellationModal: React.FC<OrderCancellationModalProps> = ({
             <div className="flex justify-between items-center mt-2">
               <p
                 className={`text-sm ${
-                  characterCount < 100 ? "text-red-500" : "text-green-600"
+                  characterCount < CHARS_COUNT
+                    ? "text-red-500"
+                    : "text-green-600"
                 }`}
               >
-                {characterCount}/100 characters minimum
+                {characterCount}/{CHARS_COUNT} characters minimum
               </p>
-              {characterCount > 0 && characterCount < 100 && (
+              {characterCount > 0 && characterCount < CHARS_COUNT && (
                 <p className="text-sm text-red-500">
-                  {100 - characterCount} more characters needed
+                  {CHARS_COUNT - characterCount} more characters needed
                 </p>
               )}
             </div>
