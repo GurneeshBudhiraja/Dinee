@@ -56,44 +56,38 @@ export const SAMPLE_ORDER_ITEMS: OrderItem[] = [
   }
 ];
 
-// Sample calls data
-export const SAMPLE_CALLS: Call[] = [
+// Sample calls data - Note: These are mock data for UI development
+// In production, these would come from Convex with proper _id and _creationTime fields
+export const SAMPLE_CALLS = [
   {
-    id: 'call-001',
+    callId: 'call-001',
     phoneNumber: '(555) 123-4567',
-    duration: 180,
-    status: 'active',
-    liveTranscript: 'Customer: Hi, I\'d like to place an order for delivery...\nAgent: Of course! I\'d be happy to help you with that. What would you like to order today?',
+    status: 'active' as const,
     orderId: 'order-001',
-    timestamp: new Date('2024-01-15T18:30:00')
+    restaurantId: 'rest-001',
+    callStartTime: new Date('2024-01-15T18:30:00').getTime()
   },
   {
-    id: 'call-002',
+    callId: 'call-002',
     phoneNumber: '(555) 987-6543',
-    duration: 240,
-    status: 'completed',
-    transcript: 'Customer: Hello, do you have any vegetarian options?\nAgent: Yes, we have several vegetarian dishes. Would you like me to go through our vegetarian menu?\nCustomer: Yes, please...\n[Full conversation continues]',
+    status: 'completed' as const,
     orderId: 'order-002',
-    sentiment: 'positive',
-    timestamp: new Date('2024-01-15T17:45:00')
+    restaurantId: 'rest-001',
+    callStartTime: new Date('2024-01-15T17:45:00').getTime()
   },
   {
-    id: 'call-003',
+    callId: 'call-003',
     phoneNumber: '(555) 456-7890',
-    duration: 120,
-    status: 'completed',
-    transcript: 'Customer: Hi, what are your hours?\nAgent: We\'re open from 11 AM to 10 PM Monday through Sunday.\nCustomer: Thank you, I\'ll call back later.',
-    sentiment: 'neutral',
-    reason: 'Information inquiry only',
-    timestamp: new Date('2024-01-15T16:20:00')
+    status: 'completed' as const,
+    restaurantId: 'rest-001',
+    callStartTime: new Date('2024-01-15T16:20:00').getTime()
   },
   {
-    id: 'call-004',
+    callId: 'call-004',
     phoneNumber: '(555) 321-0987',
-    duration: 90,
-    status: 'active',
-    liveTranscript: 'Customer: I need to cancel my order from earlier...\nAgent: I understand. Let me help you with that. Can you provide your order number?',
-    timestamp: new Date('2024-01-15T19:15:00')
+    status: 'active' as const,
+    restaurantId: 'rest-001',
+    callStartTime: new Date('2024-01-15T19:15:00').getTime()
   }
 ];
 

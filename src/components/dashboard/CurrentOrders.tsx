@@ -158,8 +158,8 @@ const CurrentOrders: React.FC<CurrentOrdersProps> = ({ className }) => {
             No Active Orders
           </h3>
           <p className="text-gray-600 max-w-md mx-auto mb-8 leading-relaxed">
-            When customers place orders through calls, they'll appear here for
-            you to manage and fulfill.
+            When customers place orders through calls, they&apos;ll appear here
+            for you to manage and fulfill.
           </p>
           <div className="inline-flex items-center space-x-3 bg-white px-6 py-3 rounded-lg shadow-sm border border-blue-200">
             <ChefHat className="w-5 h-5 text-blue-600" />

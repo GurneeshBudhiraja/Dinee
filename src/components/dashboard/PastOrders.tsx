@@ -136,7 +136,7 @@ const PastOrders: React.FC<PastOrdersProps> = ({ className }) => {
           </h3>
           <p className="text-gray-600 max-w-md mx-auto mb-8 leading-relaxed">
             Completed and cancelled orders will appear here. This helps you
-            track your restaurant's performance and customer satisfaction.
+            track your restaurant&apos;s performance and customer satisfaction.
           </p>
           <div className="inline-flex items-center space-x-3 bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200">
             <CheckCircle className="w-5 h-5 text-gray-600" />

@@ -47,7 +47,7 @@ fastify.register(cors, {
 
 
 // Adding a router
-await fastify.register(import('./route.ts'));
+// await fastify.register(import('./route.ts')); // Commented out - route moved
 
 
 /* test route */
