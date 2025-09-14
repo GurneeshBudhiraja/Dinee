@@ -13,15 +13,6 @@ export interface ModalProps {
   closeOnEscape?: boolean;
 }
 
-export interface ConfirmationModalProps extends Omit<ModalProps, "children"> {
-  onConfirm: () => void;
-  onCancel?: () => void;
-  confirmText?: string;
-  cancelText?: string;
-  variant?: "default" | "destructive";
-  loading?: boolean;
-}
-
 const Modal: React.FC<ModalProps> = ({
   isOpen,
   onClose,
@@ -170,57 +161,6 @@ const Modal: React.FC<ModalProps> = ({
   );
 };
 
-const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
-  isOpen,
-  onClose,
-  onConfirm,
-  onCancel,
-  title = "Confirm Action",
-  description = "Are you sure you want to proceed?",
-  confirmText = "Confirm",
-  cancelText = "Cancel",
-  variant = "default",
-  loading = false,
-  ...modalProps
-}) => {
-  const handleConfirm = () => {
-    onConfirm();
-  };
-
-  const handleCancel = () => {
-    if (onCancel) {
-      onCancel();
-    } else {
-      onClose();
-    }
-  };
-
-  return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={title}
-      description={description}
-      size="sm"
-      {...modalProps}
-    >
-      <div className="flex gap-3 justify-end">
-        <Button variant="outline" onClick={handleCancel} disabled={loading}>
-          {cancelText}
-        </Button>
-        <Button
-          variant={variant === "destructive" ? "destructive" : "primary"}
-          onClick={handleConfirm}
-          loading={loading}
-        >
-          {confirmText}
-        </Button>
-      </div>
-    </Modal>
-  );
-};
-
 Modal.displayName = "Modal";
-ConfirmationModal.displayName = "ConfirmationModal";
 
-export { Modal, ConfirmationModal };
+export { Modal };

@@ -10,6 +10,10 @@ import { MinimalHeader } from "@/components/ui/Header";
 
 type OnboardingStep = "restaurant-setup" | "restaurant-id" | "complete";
 
+/**
+ * Onboarding page that guides users through restaurant setup process
+ * Handles three steps: restaurant setup, virtual number generation, and completion
+ */
 export default function OnboardingPage() {
   const router = useRouter();
   const { restaurantId } = useRestaurantStorage();
@@ -18,27 +22,26 @@ export default function OnboardingPage() {
   const [generatedRestaurantId, setGeneratedRestaurantId] =
     useState<string>("");
 
-  // Check if user already has a restaurant ID and redirect to dashboard
   useEffect(() => {
     if (restaurantId) {
       router.push("/client/dashboard");
     }
-    // Ensure page loads at top
     window.scrollTo(0, 0);
   }, [restaurantId, router]);
 
-  const handleRestaurantSetup = async (restaurantId: string) => {
+  const handleRestaurantSetup = (restaurantId: string) => {
     setGeneratedRestaurantId(restaurantId);
     setCurrentStep("restaurant-id");
   };
 
   const handleComplete = async () => {
     setCurrentStep("complete");
-
-    // Redirect to dashboard after a short delay
+    // Set flag to indicate we're coming from onboarding
+    sessionStorage.setItem("fromOnboarding", "true");
+    // Add a longer delay to ensure all data is properly initialized
     setTimeout(() => {
       router.push("/client/dashboard");
-    }, 1500);
+    }, 2000);
   };
 
   const renderCurrentStep = () => {

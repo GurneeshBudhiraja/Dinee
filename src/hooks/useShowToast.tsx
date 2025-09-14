@@ -1,15 +1,14 @@
 import { toast } from "sonner";
 
-type UseShowToastProps =
-  | {
-      type: "error" | "success";
-      message: string;
-    }
-  | {
-      type: "clear";
-      message?: "";
-    };
+type UseShowToastProps = {
+  type: "error" | "success";
+  message: string;
+};
 
+/**
+ * Custom hook for displaying toast notifications
+ * Provides a consistent interface for success and error messages
+ */
 export function useShowToast() {
   const showToast = ({ type, message }: UseShowToastProps) => {
     switch (type) {
@@ -21,5 +20,6 @@ export function useShowToast() {
         break;
     }
   };
+
   return { showToast };
 }

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Inter, Poppins } from "next/font/google";
+import { Inter } from "next/font/google";
 import { AppProvider } from "@/contexts/AppProvider";
 import { ConvexClientProvider } from "@/components/providers/ConvexClientProvider";
 import "../../globals.css";
@@ -9,23 +9,15 @@ const inter = Inter({
   display: "swap",
 });
 
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  display: "swap",
-});
-
-const ibmPlex = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
-
 export const metadata: Metadata = {
   title: "Restaurant Call Management",
   description: "Manage AI agent calls and orders for your restaurant",
 };
 
+/**
+ * Root layout component that wraps all client pages
+ * Provides Convex client and app context providers
+ */
 export default function RootLayout({
   children,
 }: {

@@ -9,11 +9,19 @@ import {
   OrdersSection,
 } from "@/components/dashboard";
 import { useRestaurantStorage } from "@/hooks/useRestaurantStorage";
+import { toTitleCase } from "@/lib/utils";
 
+/**
+ * Main dashboard page that displays restaurant call and order management interface
+ * Redirects to onboarding if no restaurant is set up
+ */
 export default function DashboardPage() {
   const router = useRouter();
   const { restaurantId, restaurantData, loading } = useRestaurantStorage();
-  const restaurantName = restaurantData?.name || "Restaurant Dashboard";
+
+  const restaurantName = restaurantData?.name
+    ? toTitleCase(restaurantData.name)
+    : "Restaurant Dashboard";
 
   // Redirect to onboarding if no restaurant ID is found
   useEffect(() => {
@@ -21,6 +29,20 @@ export default function DashboardPage() {
       router.push("/client/onboarding");
     }
   }, [loading, restaurantId, router]);
+
+  // Programmatic refresh when coming from onboarding
+  useEffect(() => {
+    if (restaurantId && !loading) {
+      // Check if we're coming from onboarding by checking sessionStorage
+      const fromOnboarding = sessionStorage.getItem("fromOnboarding");
+      if (fromOnboarding === "true") {
+        // Clear the flag
+        sessionStorage.removeItem("fromOnboarding");
+        // Refresh the page to ensure all data is loaded
+        window.location.reload();
+      }
+    }
+  }, [restaurantId, loading]);
 
   // Show loading state while checking for restaurant ID
   if (loading) {

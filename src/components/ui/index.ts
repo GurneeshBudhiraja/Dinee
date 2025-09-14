@@ -8,8 +8,11 @@ export type { CardProps, CardHeaderProps, CardContentProps, CardFooterProps } fr
 export { default as Input } from './Input';
 export type { InputProps } from './Input';
 
-export { Modal, ConfirmationModal } from './Modal';
-export type { ModalProps, ConfirmationModalProps } from './Modal';
+export { Modal } from './Modal';
+export type { ModalProps } from './Modal';
+
+export { default as ConfirmationModal } from './ConfirmationModal';
+export type { ConfirmationModalProps } from './ConfirmationModal';
 
 export { default as Badge } from './Badge';
 export type { BadgeProps } from './Badge';

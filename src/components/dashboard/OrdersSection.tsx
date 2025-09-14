@@ -11,6 +11,10 @@ export interface OrdersSectionProps {
 
 type OrdersTabType = "current" | "past";
 
+/**
+ * Orders section component that manages current and past orders
+ * Shows order counts and provides navigation between active and historical orders
+ */
 const OrdersSection: React.FC<OrdersSectionProps> = ({ tabId }) => {
   const [activeOrdersTab, setActiveOrdersTab] =
     useState<OrdersTabType>("current");
@@ -36,7 +40,6 @@ const OrdersSection: React.FC<OrdersSectionProps> = ({ tabId }) => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div className="p-2 bg-white/5 rounded-lg border border-white/10">
@@ -52,7 +55,6 @@ const OrdersSection: React.FC<OrdersSectionProps> = ({ tabId }) => {
         </div>
       </div>
 
-      {/* Sub-navigation for Orders */}
       <div className="inline-flex bg-black border border-white/10 rounded-lg p-0.5">
         <nav className="flex">
           {ordersTabs.map((tab) => {
@@ -90,7 +92,6 @@ const OrdersSection: React.FC<OrdersSectionProps> = ({ tabId }) => {
         </nav>
       </div>
 
-      {/* Content */}
       <div>
         {activeOrdersTab === "current" && <CurrentOrders />}
         {activeOrdersTab === "past" && <PastOrders />}

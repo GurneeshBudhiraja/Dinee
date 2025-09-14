@@ -12,6 +12,10 @@ interface RestaurantIdDisplayProps {
   loading?: boolean;
 }
 
+/**
+ * Component that displays the generated restaurant ID and virtual phone number
+ * Shows setup completion status and instructions for customers
+ */
 const RestaurantIdDisplay: React.FC<RestaurantIdDisplayProps> = ({
   restaurantId,
   onComplete,
@@ -73,7 +77,8 @@ const RestaurantIdDisplay: React.FC<RestaurantIdDisplayProps> = ({
             Setup Complete
           </h1>
           <p className="text-gray-400 text-lg text-minimal">
-            Your restaurant is ready! Customers can now call your new virtual number.
+            Your restaurant is ready! Customers can now call your new virtual
+            number.
           </p>
         </motion.div>
 

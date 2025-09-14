@@ -1,26 +1,19 @@
-import { Restaurant, Call, Order, OrderItem } from '@/types/global';
+import { Order, OrderItem } from '@/types/global';
 
-// Gemini 2.5 flash model
-export const GEMINI_MODEL_2POINT5_FlASH = "gemini-2.5-flash	"
-
-
-// LLM prompts
-export const PROMPT_READ_MENU = `{"about_you":"You are the smart AI assistant whose primary task is to extract name, price, and description from the provided input.",
-  "output_instructions":"
+export const GEMINI_MODEL_2POINT5_FlASH = "gemini-2.5-flash";
+export const PROMPT_READ_MENU = `{
+  "about_you": "You are the smart AI assistant whose primary task is to extract name, price, and description from the provided input.",
+  "output_instructions": "
   * If the provided image/pdf does not have the information related to the menu items and price you will return the empty array. 
   * If the provided image/pdf does not contain the description of the items, in that case you will not generate the description from your end and will just return the empty string for the description.
   * Make sure to properly extract data related to the menu items and price.
   * Do not add the currency symbol in the price.
-  "}`
+  "
+}`;
 
-
-// Websocket server URL
-
-export const SERVER_URL = `http://localhost:${process.env.NEXT_PUBLIC_BACKEND_PORT}`
-// TODO: change this to the updated ngrok URL
-export const NGROK_URL = "https://126e03895ab2.ngrok-free.app"
-
-// Sample order items
+// Server configuration
+export const SERVER_URL = `http://localhost:${process.env.NEXT_PUBLIC_BACKEND_PORT}`;
+export const NGROK_URL = "https://126e03895ab2.ngrok-free.app";
 export const SAMPLE_ORDER_ITEMS: OrderItem[] = [
   {
     id: 'item-001',
@@ -56,8 +49,7 @@ export const SAMPLE_ORDER_ITEMS: OrderItem[] = [
   }
 ];
 
-// Sample calls data - Note: These are mock data for UI development
-// In production, these would come from Convex with proper _id and _creationTime fields
+// Sample data for development and testing
 export const SAMPLE_CALLS = [
   {
     callId: 'call-001',
@@ -91,7 +83,6 @@ export const SAMPLE_CALLS = [
   }
 ];
 
-// Sample orders data
 export const SAMPLE_ORDERS: Order[] = [
   {
     id: 'order-001',
@@ -147,21 +138,18 @@ export const SAMPLE_ORDERS: Order[] = [
   }
 ];
 
-// Phone number patterns for generation
 export const PHONE_NUMBER_PATTERNS = [
   '(555) ###-####',
   '555-###-####',
   '555.###.####'
 ];
 
-// Language options
 export const LANGUAGE_OPTIONS = [
   { value: 'english', label: 'English' },
   { value: 'spanish', label: 'Spanish' },
   { value: 'french', label: 'French' }
 ];
 
-// Status display configurations
 export const CALL_STATUS_CONFIG = {
   active: {
     label: 'Active',

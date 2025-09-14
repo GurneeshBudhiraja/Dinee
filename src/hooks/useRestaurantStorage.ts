@@ -8,14 +8,12 @@ import { Restaurant } from "@/types/global";
 const RESTAURANT_ID_KEY = "restaurantId";
 
 /**
- * Custom hook to manage restaurant ID in local storage and fetch data from Convex.
- * @returns An object with functions to interact with the restaurant data.
+ * Custom hook to manage restaurant ID in local storage and fetch data from Convex
+ * Provides functions to create, update, and delete restaurant data
  */
 export function useRestaurantStorage() {
   const [restaurantId, setRestaurantId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-
-  // Convex queries and mutations
   const restaurantData = useQuery(
     api.restaurants.getRestaurant,
     restaurantId ? { restaurantId } : "skip"
@@ -81,9 +79,10 @@ export function useRestaurantStorage() {
           });
         }
 
+
+
         return { restaurantId };
       } else {
-        // Create new restaurant
         const result = await createRestaurant({
           name: data.name,
           agentName: data.agentName,
@@ -93,14 +92,14 @@ export function useRestaurantStorage() {
 
         if (result?.restaurantId) {
           saveRestaurantId(result.restaurantId);
-
-          // Save menu items separately
           if (data.menuDetails && data.menuDetails.length > 0) {
             await createMenuItems({
               restaurantId: result.restaurantId,
               menuItems: data.menuDetails,
             });
           }
+
+
 
           return result;
         }
@@ -130,16 +129,10 @@ export function useRestaurantStorage() {
 
   useEffect(() => {
     const id = getRestaurantId();
-    // If we have a restaurant ID, we're not loading anymore
-    if (id) {
-      setLoading(false);
-    } else {
-      // If no restaurant ID, we're still loading until we confirm there isn't one
-      setLoading(false);
-    }
+    setLoading(false);
   }, [getRestaurantId]);
 
-  // Convert Convex data to our Restaurant type
+  // Convert Convex data to Restaurant type
   const convertedRestaurantData: Restaurant | null = restaurantData && menuItems ? {
     id: restaurantData.restaurantId,
     name: restaurantData.name,

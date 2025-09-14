@@ -11,7 +11,6 @@ export const getRestaurantAndMenuDetailsUsingId = query({
   args: { restaurantId: v.string() },
   handler: async (ctx, args) => {
     try {
-      // TODO: remove in prod
       console.log("🏃 Getting restaurant details")
       const restaurantDetails = await ctx.db
         .query("restaurants")

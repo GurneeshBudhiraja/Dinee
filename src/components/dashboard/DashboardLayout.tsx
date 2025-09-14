@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "motion/react";
-import { cn } from "@/lib/utils";
+import { cn, toTitleCase } from "@/lib/utils";
 import { Inter } from "next/font/google";
 import Link from "next/link";
 import SettingsSection from "./SettingsSection";
@@ -24,10 +24,15 @@ export interface TabConfig {
   icon: React.ReactNode;
 }
 
+/**
+ * Main dashboard layout component that provides navigation and structure
+ * Handles tab navigation between calls, orders, and settings sections
+ */
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   restaurantName,
   children,
 }) => {
+  const displayName = toTitleCase(restaurantName);
   const [activeTab, setActiveTab] = useState<TabType>("calls");
   const tabRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
   const skipLinkRef = useRef<HTMLAnchorElement>(null);
@@ -116,14 +121,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     }
   };
 
-  // Handle navigation to call details
   useEffect(() => {
     const handleNavigateToCall = (event: CustomEvent) => {
       const { callId } = event.detail;
       if (callId) {
         setActiveTab("calls");
-        // You can add additional logic here to highlight the specific call
-        console.log("Navigating to call:", callId);
       }
     };
 
@@ -131,7 +133,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       "navigateToCall",
       handleNavigateToCall as EventListener
     );
-
     return () => {
       window.removeEventListener(
         "navigateToCall",
@@ -142,13 +143,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
   return (
     <div className="min-h-screen bg-black">
-      {/* Header */}
       <header className="sticky top-0 z-50 bg-black border-b border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center min-w-0 flex-1">
               <div className="flex items-center space-x-4">
-                {/* Restaurant Icon */}
                 <div className="flex-shrink-0 w-8 h-8 bg-emerald-500/20 border border-emerald-500/30 rounded-lg flex items-center justify-center">
                   <svg
                     className="w-4 h-4 text-emerald-500"
@@ -166,12 +165,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                   </svg>
                 </div>
 
-                {/* Restaurant Info */}
                 <div className="min-w-0 flex-1">
                   <h1
                     className={`text-lg font-semibold text-white truncate ${inter.className}`}
                   >
-                    {restaurantName}
+                    {displayName}
                   </h1>
                   <p className="text-sm text-gray-400 truncate">
                     Restaurant Management Dashboard
@@ -180,9 +178,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               </div>
             </div>
 
-            {/* System Status & Settings */}
             <div className="flex items-center space-x-4">
-              {/* System Status */}
               <div className="flex items-center space-x-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
                 <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
                 <span className="text-sm font-medium text-emerald-500">
@@ -190,7 +186,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 </span>
               </div>
 
-              {/* Settings Quick Access */}
               <button
                 onClick={() => setActiveTab("settings")}
                 className="p-2 text-gray-400 hover:text-white hover:bg-emerald-500/20 rounded-lg transition-all duration-200 cursor-pointer"
@@ -221,7 +216,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         </div>
       </header>
 
-      {/* Tab Navigation */}
       <nav
         className="sticky top-16 z-40 bg-black border-b border-gray-800"
         role="tablist"
@@ -268,7 +262,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         </div>
       </nav>
 
-      {/* Content Area */}
       <main
         id="main-content"
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
@@ -290,7 +283,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             return null;
           })}
 
-          {/* Always render SettingsSection when settings tab is active */}
           {activeTab === "settings" && <SettingsSection tabId="settings" />}
         </div>
       </main>

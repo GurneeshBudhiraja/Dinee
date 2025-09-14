@@ -1,33 +1,30 @@
 import { NextRequest } from "next/server";
-import BedrockService from "../../api-services/bedrock";
+import GeminiService from "../../api-services/gemini";
 
+/**
+ * API route for extracting menu data from uploaded images or PDFs
+ * Uses Google Gemini AI to analyze and extract menu items with names, prices, and descriptions
+ */
 export async function POST(request: NextRequest) {
   const formData = await request.formData()
   const file = formData.get('file') as File
 
-  // File validation
   if (typeof (file) !== "object") return new Response(JSON.stringify({ success: false, message: "Invalid file" }), { status: 400 })
 
-  // Validating max file size (increased for Bedrock as it can handle larger files)
   if (file.size > 20000000) return new Response(JSON.stringify({ success: false, message: "File size too large (max 20MB)" }), { status: 400 })
 
-  // Validating file type
   if (file.type !== "image/png" && file.type !== "image/jpeg" && file.type !== "image/jpg" && file.type !== "application/pdf") return new Response(JSON.stringify({ success: false, message: "Invalid file type" }), { status: 400 })
 
-  // Converts to the ArrayBuffer
   const data = await file.arrayBuffer()
-  // Convert ArrayBuffer to Node.js Buffer
   const buffer = Buffer.from(data)
-  // Node.js buffer to base64 
   const base64Data = buffer.toString("base64")
 
   try {
-    // Gets Bedrock instance
-    const bedrockInstance = BedrockService.getInstance()
+    const geminiInstance = GeminiService.getInstance()
 
-    const response = await bedrockInstance.readMenu(base64Data, file.type === "application/pdf" ? "pdf" : "image", file.type) as { success: boolean; data: { menuDetails: Array<{ name: string; price: string; description: string }> } }
+    const response = await geminiInstance.readMenu(base64Data, file.type === "application/pdf" ? "pdf" : "image") as { success: boolean; data: { menuDetails: Array<{ name: string; price: string; description: string }> } }
 
-    console.log("Bedrock response:", response)
+    console.log("Gemini response:", response)
 
     if (!response.success) {
       return new Response(

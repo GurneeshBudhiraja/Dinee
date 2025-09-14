@@ -1,16 +1,19 @@
-import otpGenerator from "otp-generator"
+import otpGenerator from "otp-generator";
 
-const NEXT_APP_URL = "http://localhost:3000"
+const NEXT_APP_URL = "http://localhost:3000";
 
-// TODO: remove the default value in production
+/**
+ * Fetches restaurant details from the API
+ */
 export async function wrapperGetRestaurantDetails(restaurantId: string = "67126") {
-  const response = await fetch(`${NEXT_APP_URL}/api/v1/get-restaurant-data/${restaurantId}`)
-  const data = await response.json()
-  return data
+  const response = await fetch(`${NEXT_APP_URL}/api/v1/get-restaurant-data/${restaurantId}`);
+  const data = await response.json();
+  return data;
 }
 
-
-// Inserts or updates the call in the table
+/**
+ * Inserts or updates call data in the database
+ */
 export async function wrapperUpsertCallData(callData) {
   console.log("🍬 wrapper call data")
   console.log(callData)

@@ -18,28 +18,21 @@ export interface RestaurantSetupProps {
   onComplete: (restaurantId: string) => void;
 }
 
-// FormData type
 export interface FormData {
   name: string;
   agentName: string;
   menuDetails: Array<{
-    // Menu item name
     name: string;
-    // Menu item price
     price: string;
-    // Menu item description
     description?: string;
   }>;
   specialInstructions: string;
   languagePreference: LanguagePreference;
 }
 
-// Formerrors type
 export interface FormErrors {
   [key: string]: string | undefined;
 }
-
-// Onboarding steps
 const STEPS = [
   {
     id: "restaurant-name",
@@ -68,7 +61,6 @@ const STEPS = [
   },
 ];
 
-// Agent supported language
 const LANGUAGE_OPTIONS: {
   value: LanguagePreference;
   label: string;
@@ -91,15 +83,15 @@ const LANGUAGE_OPTIONS: {
   },
 ];
 
-// Main component
+/**
+ * Multi-step restaurant setup component that guides users through
+ * configuring their restaurant information and AI agent settings
+ */
 const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
-  // Navigation router
   const router = useRouter();
   const { saveRestaurantData } = useRestaurantStorage();
 
-  // The step number
   const [currentStep, setCurrentStep] = useState(0);
-  // Form data state
   const [formData, setFormData] = useState<FormData>({
     name: "",
     agentName: "",
@@ -108,15 +100,13 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
     languagePreference: "english",
   });
   const [errors, setErrors] = useState<FormErrors>({});
-  // Loading state
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // page loading state
   const [pageLoading, setPageLoading] = useState(true);
 
   useEffect(() => {
     setPageLoading(false);
   }, []);
-  // Validates the input of the current step
+
   const validateCurrentStep = useCallback((): boolean => {
     const newErrors: FormErrors = {};
     const currentStepId = STEPS[currentStep].id;
@@ -145,7 +135,6 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
         break;
 
       case "special-instructions":
-        // Special instructions are optional, but if provided should be meaningful
         if (
           formData.specialInstructions.trim() &&
           formData.specialInstructions.trim().length < 5
@@ -193,7 +182,6 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
     }
   };
 
-  // Handle Enter key navigation
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Enter" && !isSubmitting) {
@@ -223,8 +211,6 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
         languagePreference: formData.languagePreference,
       });
 
-      // The saveRestaurantData function now returns the restaurant ID from Convex
-      // and saves it to localStorage automatically
       onComplete(result?.restaurantId || "");
     } catch (error) {
       setErrors({

@@ -9,6 +9,10 @@ export interface CallsSectionProps {
 
 type CallsTabType = "current" | "past";
 
+/**
+ * Calls section component that manages current and past calls
+ * Provides sub-navigation between live calls and call history
+ */
 const CallsSection: React.FC<CallsSectionProps> = () => {
   const [activeCallsTab, setActiveCallsTab] = useState<CallsTabType>("current");
 
@@ -19,7 +23,6 @@ const CallsSection: React.FC<CallsSectionProps> = () => {
 
   return (
     <div className="space-y-6">
-      {/* Sub-navigation for Calls */}
       <div className="inline-flex bg-black border border-white/10 rounded-lg p-0.5">
         <nav className="flex">
           {callsTabs.map((tab) => (
@@ -41,7 +44,6 @@ const CallsSection: React.FC<CallsSectionProps> = () => {
         </nav>
       </div>
 
-      {/* Content */}
       <div>
         {activeCallsTab === "current" && <CurrentCalls />}
         {activeCallsTab === "past" && <PastCalls />}

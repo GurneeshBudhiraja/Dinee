@@ -1,18 +1,18 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
-import { useEffect, useState } from "react";
-import { BackgroundBeams } from "@/components/ui/background-beams";
 import { Header } from "@/components/ui/Header";
 
-// Voice frequency animation component
+/**
+ * Voice frequency animation component that displays animated bars
+ * representing voice frequency patterns at the bottom of the page
+ */
 const VoiceFrequencyAnimation = () => {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    // Small delay to ensure smooth transition from placeholder
     const timer = setTimeout(() => {
       setIsMounted(true);
     }, 100);
@@ -20,7 +20,6 @@ const VoiceFrequencyAnimation = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Generate smooth wave pattern using sine waves
   const generateSmoothBars = () => {
     const colors = [
       "#64748b", // gray
@@ -86,48 +85,46 @@ const VoiceFrequencyAnimation = () => {
     return bars;
   };
 
-  // Show invisible placeholder during SSR and initial load
+  // Show invisible placeholder during SSR to prevent layout shift
   if (!isMounted) {
     return (
       <div className="absolute bottom-0 left-0 right-0 h-48 px-4 pb-4 z-20 opacity-0">
-        {/* Invisible placeholder to prevent layout shift */}
         <div className="w-full h-full" />
       </div>
     );
   }
 
   return (
-    // TODO: only uncomment in production
     <motion.div
-      className="absolute bottom-0 left-0 right-0 flex items-end justify-between gap-1 h-48 px-4 pb-4 z-20 "
+      className="absolute bottom-0 left-0 right-0 flex items-end justify-between gap-1 h-48 px-4 pb-4 z-20"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
     >
       {generateSmoothBars()}
     </motion.div>
-    // <div></div>
   );
 };
 
+/**
+ * Homepage component that displays the main landing page
+ * Features animated voice frequency bars and call-to-action
+ */
 export default function Home() {
   const router = useRouter();
 
-  // Ensure page loads at top
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const handleGetStarted = async () => {
+  const handleGetStarted = () => {
     router.push("/client/onboarding");
   };
 
   return (
     <div className="h-screen text-white overflow-hidden relative">
       <Header onTryNow={handleGetStarted} />
-      {/* Main content */}
       <div className="relative z-10 flex flex-col items-center justify-center h-full px-6 pt-16 pb-16">
-        {/* Title */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -142,7 +139,6 @@ export default function Home() {
           </h2>
         </motion.div>
 
-        {/* Subtitle */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -154,7 +150,6 @@ export default function Home() {
           integrate seamlessly with your operations.
         </motion.p>
 
-        {/* Try Demo button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -175,7 +170,6 @@ export default function Home() {
         </motion.div>
       </div>
 
-      {/* Voice frequency animation at bottom */}
       <VoiceFrequencyAnimation />
     </div>
   );

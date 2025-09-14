@@ -2,14 +2,8 @@
 
 import React from "react";
 import { motion } from "motion/react";
-import { IBM_Plex_Mono, Poppins } from "next/font/google";
+import { Poppins } from "next/font/google";
 import Link from "next/link";
-
-const ibmPlex = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -21,7 +15,10 @@ interface HeaderProps {
   onTryNow?: () => void;
 }
 
-// Minimal header for onboarding pages
+/**
+ * Minimal header component used on onboarding pages
+ * Shows only the logo with a clean, minimal design
+ */
 export const MinimalHeader: React.FC = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-md">
@@ -37,6 +34,10 @@ export const MinimalHeader: React.FC = () => {
   );
 };
 
+/**
+ * Main header component with full navigation and branding
+ * Used on the homepage and main application pages
+ */
 export const Header: React.FC<HeaderProps> = ({ onTryNow }) => {
   return (
     <motion.header
@@ -47,7 +48,6 @@ export const Header: React.FC<HeaderProps> = ({ onTryNow }) => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
           <div className="flex-shrink-0">
             <Link
               href={"/client"}
@@ -57,7 +57,6 @@ export const Header: React.FC<HeaderProps> = ({ onTryNow }) => {
             </Link>
           </div>
 
-          {/* Navigation Links */}
           <nav className="hidden md:flex items-center space-x-8">
             <a
               href="#"
@@ -91,7 +90,6 @@ export const Header: React.FC<HeaderProps> = ({ onTryNow }) => {
             </a>
           </nav>
 
-          {/* Try Now Button */}
           <div className="flex-shrink-0 hidden md:block">
             <button
               className="btn-try-now border-2 border-emerald-400 bg-emerald-500 text-black px-6 py-2 rounded-full text-sm font-mono cursor-pointer shadow-button-inset-shadow-mini"
@@ -101,7 +99,6 @@ export const Header: React.FC<HeaderProps> = ({ onTryNow }) => {
             </button>
           </div>
 
-          {/* Mobile menu button */}
           <div className="md:hidden">
             <button className="text-gray-300 hover:text-white">
               <svg

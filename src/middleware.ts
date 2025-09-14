@@ -1,5 +1,9 @@
 import { NextResponse, NextRequest } from 'next/server'
 
+/**
+ * Middleware to redirect all requests to /client prefix
+ * Ensures consistent routing structure for the application
+ */
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 

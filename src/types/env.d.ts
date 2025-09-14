@@ -10,9 +10,6 @@ declare global {
       NEXT_TWILIO_SID: string;
       NEXT_TWILIO_AUTH_TOKEN: string;
       BACKEND_PORT: string;
-      NEXT_AWS_ACCESS_KEY_ID: string;
-      NEXT_AWS_SECRET_ACCESS_KEY: string;
-      NEXT_AWS_REGION: string;
     }
   }
 }
