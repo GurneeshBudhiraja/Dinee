@@ -2,284 +2,188 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import Button from "@/components/ui/Button";
-import { Card, CardContent } from "@/components/ui/Card";
-import { useConvex, useMutation, useQuery } from "convex/react";
-import { useShowToast } from "@/hooks/useShowToast";
-import { toast } from "sonner";
-import { Doc } from "../../../convex/_generated/dataModel";
+import { motion } from "motion/react";
+import { useEffect, useState } from "react";
+import { BackgroundBeams } from "@/components/ui/background-beams";
+import { Header } from "@/components/ui/Header";
+import { Poppins } from "next/font/google";
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
+// Voice frequency animation component
+const VoiceFrequencyAnimation = () => {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    // Small delay to ensure smooth transition from placeholder
+    const timer = setTimeout(() => {
+      setIsMounted(true);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Generate smooth wave pattern using sine waves
+  const generateSmoothBars = () => {
+    const colors = [
+      "#64748b", // gray
+      "#06b6d4", // cyan
+      "#8b5cf6", // purple
+      "#f59e0b", // amber
+      "#10b981", // emerald
+      "#ef4444", // red
+      "#3b82f6", // blue
+      "#f97316", // orange
+    ];
+
+    const totalBars = 120;
+    const bars = [];
+
+    for (let i = 0; i < totalBars; i++) {
+      // Create smooth wave patterns using sine functions
+      const wavePosition = (i / totalBars) * Math.PI * 4; // 4 complete waves across the width
+      const baseWave = Math.sin(wavePosition) * 30 + 50; // Base wave pattern
+      const secondaryWave = Math.sin(wavePosition * 2.5 + Math.PI / 3) * 20; // Secondary wave for complexity
+      const tertiaryWave = Math.sin(wavePosition * 0.8 + Math.PI / 6) * 15; // Tertiary wave for more natural feel
+
+      const baseHeight = Math.max(20, baseWave + secondaryWave + tertiaryWave);
+
+      // Color selection based on position for gradient-like effect
+      const colorIndex = Math.floor((i / totalBars) * colors.length);
+      const color = colors[colorIndex % colors.length];
+
+      bars.push(
+        <motion.div
+          key={i}
+          className="rounded-t-full flex-1 min-w-0"
+          style={{
+            backgroundColor: color,
+            minWidth: "2px",
+          }}
+          animate={{
+            height: [
+              baseHeight,
+              baseHeight + Math.sin(i * 0.1 + Date.now() * 0.001) * 40,
+              baseHeight + Math.sin(i * 0.15 + Date.now() * 0.002) * 60,
+              baseHeight + Math.sin(i * 0.08 + Date.now() * 0.0015) * 35,
+              baseHeight,
+            ],
+          }}
+          transition={{
+            duration: 3 + (i % 10) * 0.1, // Slightly varied duration for natural feel
+            repeat: Infinity,
+            repeatType: "reverse",
+            ease: "easeInOut",
+          }}
+          initial={{
+            height: baseHeight,
+            opacity: 0,
+          }}
+          whileInView={{
+            opacity: 1,
+          }}
+        />
+      );
+    }
+
+    return bars;
+  };
+
+  // Show invisible placeholder during SSR and initial load
+  if (!isMounted) {
+    return (
+      <div className="absolute bottom-0 left-0 right-0 h-48 px-4 pb-4 z-20 opacity-0">
+        {/* Invisible placeholder to prevent layout shift */}
+        <div className="w-full h-full" />
+      </div>
+    );
+  }
+
+  return (
+    // TODO: only uncomment in production
+    <motion.div
+      className="absolute bottom-0 left-0 right-0 flex items-end justify-between gap-1 h-48 px-4 pb-4 z-20 "
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+    >
+      {generateSmoothBars()}
+    </motion.div>
+    // <div></div>
+  );
+};
 
 export default function Home() {
   const router = useRouter();
-  const { showToast } = useShowToast();
-  const convexClient = useConvex();
+
+  // Ensure page loads at top
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleGetStarted = async () => {
-    // await deleteAllData();
     router.push("/client/onboarding");
   };
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className="relative z-10 pb-8 bg-gray-50 sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
-            <div className="pt-10 mx-auto max-w-7xl px-4 sm:pt-12 sm:px-6 md:pt-16 lg:pt-20 lg:px-8 xl:pt-28">
-              <div className="sm:text-center lg:text-left">
-                <h1 className="text-4xl tracking-tight font-bold text-gray-900 sm:text-5xl md:text-6xl">
-                  <span className="block xl:inline">Restaurant Call</span>{" "}
-                  <span className="block text-blue-600 xl:inline">
-                    Management
-                  </span>
-                </h1>
-                <p className="mt-3 text-base text-gray-600 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
-                  Automate your restaurant&apos;s phone orders with AI. Let your
-                  intelligent agent handle customer calls, take orders, and
-                  manage callbacks while you focus on cooking.
-                </p>
-                <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
-                  <div className="rounded-md shadow">
-                    <Button
-                      variant="primary"
-                      size="lg"
-                      className="w-full sm:w-auto cursor-pointer bg-blue-600"
-                      onClick={async () => {
-                        // const result = await convexClient.query(
-                        //   api.internal.getRestaurantAndMenuDetailsUsingId,
-                        //   {
-                        //     restaurantId: "67126",
-                        //   }
-                        // );
-                        // console.log(result);
-                        const response = await fetch("/api/v1/upsert-order", {
-                          method: "POST",
-                          headers: {
-                            "Content-Type": "application/json",
-                          },
-                          body: JSON.stringify({
-                            callId: "Tesitng order id",
-                            customerName: "Testing customer name",
-                            items: [
-                              {
-                                name: "Testing name",
-                                price: 200,
-                                quantity: 2,
-                              },
-                            ],
-                            orderId: "testing-order-id",
-                            restaurantId: "67126",
-                            totalAmount: 200,
-                            status:"active",
-                            cancellationReason: "Meri marzi"
-                          } as Doc<"orders">),
-                        });
-                        const data = await response.json();
-                        console.log(data);
-                      }}
-                    >
-                      testing convex functions
-                    </Button>
-                    <Button
-                      variant="primary"
-                      size="lg"
-                      className="w-full sm:w-auto cursor-pointer bg-blue-600"
-                      onClick={handleGetStarted}
-                    >
-                      Try Demo
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
-          <div className="h-56 w-full bg-blue-600 sm:h-72 md:h-96 lg:w-full lg:h-full flex items-center justify-center">
-            <div className="text-center text-white">
-              <svg
-                className="mx-auto h-24 w-24 mb-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1}
-                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                />
-              </svg>
-              <p className="text-lg font-medium">AI-Powered Call Management</p>
-            </div>
-          </div>
-        </div>
+    <div className="h-screen text-white overflow-hidden">
+      <Header onTryNow={handleGetStarted} />
+      {/* Main content */}
+      <div className="relative z-10 flex flex-col items-center justify-center h-full px-6 pt-16 pb-16">
+        {/* Title */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="text-center mb-8"
+        >
+          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-2 bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent font-display leading-tight">
+            Voice AI agents
+          </h1>
+          <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent font-display leading-tight">
+            for restaurants
+          </h2>
+        </motion.div>
+
+        {/* Subtitle */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+          className="text-gray-400 text-center max-w-2xl text-base md:text-lg leading-relaxed mb-8 px-4"
+        >
+          Automate your restaurant's phone orders with intelligent AI agents
+          that understand your menu, take orders accurately, and integrate
+          seamlessly with your operations.
+        </motion.p>
+
+        {/* Try Demo button */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 1.2, ease: "easeOut" }}
+        >
+          <button
+            className="btn-try-now bg-emerald-500 text-black px-8 md:px-10 py-3 md:py-4 rounded-full text-base md:text-lg border-2 border-emerald-400 font-mono cursor-pointer shadow-button-inset-shadow"
+            onClick={handleGetStarted}
+          >
+            <span className="flex items-center gap-3">
+              Try Now
+              <span className="relative flex size-3">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-black opacity-75" />
+                <span className="relative inline-flex size-3 rounded-full bg-black" />
+              </span>
+            </span>
+          </button>
+        </motion.div>
       </div>
 
-      {/* Features Section */}
-      <div className="py-12 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:text-center">
-            <h2 className="text-base text-blue-600 font-semibold tracking-wide uppercase">
-              Features
-            </h2>
-            <p className="mt-2 text-3xl leading-8 font-bold tracking-tight text-gray-900 sm:text-4xl">
-              Everything you need to manage calls
-            </p>
-            <p className="mt-4 max-w-2xl text-xl text-gray-600 lg:mx-auto">
-              Our AI agent handles your restaurant calls professionally,
-              ensuring no order is missed.
-            </p>
-          </div>
-
-          <div className="mt-10">
-            <div className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex">
-                    <div className="flex-shrink-0">
-                      <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-600 text-white">
-                        <svg
-                          className="h-6 w-6"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          aria-hidden="true"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                    <div className="ml-4">
-                      <h3 className="text-lg leading-6 font-medium text-gray-900">
-                        Automated Order Taking
-                      </h3>
-                      <p className="mt-2 text-base text-gray-600">
-                        Your AI agent takes orders accurately, asks clarifying
-                        questions, and handles special requests.
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex">
-                    <div className="flex-shrink-0">
-                      <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-600 text-white">
-                        <svg
-                          className="h-6 w-6"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          aria-hidden="true"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                    <div className="ml-4">
-                      <h3 className="text-lg leading-6 font-medium text-gray-900">
-                        Real-time Dashboard
-                      </h3>
-                      <p className="mt-2 text-base text-gray-600">
-                        Monitor all calls, orders, and customer interactions
-                        from a comprehensive dashboard.
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex">
-                    <div className="flex-shrink-0">
-                      <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-600 text-white">
-                        <svg
-                          className="h-6 w-6"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          aria-hidden="true"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                    <div className="ml-4">
-                      <h3 className="text-lg leading-6 font-medium text-gray-900">
-                        Smart Callbacks
-                      </h3>
-                      <p className="mt-2 text-base text-gray-600">
-                        Automatically schedule and manage customer callbacks for
-                        busy periods or follow-ups.
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex">
-                    <div className="flex-shrink-0">
-                      <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-600 text-white">
-                        <svg
-                          className="h-6 w-6"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          aria-hidden="true"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                    <div className="ml-4">
-                      <h3 className="text-lg leading-6 font-medium text-gray-900">
-                        Customizable Settings
-                      </h3>
-                      <p className="mt-2 text-base text-gray-600">
-                        Configure your AI agent with your menu, special
-                        instructions, and business preferences.
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
+      {/* Voice frequency animation at bottom */}
+      <VoiceFrequencyAnimation />
+    </div>
   );
 }

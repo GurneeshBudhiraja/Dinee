@@ -40,15 +40,9 @@ const fastify = Fastify({ logger: true });
 fastify.register(fastifyFormBody);
 fastify.register(fastifyWs);
 fastify.register(cors, {
-  origin: ['http://localhost:3000', "http://localhost:3001"],
+  origin: ["*"],
   methods: ['GET', 'POST'],
 });
-
-
-
-// Adding a router
-// await fastify.register(import('./route.ts')); // Commented out - route moved
-
 
 /* test route */
 fastify.all("/testing", async (_req, reply) => {
