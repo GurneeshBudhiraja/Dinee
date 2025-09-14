@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from "react";
-import { User, Bot, Clock, Mic, MicOff } from "lucide-react";
+import { User, Bot, Clock, Mic, MicOff, MessageSquare } from "lucide-react";
 import { useTranscripts } from "@/hooks/useTranscripts";
 
 interface TranscriptDisplayProps {
   callId: string;
   callStartTime: number;
+  isActive?: boolean;
 }
 
 interface TranscriptEntry {
@@ -18,6 +19,7 @@ interface TranscriptEntry {
 const TranscriptDisplay: React.FC<TranscriptDisplayProps> = ({
   callId,
   callStartTime,
+  isActive = true,
 }) => {
   const { transcripts, loading } = useTranscripts(callId);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -62,18 +64,17 @@ const TranscriptDisplay: React.FC<TranscriptDisplayProps> = ({
 
   if (loading) {
     return (
-      <div className="relative bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl border border-slate-200 p-6 min-h-[280px] overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-50/50 to-purple-50/50"></div>
-        <div className="relative flex flex-col items-center justify-center h-full space-y-4">
+      <div className="bg-black border border-gray-800 rounded-lg p-4 min-h-[200px]">
+        <div className="flex flex-col items-center justify-center h-full space-y-3">
           <div className="relative">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 animate-pulse"></div>
-            <div className="absolute inset-0 w-12 h-12 rounded-full border-2 border-blue-300 animate-spin border-t-transparent"></div>
+            <div className="w-8 h-8 rounded-full bg-emerald-500/20 animate-pulse"></div>
+            <div className="absolute inset-0 w-8 h-8 rounded-full border-2 border-emerald-500/50 animate-spin border-t-transparent"></div>
           </div>
           <div className="text-center">
-            <p className="text-slate-600 font-medium">
+            <p className="text-white text-sm font-medium">
               Connecting to conversation...
             </p>
-            <p className="text-slate-500 text-sm mt-1">
+            <p className="text-gray-400 text-xs mt-1">
               Loading transcript data
             </p>
           </div>
@@ -84,24 +85,21 @@ const TranscriptDisplay: React.FC<TranscriptDisplayProps> = ({
 
   if (transcripts.length === 0) {
     return (
-      <div className="relative bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl border border-slate-200 p-8 min-h-[280px] overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-emerald-50/30 to-blue-50/30"></div>
-        <div className="relative flex flex-col items-center justify-center h-full text-center space-y-4">
-          <div className="relative">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-r from-emerald-400 to-blue-500 flex items-center justify-center shadow-lg">
-              <Mic className="w-8 h-8 text-white" />
-            </div>
-            <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-            </div>
+      <div className="bg-black border border-gray-800 rounded-lg p-6 min-h-[200px]">
+        <div className="flex flex-col items-center justify-center h-full text-center space-y-3">
+          <div className="w-12 h-12 rounded-full bg-gray-700/50 flex items-center justify-center border border-gray-600">
+            <MessageSquare className="w-6 h-6 text-gray-400" />
           </div>
           <div>
-            <h4 className="text-slate-800 font-semibold text-lg mb-2">
-              Listening for conversation
+            <h4 className="text-white font-medium text-sm mb-1">
+              {isActive
+                ? "Listening for conversation"
+                : "No transcripts available"}
             </h4>
-            <p className="text-slate-600 max-w-sm">
-              The AI assistant is ready to engage with the customer. Transcript
-              will appear here in real-time.
+            <p className="text-gray-400 text-xs max-w-sm">
+              {isActive
+                ? "The AI assistant is ready to engage with the customer. Transcript will appear here in real-time."
+                : "This call did not generate any transcript data."}
             </p>
           </div>
         </div>
@@ -110,39 +108,45 @@ const TranscriptDisplay: React.FC<TranscriptDisplayProps> = ({
   }
 
   return (
-    <div className="relative bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl border border-slate-200 overflow-hidden">
+    <div className="bg-black border border-gray-800 rounded-lg overflow-hidden">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-slate-200 px-4 py-3">
+      <div className="bg-gray-900/50 border-b border-gray-800 px-3 py-2">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-              <span className="text-slate-700 font-medium text-sm">
-                Live Transcript
-              </span>
+          <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1.5">
+              {isActive ? (
+                <>
+                  <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></div>
+                  <span className="text-white font-medium text-xs">
+                    Live Transcript
+                  </span>
+                </>
+              ) : (
+                <span className="text-white font-medium text-xs">
+                  Call Transcript
+                </span>
+              )}
             </div>
-            <div className="h-4 w-px bg-slate-300"></div>
-            <div className="flex items-center space-x-1 text-slate-500 text-xs">
+            <div className="h-3 w-px bg-gray-700"></div>
+            <div className="flex items-center space-x-1 text-gray-400 text-xs">
               <Clock className="w-3 h-3" />
               <span>{transcripts.length} messages</span>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <div className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
-              Active
+          {isActive && (
+            <div className="flex items-center space-x-2">
+              <div className="px-2 py-0.5 bg-emerald-500/20 text-emerald-500 rounded-md text-xs font-medium border border-emerald-500/30">
+                Active
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
       {/* Messages Container */}
       <div
         ref={scrollContainerRef}
-        className="max-h-80 overflow-y-auto scrollbar-thin p-4 space-y-3"
-        style={{
-          background:
-            "linear-gradient(to bottom, rgba(248, 250, 252, 0.8), rgba(241, 245, 249, 0.9))",
-        }}
+        className="max-h-64 overflow-y-auto p-3 space-y-2 bg-black"
       >
         {transcripts.map((transcript: TranscriptEntry, index: number) => {
           const isLastMessage = index === transcripts.length - 1;
@@ -170,36 +174,36 @@ const TranscriptDisplay: React.FC<TranscriptDisplayProps> = ({
                 {/* Avatar */}
                 {isFirstFromSpeaker && (
                   <div
-                    className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center shadow-lg ring-2 ring-white ${
+                    className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center border ${
                       isHuman
-                        ? "bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700"
-                        : "bg-gradient-to-br from-emerald-500 via-emerald-600 to-emerald-700"
+                        ? "bg-gray-700 border-gray-600"
+                        : "bg-emerald-500 border-emerald-400"
                     }`}
                   >
                     {isHuman ? (
-                      <User className="w-4 h-4 text-white drop-shadow-sm" />
+                      <User className="w-3 h-3 text-white" />
                     ) : (
-                      <Bot className="w-4 h-4 text-white drop-shadow-sm" />
+                      <Bot className="w-3 h-3 text-white" />
                     )}
                   </div>
                 )}
-                {!isFirstFromSpeaker && <div className="w-8"></div>}
+                {!isFirstFromSpeaker && <div className="w-6"></div>}
 
                 {/* Message Bubble */}
                 <div className="flex flex-col space-y-1">
                   {/* Speaker Label & Time (only for first message from speaker) */}
                   {isFirstFromSpeaker && (
                     <div
-                      className={`flex items-center space-x-2 px-1 ${isHuman ? "justify-end" : "justify-start"}`}
+                      className={`flex items-center space-x-1.5 px-1 ${isHuman ? "justify-end" : "justify-start"}`}
                     >
                       <span
-                        className={`text-xs font-semibold ${
-                          isHuman ? "text-blue-700" : "text-emerald-700"
+                        className={`text-xs font-medium ${
+                          isHuman ? "text-gray-300" : "text-emerald-500"
                         }`}
                       >
                         {isHuman ? "Customer" : "AI Assistant"}
                       </span>
-                      <span className="text-slate-500 text-xs font-medium">
+                      <span className="text-gray-400 text-xs">
                         {formatMessageTime(transcript._creationTime)}
                       </span>
                     </div>
@@ -207,10 +211,10 @@ const TranscriptDisplay: React.FC<TranscriptDisplayProps> = ({
 
                   {/* Message Content */}
                   <div
-                    className={`relative px-4 py-3 rounded-2xl shadow-sm transition-all duration-200 hover:shadow-md ${
+                    className={`relative px-3 py-2 rounded-lg transition-all duration-200 ${
                       isHuman
-                        ? "bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white"
-                        : "bg-white text-slate-800 border border-slate-200/80 backdrop-blur-sm"
+                        ? "bg-gray-800 text-white border border-gray-700"
+                        : "bg-black text-white border border-gray-800"
                     } ${
                       isFirstFromSpeaker
                         ? isHuman
@@ -219,14 +223,9 @@ const TranscriptDisplay: React.FC<TranscriptDisplayProps> = ({
                         : ""
                     }`}
                   >
-                    <p className="text-sm leading-relaxed whitespace-pre-wrap font-medium">
+                    <p className="text-xs leading-relaxed whitespace-pre-wrap">
                       {transcript.dialogue}
                     </p>
-
-                    {/* Message tail - only for AI messages */}
-                    {isFirstFromSpeaker && !isHuman && (
-                      <div className="absolute top-0 -left-2 w-0 h-0 border-r-8 border-r-white border-t-8 border-t-transparent"></div>
-                    )}
                   </div>
                 </div>
               </div>
@@ -235,15 +234,17 @@ const TranscriptDisplay: React.FC<TranscriptDisplayProps> = ({
         })}
       </div>
 
-      {/* Footer */}
-      <div className="bg-white/80 backdrop-blur-sm border-t border-slate-200 px-4 py-2">
-        <div className="flex items-center justify-center">
-          <div className="flex items-center space-x-2 text-slate-500 text-xs">
-            <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-            <span>Real-time conversation monitoring</span>
+      {/* Footer - Only show for active calls */}
+      {isActive && (
+        <div className="bg-gray-900/50 border-t border-gray-800 px-3 py-1.5">
+          <div className="flex items-center justify-center">
+            <div className="flex items-center space-x-1.5 text-gray-400 text-xs">
+              <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
+              <span>Real-time conversation monitoring</span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

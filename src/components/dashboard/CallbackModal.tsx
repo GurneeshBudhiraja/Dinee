@@ -81,75 +81,82 @@ const CallbackModal: React.FC<CallbackModalProps> = ({
       closeOnOverlayClick={!isSubmitting}
       closeOnEscape={!isSubmitting}
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <h4 className="font-medium text-gray-900 mb-2">Order Information</h4>
-          <div className="text-sm text-gray-600 space-y-1">
-            <p>
-              <span className="font-medium">Customer:</span>{" "}
-              {order.customerName}
-            </p>
-            <p>
-              <span className="font-medium">Phone:</span> {order.phoneNumber}
-            </p>
-            <p>
-              <span className="font-medium">Total:</span> $
-              {order.totalAmount.toFixed(2)}
-            </p>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="bg-white/5 border border-gray-600 rounded-lg p-4">
+          <h4 className="text-sm font-medium text-white mb-3">
+            Order Information
+          </h4>
+          <div className="text-sm space-y-2">
+            <div className="flex items-center space-x-2">
+              <span className="font-medium text-gray-300">Customer:</span>
+              <span className="text-white">{order.customerName}</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="font-medium text-gray-300">Phone:</span>
+              <span className="text-emerald-400">{order.phoneNumber}</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="font-medium text-gray-300">Total:</span>
+              <span className="text-emerald-400">
+                ${order.totalAmount.toFixed(2)}
+              </span>
+            </div>
           </div>
         </div>
 
         <div>
           <label
             htmlFor="callback-reason"
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="block text-sm font-medium text-white mb-2"
           >
-            Reason for Callback <span className="text-red-500">*</span>
+            Reason for Callback <span className="text-red-400">*</span>
           </label>
           <textarea
             id="callback-reason"
             value={reason}
             onChange={(e) => setReason(e.target.value)}
-            placeholder="Please provide a detailed reason for the callback (minimum 100 characters)..."
-            className="w-full h-32 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+            placeholder="Please provide a detailed reason for the callback (minimum 10 characters)..."
+            className="w-full h-32 px-3 py-2 bg-black border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 resize-none"
             disabled={isSubmitting}
             required
           />
           <div className="flex justify-between items-center mt-2">
             <p
-              className={`text-sm ${
+              className={`text-xs ${
                 characterCount < TOTAL_CHAR_COUNT
-                  ? "text-red-500"
-                  : "text-green-600"
+                  ? "text-red-400"
+                  : "text-emerald-400"
               }`}
             >
               {characterCount}/{TOTAL_CHAR_COUNT} characters minimum
             </p>
             {characterCount > 0 && characterCount < TOTAL_CHAR_COUNT && (
-              <p className="text-sm text-red-500">
+              <p className="text-xs text-red-400">
                 {TOTAL_CHAR_COUNT - characterCount} more characters needed
               </p>
             )}
           </div>
         </div>
 
-        <div className="flex gap-3 justify-end pt-4">
-          <Button
+        <div className="flex gap-2 justify-end pt-4 border-t border-gray-700">
+          <button
             type="button"
-            variant="outline"
             onClick={handleClose}
             disabled={isSubmitting}
+            className="px-4 py-2 bg-white/5 border border-gray-600 text-white hover:bg-white/10 hover:border-gray-500 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
-          </Button>
-          <Button
+          </button>
+          <button
             type="submit"
-            variant="primary"
             disabled={!isReasonValid || isSubmitting}
-            loading={isSubmitting}
+            className="px-4 py-2 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 hover:border-emerald-500/40 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
           >
-            Initiate Callback
-          </Button>
+            {isSubmitting && (
+              <div className="animate-spin rounded-full h-3 w-3 border border-emerald-400 border-t-transparent"></div>
+            )}
+            <span>Initiate Callback</span>
+          </button>
         </div>
       </form>
     </Modal>

@@ -96,15 +96,17 @@ const PastOrders: React.FC<PastOrdersProps> = ({ className }) => {
 
   if (loading) {
     return (
-      <div className={cn("flex items-center justify-center py-20", className)}>
-        <div className="flex flex-col items-center space-y-6">
-          <div className="relative">
-            <div className="animate-spin rounded-full h-12 w-12 border-2 border-gray-200 border-t-gray-600"></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <History className="w-5 h-5 text-gray-400" />
+      <div className="flex items-center justify-center py-16">
+        <div className="bg-black border border-gray-800 rounded-lg p-6 text-center">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="relative">
+              <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-700 border-t-emerald-500"></div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <History className="w-3 h-3 text-emerald-500" />
+              </div>
             </div>
+            <p className="text-gray-400 text-sm">Loading order history...</p>
           </div>
-          <p className="text-gray-600 font-medium">Loading order history...</p>
         </div>
       </div>
     );
@@ -112,35 +114,37 @@ const PastOrders: React.FC<PastOrdersProps> = ({ className }) => {
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-xl p-8 text-center">
-        <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-xl flex items-center justify-center">
-          <XCircle className="w-8 h-8 text-red-500" />
+      <div className="bg-black border border-red-500/30 rounded-lg p-8 text-center">
+        <div className="w-16 h-16 mx-auto mb-4 bg-red-500/10 rounded-lg flex items-center justify-center">
+          <XCircle className="w-8 h-8 text-red-400" />
         </div>
-        <h3 className="text-lg font-semibold text-red-900 mb-2">
+        <h3 className="text-lg font-medium text-white mb-2">
           Error Loading Orders
         </h3>
-        <p className="text-red-600">Unable to load order history: {error}</p>
+        <p className="text-gray-400 text-sm">
+          Unable to load order history: {error}
+        </p>
       </div>
     );
   }
 
   if (pastOrders.length === 0) {
     return (
-      <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 p-12">
+      <div className="bg-gray-900/30 border border-gray-700 rounded-xl p-12">
         <div className="text-center">
-          <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-gray-600 to-gray-700 rounded-xl flex items-center justify-center shadow-lg">
-            <History className="w-10 h-10 text-white" />
+          <div className="w-20 h-20 mx-auto mb-6 bg-white/5 rounded-xl flex items-center justify-center border border-gray-600">
+            <History className="w-10 h-10 text-gray-300" />
           </div>
-          <h3 className="text-xl font-bold text-gray-900 mb-3">
+          <h3 className="text-lg font-medium text-white mb-2">
             No Order History Yet
           </h3>
-          <p className="text-gray-600 max-w-md mx-auto mb-8 leading-relaxed">
+          <p className="text-gray-300 max-w-md mx-auto mb-6 leading-relaxed text-sm">
             Completed and cancelled orders will appear here. This helps you
             track your restaurant&apos;s performance and customer satisfaction.
           </p>
-          <div className="inline-flex items-center space-x-3 bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200">
-            <CheckCircle className="w-5 h-5 text-gray-600" />
-            <span className="text-sm font-medium text-gray-700">
+          <div className="inline-flex items-center space-x-3 bg-emerald-500/10 px-6 py-3 rounded-lg border border-emerald-500/20">
+            <CheckCircle className="w-5 h-5 text-emerald-400" />
+            <span className="text-sm font-medium text-emerald-400">
               Ready to track orders
             </span>
           </div>
@@ -157,63 +161,56 @@ const PastOrders: React.FC<PastOrdersProps> = ({ className }) => {
         const isExpanded = expandedOrders.has(order.id);
 
         return (
-          <Card
+          <div
             key={order.id}
-            className="border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 rounded-xl overflow-hidden bg-white"
+            className="bg-gray-900/30 border border-gray-700 hover:border-gray-600 transition-all duration-200 rounded-xl overflow-hidden"
           >
-            <CardHeader
-              className={cn(
-                "border-b border-gray-100 pb-4",
-                isCompleted
-                  ? "bg-gradient-to-r from-green-50/80 to-white"
-                  : "bg-gradient-to-r from-red-50/80 to-white"
-              )}
-            >
+            <div className="bg-white/5 border-b border-gray-700 p-6">
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-3">
                     <div
                       className={cn(
-                        "w-12 h-12 rounded-xl flex items-center justify-center shadow-lg",
+                        "w-10 h-10 rounded-lg flex items-center justify-center border",
                         isCompleted
-                          ? "bg-gradient-to-br from-green-500 to-emerald-600"
-                          : "bg-gradient-to-br from-red-500 to-red-600"
+                          ? "bg-emerald-500/20 border-emerald-500/30"
+                          : "bg-red-500/20 border-red-500/30"
                       )}
                     >
                       {isCompleted ? (
-                        <CheckCircle className="w-6 h-6 text-white" />
+                        <CheckCircle className="w-5 h-5 text-emerald-400" />
                       ) : (
-                        <XCircle className="w-6 h-6 text-white" />
+                        <XCircle className="w-5 h-5 text-red-400" />
                       )}
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-gray-900">
+                      <h3 className="text-sm font-medium text-white">
                         Order #{order.id}
                       </h3>
                       <div className="flex items-center space-x-2 mt-1">
                         <Badge
                           variant={isCompleted ? "success" : "error"}
                           className={cn(
-                            "px-3 py-1 font-medium shadow-sm",
+                            "px-2.5 py-1 text-xs font-medium",
                             isCompleted
-                              ? "bg-green-100 text-green-700 border-green-200"
-                              : "bg-red-100 text-red-700 border-red-200"
+                              ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+                              : "bg-red-500/20 text-red-400 border-red-500/30"
                           )}
                         >
                           {isCompleted ? (
                             <>
-                              <CheckCircle className="w-3 h-3 mr-1" />
+                              <CheckCircle className="w-3 h-3 mr-1.5" />
                               COMPLETED
                             </>
                           ) : (
                             <>
-                              <XCircle className="w-3 h-3 mr-1" />
+                              <XCircle className="w-3 h-3 mr-1.5" />
                               CANCELLED
                             </>
                           )}
                         </Badge>
-                        <div className="flex items-center space-x-1 text-gray-500 text-sm">
-                          <Calendar className="w-3 h-3" />
+                        <div className="flex items-center space-x-1.5 text-gray-300 text-xs">
+                          <Calendar className="w-3.5 h-3.5" />
                           <span>
                             {formatOrderDate(order.timestamp)} at{" "}
                             {formatOrderTime(order.timestamp)}
@@ -226,22 +223,22 @@ const PastOrders: React.FC<PastOrdersProps> = ({ className }) => {
 
                 <div className="flex items-center space-x-4">
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-gray-900">
+                    <div className="text-sm font-medium text-white">
                       {formatCurrency(order.totalAmount)}
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-xs text-gray-300">
                       {order.items.length} item
                       {order.items.length !== 1 ? "s" : ""}
                     </div>
                   </div>
                   <button
                     onClick={() => toggleOrderExpansion(order.id)}
-                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                    className="p-2 hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
                   >
                     {isExpanded ? (
-                      <ChevronUp className="w-5 h-5 text-gray-500" />
+                      <ChevronUp className="w-4 h-4 text-gray-300" />
                     ) : (
-                      <ChevronDown className="w-5 h-5 text-gray-500" />
+                      <ChevronDown className="w-4 h-4 text-gray-300" />
                     )}
                   </button>
                 </div>
@@ -250,25 +247,25 @@ const PastOrders: React.FC<PastOrdersProps> = ({ className }) => {
               {/* Basic Info - Always Visible */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                 <div className="flex items-center space-x-2">
-                  <User className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm text-gray-600">Customer:</span>
-                  <span className="font-medium text-gray-900">
+                  <User className="w-3.5 h-3.5 text-gray-300" />
+                  <span className="text-xs text-gray-300">Customer:</span>
+                  <span className="font-medium text-white text-xs">
                     {order.customerName}
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Phone className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm text-gray-600">Phone:</span>
-                  <span className="font-medium text-gray-900">
+                  <Phone className="w-3.5 h-3.5 text-gray-300" />
+                  <span className="text-xs text-gray-300">Phone:</span>
+                  <span className="font-medium text-white text-xs">
                     {order.phoneNumber && order.phoneNumber !== "Unknown"
                       ? order.phoneNumber
                       : "Not Available"}
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <ShoppingBag className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm text-gray-600">Items:</span>
-                  <span className="font-medium text-gray-900">
+                  <ShoppingBag className="w-3.5 h-3.5 text-gray-300" />
+                  <span className="text-xs text-gray-300">Items:</span>
+                  <span className="font-medium text-white text-xs">
                     {order.items
                       .slice(0, 2)
                       .map((item) => `${item.quantity}x ${item.name}`)
@@ -278,21 +275,21 @@ const PastOrders: React.FC<PastOrdersProps> = ({ className }) => {
                   </span>
                 </div>
               </div>
-            </CardHeader>
+            </div>
 
             {isExpanded && (
-              <CardContent className="p-6">
+              <div className="p-6">
                 <div className="space-y-6">
                   {/* Cancellation Reason */}
                   {isCancelled && order.cancellationReason && (
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <AlertTriangle className="w-4 h-4 text-red-600" />
-                        <span className="font-medium text-red-900 text-sm">
+                    <div className="bg-red-500/5 border border-red-500/20 rounded-lg p-3">
+                      <div className="flex items-center space-x-2 mb-1">
+                        <AlertTriangle className="w-3.5 h-3.5 text-red-400" />
+                        <span className="font-medium text-red-400 text-xs">
                           Cancellation Reason
                         </span>
                       </div>
-                      <p className="text-red-800 font-medium">
+                      <p className="text-red-300 text-sm">
                         {order.cancellationReason}
                       </p>
                     </div>
@@ -301,51 +298,51 @@ const PastOrders: React.FC<PastOrdersProps> = ({ className }) => {
                   {/* Order Items */}
                   <div>
                     <div className="flex items-center space-x-2 mb-4">
-                      <ShoppingBag className="w-5 h-5 text-gray-600" />
-                      <h4 className="text-lg font-semibold text-gray-900">
+                      <ShoppingBag className="w-4 h-4 text-gray-300" />
+                      <h4 className="text-sm font-medium text-white">
                         Order Items
                       </h4>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                    <div className="bg-white/5 rounded-lg p-4 border border-gray-700">
                       <div className="space-y-3">
-                        {order.items.map((item, index) => (
+                        {order.items.slice(0, 1).map((item, index) => (
                           <div
                             key={index}
-                            className="flex justify-between items-center py-2 border-b border-gray-200 last:border-b-0"
+                            className="flex justify-between items-center py-2"
                           >
                             <div className="flex items-center space-x-3">
-                              <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center border border-gray-200 font-semibold text-sm text-gray-700">
+                              <div className="w-6 h-6 bg-white/10 rounded flex items-center justify-center border border-gray-600 font-medium text-xs text-white">
                                 {item.quantity}
                               </div>
                               <div>
-                                <p className="font-medium text-gray-900">
+                                <p className="font-medium text-white text-sm">
                                   {item.name}
                                 </p>
                                 {item.specialInstructions && (
-                                  <p className="text-sm text-gray-500 mt-1">
+                                  <p className="text-xs text-gray-300 mt-1">
                                     Note: {item.specialInstructions}
                                   </p>
                                 )}
                               </div>
                             </div>
                             <div className="text-right">
-                              <p className="font-semibold text-gray-900">
+                              <p className="font-medium text-white text-sm">
                                 {formatCurrency(item.price * item.quantity)}
                               </p>
-                              <p className="text-sm text-gray-500">
+                              <p className="text-xs text-gray-300">
                                 {formatCurrency(item.price)} each
                               </p>
                             </div>
                           </div>
                         ))}
-                        <div className="flex justify-between items-center pt-3 mt-3 border-t border-gray-300">
-                          <span className="text-lg font-semibold text-gray-900">
+                        <div className="flex justify-between items-center pt-3 mt-3 border-t border-gray-600">
+                          <span className="text-sm font-medium text-white">
                             Total:
                           </span>
                           <span
                             className={cn(
-                              "text-xl font-bold",
-                              isCompleted ? "text-green-600" : "text-gray-600"
+                              "text-sm font-medium",
+                              isCompleted ? "text-emerald-400" : "text-gray-300"
                             )}
                           >
                             {formatCurrency(order.totalAmount)}
@@ -359,13 +356,13 @@ const PastOrders: React.FC<PastOrdersProps> = ({ className }) => {
                   {order.specialInstructions && (
                     <div>
                       <div className="flex items-center space-x-2 mb-3">
-                        <MessageSquare className="w-5 h-5 text-gray-600" />
-                        <h4 className="text-lg font-semibold text-gray-900">
+                        <MessageSquare className="w-4 h-4 text-gray-300" />
+                        <h4 className="text-sm font-medium text-white">
                           Special Instructions
                         </h4>
                       </div>
-                      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                        <p className="text-amber-800 font-medium">
+                      <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4">
+                        <p className="text-amber-300 font-medium text-sm">
                           {order.specialInstructions}
                         </p>
                       </div>
@@ -374,21 +371,20 @@ const PastOrders: React.FC<PastOrdersProps> = ({ className }) => {
 
                   {/* Action Button */}
                   {order.callId && (
-                    <div className="pt-4 border-t border-gray-200">
-                      <Button
-                        variant="outline"
-                        className="flex items-center space-x-2"
+                    <div className="pt-3 border-t border-gray-700">
+                      <button
+                        className="bg-white/5 border border-gray-600 text-white hover:bg-white/10 hover:border-gray-500 px-3 py-1.5 rounded-lg flex items-center justify-center space-x-1.5 text-xs font-medium transition-all duration-200 cursor-pointer"
                         onClick={() => handleAnalyzeCall(order)}
                       >
-                        <Eye className="w-4 h-4" />
+                        <Eye className="w-3.5 h-3.5" />
                         <span>View Call Details</span>
-                      </Button>
+                      </button>
                     </div>
                   )}
                 </div>
-              </CardContent>
+              </div>
             )}
-          </Card>
+          </div>
         );
       })}
     </div>

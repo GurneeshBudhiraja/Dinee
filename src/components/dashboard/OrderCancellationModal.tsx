@@ -118,140 +118,149 @@ const OrderCancellationModal: React.FC<OrderCancellationModalProps> = ({
       closeOnEscape={!isSubmitting}
     >
       {step === "confirm" && (
-        <div className="space-y-4">
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h4 className="font-medium text-gray-900 mb-2">
+        <div className="space-y-6">
+          <div className="bg-white/5 border border-gray-600 rounded-lg p-4">
+            <h4 className="text-sm font-medium text-white mb-3">
               Order Information
             </h4>
-            <div className="text-sm text-gray-600 space-y-1">
-              <p>
-                <span className="font-medium">Customer:</span>{" "}
-                {order.customerName}
-              </p>
-              <p>
-                <span className="font-medium">Phone:</span> {order.phoneNumber}
-              </p>
-              <p>
-                <span className="font-medium">Total:</span> $
-                {order.totalAmount.toFixed(2)}
-              </p>
-              <p>
-                <span className="font-medium">Items:</span>{" "}
-                {order.items
-                  .map((item) => `${item.quantity}x ${item.name}`)
-                  .join(", ")}
-              </p>
+            <div className="text-sm space-y-2">
+              <div className="flex items-center space-x-2">
+                <span className="font-medium text-gray-300">Customer:</span>
+                <span className="text-white">{order.customerName}</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="font-medium text-gray-300">Phone:</span>
+                <span className="text-emerald-400">{order.phoneNumber}</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="font-medium text-gray-300">Total:</span>
+                <span className="text-emerald-400">
+                  ${order.totalAmount.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex items-start space-x-2">
+                <span className="font-medium text-gray-300">Items:</span>
+                <span className="text-white text-xs">
+                  {order.items
+                    .map((item) => `${item.quantity}x ${item.name}`)
+                    .join(", ")}
+                </span>
+              </div>
             </div>
           </div>
 
-          <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
-            <h4 className="font-medium text-yellow-800 mb-2">
+          <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-lg">
+            <h4 className="text-sm font-medium text-emerald-400 mb-2">
               Do you want to call and inform the customer about the
               cancellation?
             </h4>
-            <p className="text-sm text-yellow-700 mb-4">
+            <p className="text-xs text-emerald-300 mb-4">
               This will help maintain good customer service and explain the
               reason for cancellation.
             </p>
 
-            <div className="flex gap-3">
-              <Button
-                variant="primary"
+            <div className="flex gap-2">
+              <button
                 onClick={() => handleCustomerCallDecision(true)}
                 disabled={isSubmitting}
+                className="px-4 py-2 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 hover:border-emerald-500/40 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
               >
-                📞 Yes, Call Customer
-              </Button>
-              <Button
-                variant="outline"
+                <span>📞</span>
+                <span>Yes, Call Customer</span>
+              </button>
+              <button
                 onClick={() => handleCustomerCallDecision(false)}
                 disabled={isSubmitting}
+                className="px-4 py-2 bg-white/5 border border-gray-600 text-white hover:bg-white/10 hover:border-gray-500 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 No, Cancel Without Calling
-              </Button>
+              </button>
             </div>
           </div>
 
-          <div className="flex gap-3 justify-end pt-4">
-            <Button
-              variant="outline"
+          <div className="flex gap-2 justify-end pt-4 border-t border-gray-700">
+            <button
               onClick={handleClose}
               disabled={isSubmitting}
+              className="px-4 py-2 bg-white/5 border border-gray-600 text-white hover:bg-white/10 hover:border-gray-500 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Keep Order Active
-            </Button>
+            </button>
           </div>
         </div>
       )}
 
       {step === "reason" && (
-        <form onSubmit={handleReasonSubmit} className="space-y-4">
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h4 className="font-medium text-gray-900 mb-2">
+        <form onSubmit={handleReasonSubmit} className="space-y-6">
+          <div className="bg-white/5 border border-gray-600 rounded-lg p-4">
+            <h4 className="text-sm font-medium text-white mb-3">
               Order Information
             </h4>
-            <div className="text-sm text-gray-600 space-y-1">
-              <p>
-                <span className="font-medium">Customer:</span>{" "}
-                {order.customerName}
-              </p>
-              <p>
-                <span className="font-medium">Phone:</span> {order.phoneNumber}
-              </p>
+            <div className="text-sm space-y-2">
+              <div className="flex items-center space-x-2">
+                <span className="font-medium text-gray-300">Customer:</span>
+                <span className="text-white">{order.customerName}</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="font-medium text-gray-300">Phone:</span>
+                <span className="text-emerald-400">{order.phoneNumber}</span>
+              </div>
             </div>
           </div>
 
           <div>
             <label
               htmlFor="cancellation-reason"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-white mb-2"
             >
-              Reason for Cancellation <span className="text-red-500">*</span>
+              Reason for Cancellation <span className="text-red-400">*</span>
             </label>
             <textarea
               id="cancellation-reason"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              placeholder="Please provide a detailed reason for the cancellation that will be communicated to the customer (minimum 100 characters)..."
-              className="w-full h-32 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              placeholder="Please provide a detailed reason for the cancellation that will be communicated to the customer (minimum 10 characters)..."
+              className="w-full h-32 px-3 py-2 bg-black border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 resize-none"
               disabled={isSubmitting}
               required
             />
             <div className="flex justify-between items-center mt-2">
               <p
-                className={`text-sm ${
+                className={`text-xs ${
                   characterCount < CHARS_COUNT
-                    ? "text-red-500"
-                    : "text-green-600"
+                    ? "text-red-400"
+                    : "text-emerald-400"
                 }`}
               >
                 {characterCount}/{CHARS_COUNT} characters minimum
               </p>
               {characterCount > 0 && characterCount < CHARS_COUNT && (
-                <p className="text-sm text-red-500">
+                <p className="text-xs text-red-400">
                   {CHARS_COUNT - characterCount} more characters needed
                 </p>
               )}
             </div>
           </div>
 
-          <div className="flex gap-3 justify-end pt-4">
-            <Button
+          <div className="flex gap-2 justify-end pt-4 border-t border-gray-700">
+            <button
               type="button"
-              variant="outline"
               onClick={() => setStep("confirm")}
               disabled={isSubmitting}
+              className="px-4 py-2 bg-white/5 border border-gray-600 text-white hover:bg-white/10 hover:border-gray-500 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Back
-            </Button>
-            <Button
+            </button>
+            <button
               type="submit"
-              variant="destructive"
               disabled={!isReasonValid || isSubmitting}
-              loading={isSubmitting}
+              className="px-4 py-2 bg-red-500/20 border border-red-500/30 text-red-400 hover:bg-red-500/30 hover:border-red-500/40 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
             >
-              Cancel Order & Call Customer
-            </Button>
+              {isSubmitting && (
+                <div className="animate-spin rounded-full h-3 w-3 border border-red-400 border-t-transparent"></div>
+              )}
+              <span>Cancel Order & Call Customer</span>
+            </button>
           </div>
         </form>
       )}

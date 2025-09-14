@@ -35,52 +35,54 @@ const OrdersSection: React.FC<OrdersSectionProps> = ({ tabId }) => {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <div className="p-3 bg-blue-100 rounded-xl">
-            <ShoppingBag className="w-8 h-8 text-blue-600" />
+        <div className="flex items-center space-x-3">
+          <div className="p-2 bg-white/5 rounded-lg border border-gray-600">
+            <ShoppingBag className="w-5 h-5 text-white" />
           </div>
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Orders</h1>
-            <p className="text-gray-600 mt-1">
-              Manage and track your restaurant orders
-            </p>
-          </div>
+          <h2 className="text-lg font-medium text-white">Orders</h2>
+        </div>
+        <div className="flex items-center space-x-2 bg-emerald-500/10 px-4 py-2 rounded-lg border border-emerald-500/20">
+          <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+          <span className="text-sm font-medium text-emerald-400">
+            {activeOrders.length} Active
+          </span>
         </div>
       </div>
 
       {/* Sub-navigation for Orders */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+      <div className="inline-flex bg-gray-900/30 border border-gray-800 rounded-md p-0.5">
         <nav className="flex">
-          {ordersTabs.map((tab, index) => {
+          {ordersTabs.map((tab) => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveOrdersTab(tab.id)}
                 className={cn(
-                  "flex-1 flex items-center justify-center space-x-3 py-4 px-6 font-medium text-sm transition-all duration-200",
-                  "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
-                  index === 0 ? "rounded-l-xl" : "",
-                  index === ordersTabs.length - 1 ? "rounded-r-xl" : "",
+                  "relative px-3 py-1.5 text-sm font-medium transition-all duration-200",
+                  "focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-black",
+                  "cursor-pointer rounded-sm",
                   activeOrdersTab === tab.id
-                    ? "bg-blue-50 text-blue-700 border-b-2 border-blue-500"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50 border-b-2 border-transparent"
+                    ? "bg-emerald-500/20 text-emerald-500 border border-emerald-500/30"
+                    : "text-gray-400 hover:text-white hover:bg-gray-800/30"
                 )}
               >
-                <Icon className="w-5 h-5" />
-                <span>{tab.label}</span>
-                <div
-                  className={cn(
-                    "px-2 py-1 rounded-full text-xs font-semibold",
-                    activeOrdersTab === tab.id
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-gray-100 text-gray-600"
-                  )}
-                >
-                  {tab.count}
+                <div className="flex items-center space-x-1.5">
+                  <Icon className="w-3.5 h-3.5" />
+                  <span>{tab.label}</span>
+                  <div
+                    className={cn(
+                      "px-2 py-0.5 rounded-full text-xs font-medium",
+                      activeOrdersTab === tab.id
+                        ? "bg-emerald-500/20 text-emerald-500"
+                        : "bg-gray-700 text-gray-400"
+                    )}
+                  >
+                    {tab.count}
+                  </div>
                 </div>
               </button>
             );

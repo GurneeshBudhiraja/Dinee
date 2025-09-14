@@ -101,7 +101,7 @@ const Modal: React.FC<ModalProps> = ({
     >
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black bg-opacity-50 transition-opacity animate-fade-in"
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity animate-fade-in"
         onClick={handleOverlayClick}
         aria-hidden="true"
       />
@@ -110,7 +110,7 @@ const Modal: React.FC<ModalProps> = ({
       <div
         ref={modalRef}
         className={cn(
-          "relative w-full rounded-lg bg-white shadow-xl transition-all animate-scale-in",
+          "relative w-full rounded-lg bg-black border border-gray-800 shadow-xl transition-all animate-scale-in",
           "max-h-[90vh] overflow-y-auto",
           sizes[size]
         )}
@@ -118,11 +118,11 @@ const Modal: React.FC<ModalProps> = ({
       >
         {/* Header */}
         {(title || description) && (
-          <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-border-default">
+          <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-800">
             {title && (
               <h2
                 id="modal-title"
-                className="text-base sm:text-lg font-semibold text-text-primary pr-8"
+                className="text-base sm:text-lg font-medium text-white pr-8"
               >
                 {title}
               </h2>
@@ -130,10 +130,7 @@ const Modal: React.FC<ModalProps> = ({
             {description && (
               <p
                 id="modal-description"
-                className={cn(
-                  "text-sm text-text-secondary pr-8",
-                  title && "mt-2"
-                )}
+                className={cn("text-sm text-gray-300 pr-8", title && "mt-2")}
               >
                 {description}
               </p>
@@ -149,7 +146,7 @@ const Modal: React.FC<ModalProps> = ({
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md transition-colors min-h-44 min-w-44"
+          className="absolute top-4 right-4 p-1.5 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-black rounded-md transition-colors cursor-pointer"
           aria-label="Close modal"
         >
           <svg

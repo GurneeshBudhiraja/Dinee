@@ -8,7 +8,7 @@ import { BackgroundBeams } from "@/components/ui/background-beams";
 import { Header } from "@/components/ui/Header";
 
 // Voice frequency animation component
-export const VoiceFrequencyAnimation = () => {
+const VoiceFrequencyAnimation = () => {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -149,9 +149,9 @@ export default function Home() {
           transition={{ duration: 0.8, delay: 0.8 }}
           className="text-gray-400 text-center max-w-2xl text-base md:text-lg leading-relaxed mb-8 px-4"
         >
-          Automate your restaurant's phone orders with intelligent AI agents
-          that understand your menu, take orders accurately, and integrate
-          seamlessly with your operations.
+          Automate your restaurant&apos;s phone orders with intelligent AI
+          agents that understand your menu, take orders accurately, and
+          integrate seamlessly with your operations.
         </motion.p>
 
         {/* Try Demo button */}

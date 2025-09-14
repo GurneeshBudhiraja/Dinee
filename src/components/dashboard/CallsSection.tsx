@@ -13,25 +13,26 @@ const CallsSection: React.FC<CallsSectionProps> = () => {
   const [activeCallsTab, setActiveCallsTab] = useState<CallsTabType>("current");
 
   const callsTabs = [
-    { id: "current" as CallsTabType, label: "Current Calls" },
-    { id: "past" as CallsTabType, label: "Past Calls" },
+    { id: "current" as CallsTabType, label: "Live Calls" },
+    { id: "past" as CallsTabType, label: "Call History" },
   ];
 
   return (
     <div className="space-y-6">
       {/* Sub-navigation for Calls */}
-      <div className="border-b border-gray-200">
-        <nav className="-mb-px flex space-x-8">
+      <div className="inline-flex bg-gray-900/30 border border-gray-800 rounded-md p-0.5">
+        <nav className="flex">
           {callsTabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveCallsTab(tab.id)}
               className={cn(
-                "py-2 px-1 border-b-2 font-medium text-sm",
-                "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
+                "relative px-3 py-1.5 text-sm font-medium transition-all duration-200",
+                "focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-black",
+                "cursor-pointer rounded-sm",
                 activeCallsTab === tab.id
-                  ? "border-blue-500 text-blue-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  ? "bg-emerald-500/20 text-emerald-500 border border-emerald-500/30"
+                  : "text-gray-400 hover:text-white hover:bg-gray-800/30"
               )}
             >
               {tab.label}
@@ -41,7 +42,7 @@ const CallsSection: React.FC<CallsSectionProps> = () => {
       </div>
 
       {/* Content */}
-      <div className="space-y-4">
+      <div>
         {activeCallsTab === "current" && <CurrentCalls />}
         {activeCallsTab === "past" && <PastCalls />}
       </div>

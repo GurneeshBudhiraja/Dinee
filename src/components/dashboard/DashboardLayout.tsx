@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
+import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
+import { Inter } from "next/font/google";
+import Link from "next/link";
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
+});
 
 export interface DashboardLayoutProps {
   restaurantName: string;
@@ -158,44 +167,33 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-black">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 shadow-sm">
+      <header className="sticky top-0 z-50 bg-black border-b border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-14">
             <div className="flex items-center min-w-0 flex-1">
               <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <svg
-                    className="w-5 h-5 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <h1 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">
+                <Link
+                  href="/client"
+                  className={`text-lg font-medium text-white hover:text-emerald-500 transition-colors duration-200 ${inter.className}`}
+                >
+                  DINEE
+                </Link>
+                <div className="hidden sm:block w-px h-5 bg-gray-700"></div>
+                <div className="hidden sm:block">
+                  <h1 className="text-sm font-medium text-white truncate">
                     {restaurantName}
                   </h1>
-                  <p className="text-xs text-gray-500 hidden sm:block">
-                    Call Management Dashboard
-                  </p>
+                  <p className="text-xs text-gray-400">AI Call Management</p>
                 </div>
               </div>
             </div>
-            <div className="hidden sm:flex items-center space-x-4">
-              <div className="flex items-center space-x-2 px-3 py-1.5 bg-green-50 border border-green-200 rounded-md">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-sm font-medium text-green-700">
-                  Online
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-md">
+                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
+                <span className="text-xs font-medium text-emerald-500">
+                  System Online
                 </span>
               </div>
             </div>
@@ -205,12 +203,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
       {/* Tab Navigation */}
       <nav
-        className="bg-white border-b border-gray-200"
+        className="sticky top-14 z-40 bg-black border-b border-gray-800"
         role="tablist"
         aria-label="Dashboard navigation"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex space-x-8 overflow-x-auto">
+          <div className="flex space-x-6 overflow-x-auto">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
@@ -221,12 +219,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                   setActiveTab(tab.id);
                 }}
                 className={cn(
-                  "flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap",
-                  "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
-                  "min-h-[44px]",
+                  "flex items-center space-x-2 py-3 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-all duration-200",
+                  "focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-black",
+                  "min-h-[40px] cursor-pointer",
                   activeTab === tab.id
-                    ? "border-blue-500 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    ? "border-emerald-500 text-emerald-500"
+                    : "border-transparent text-gray-400 hover:text-white hover:border-gray-700"
                 )}
                 role="tab"
                 aria-selected={activeTab === tab.id}
@@ -237,8 +235,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               >
                 <span
                   className={cn(
-                    "flex-shrink-0",
-                    activeTab === tab.id ? "text-blue-600" : "text-gray-400"
+                    "flex-shrink-0 transition-colors duration-200 w-4 h-4",
+                    activeTab === tab.id ? "text-emerald-500" : "text-gray-400"
                   )}
                 >
                   {tab.icon}

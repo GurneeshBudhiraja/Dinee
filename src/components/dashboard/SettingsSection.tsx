@@ -185,12 +185,12 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
   return (
     <div className="space-y-6">
       {/* Restaurant Information Section */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-medium text-gray-900">
+      <div className="bg-gray-900/50 border border-gray-800 rounded-lg backdrop-blur-sm">
+        <div className="px-6 py-4 border-b border-gray-800">
+          <h2 className="text-lg font-medium text-white text-minimal">
             Restaurant Information
           </h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-400 mt-1 text-minimal">
             Update your restaurant&apos;s basic information.
           </p>
         </div>
@@ -222,12 +222,12 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
       </div>
 
       {/* AI Agent Configuration Section */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-medium text-gray-900">
+      <div className="bg-gray-900/50 border border-gray-800 rounded-lg backdrop-blur-sm">
+        <div className="px-6 py-4 border-b border-gray-800">
+          <h2 className="text-lg font-medium text-white text-minimal">
             AI Agent Configuration
           </h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-400 mt-1 text-minimal">
             Configure your AI agent&apos;s behavior and responses.
           </p>
         </div>
@@ -266,24 +266,24 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-white mb-2 text-minimal">
               Menu Details
-              <span className="text-red-500 ml-1" aria-label="required">
+              <span className="text-red-400 ml-1" aria-label="required">
                 *
               </span>
             </label>
-            <div className="min-h-96 max-h-96 overflow-y-auto border border-gray-300 rounded-md p-4 bg-gray-50">
+            <div className="min-h-96 max-h-96 overflow-y-auto border border-gray-700 rounded-md p-4 bg-gray-800/50">
               {Array.isArray(restaurant.menuDetails) &&
               restaurant.menuDetails.length > 0 ? (
                 <div className="space-y-3">
                   {restaurant.menuDetails.map((item, index) => (
                     <div
                       key={index}
-                      className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm"
+                      className="bg-gray-800/50 p-4 rounded-lg border border-gray-700"
                     >
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
-                          <h4 className="font-medium text-gray-900">
+                          <h4 className="font-medium text-white text-minimal">
                             {typeof item === "object" && item !== null
                               ? item.name
                               : String(item)}
@@ -291,13 +291,13 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
                           {typeof item === "object" &&
                             item !== null &&
                             item.description && (
-                              <p className="text-sm text-gray-600 mt-1">
+                              <p className="text-sm text-gray-400 mt-1 text-minimal">
                                 {item.description}
                               </p>
                             )}
                         </div>
                         <div className="ml-4 text-right">
-                          <span className="text-lg font-semibold text-green-600">
+                          <span className="text-lg font-semibold text-emerald-400">
                             {typeof item === "object" && item !== null
                               ? item.price
                               : ""}
@@ -309,7 +309,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <div className="text-gray-400 mb-4">
+                  <div className="text-gray-500 mb-4">
                     <svg
                       className="mx-auto h-12 w-12"
                       fill="none"
@@ -324,22 +324,24 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
                       />
                     </svg>
                   </div>
-                  <p className="text-gray-500">No menu items available</p>
-                  <p className="text-sm text-gray-400 mt-1">
+                  <p className="text-gray-400 text-minimal">
+                    No menu items available
+                  </p>
+                  <p className="text-sm text-gray-500 mt-1 text-minimal">
                     Menu items will appear here once you complete the onboarding
                     process
                   </p>
                 </div>
               )}
             </div>
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm text-gray-400 text-minimal">
               Your menu items are displayed here. To update them, you can
               re-upload your menu through the onboarding process.
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-white mb-2 text-minimal">
               Special Instructions
             </label>
             <textarea
@@ -349,9 +351,9 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
               }
               placeholder="Any special instructions for the AI agent when handling calls..."
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none transition-colors duration-200 text-sm"
+              className="input-dark w-full px-3 py-2 rounded-md resize-none transition-colors duration-200 text-sm"
             />
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm text-gray-400 text-minimal">
               Include any specific guidelines, policies, or procedures the AI
               agent should follow.
             </p>
@@ -360,9 +362,9 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
       </div>
 
       {/* Customer Instructions */}
-      <div className="bg-amber-50 rounded-lg shadow-sm border border-amber-200">
+      <div className="bg-emerald-500/10 rounded-lg border border-emerald-500/20">
         <div className="px-6 py-4">
-          <h3 className="text-lg font-medium text-amber-900 mb-3 flex items-center">
+          <h3 className="text-lg font-medium text-emerald-400 mb-3 flex items-center text-minimal">
             <svg
               className="w-5 h-5 mr-2"
               fill="none"
@@ -378,18 +380,18 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
             </svg>
             Instructions for Your Customers
           </h3>
-          <div className="text-sm text-amber-800 space-y-2">
+          <div className="text-sm text-emerald-300 space-y-2 text-minimal">
             <p className="font-medium">Tell your customers to:</p>
             <ol className="list-decimal list-inside space-y-1 ml-2">
               <li>
                 Call{" "}
-                <span className="font-mono font-bold">
+                <span className="font-mono font-medium">
                   {process.env.NEXT_PUBLIC_VIRTUAL_NUMBER || "(555) 123-4567"}
                 </span>
               </li>
               <li>
                 When prompted, provide Restaurant ID:{" "}
-                <span className="font-mono font-bold bg-amber-100 px-1 rounded">
+                <span className="font-mono font-medium bg-emerald-500/20 px-1 rounded text-emerald-400">
                   {restaurantId}
                 </span>
               </li>
@@ -400,14 +402,14 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
       </div>
 
       {/* Save Section */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+      <div className="bg-gray-900/50 border border-gray-800 rounded-lg backdrop-blur-sm">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-medium text-gray-900">
+              <h3 className="text-sm font-medium text-white text-minimal">
                 Save Changes
               </h3>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-400 mt-1 text-minimal">
                 Make sure to save your changes before leaving this page.
               </p>
             </div>
@@ -424,15 +426,15 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
             <div
               className={`mt-4 p-3 rounded-md ${
                 saveMessage.type === "success"
-                  ? "bg-green-50 border border-green-200"
-                  : "bg-red-50 border border-red-200"
+                  ? "bg-emerald-500/10 border border-emerald-500/20"
+                  : "bg-red-500/10 border border-red-500/20"
               }`}
             >
               <div className="flex items-center">
                 <div
                   className={`flex-shrink-0 ${
                     saveMessage.type === "success"
-                      ? "text-green-400"
+                      ? "text-emerald-400"
                       : "text-red-400"
                   }`}
                 >
@@ -464,10 +466,10 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
                 </div>
                 <div className="ml-3">
                   <p
-                    className={`text-sm font-medium ${
+                    className={`text-sm font-medium text-minimal ${
                       saveMessage.type === "success"
-                        ? "text-green-800"
-                        : "text-red-800"
+                        ? "text-emerald-300"
+                        : "text-red-300"
                     }`}
                   >
                     {saveMessage.text}
@@ -480,20 +482,22 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
       </div>
 
       {/* Danger Zone */}
-      <div className="bg-white rounded-lg shadow-sm border border-red-200">
-        <div className="px-6 py-4 border-b border-red-200">
-          <h2 className="text-lg font-medium text-red-900">Danger Zone</h2>
-          <p className="text-sm text-red-600 mt-1">
+      <div className="bg-gray-900/50 border border-red-500/20 rounded-lg backdrop-blur-sm">
+        <div className="px-6 py-4 border-b border-red-500/20">
+          <h2 className="text-lg font-medium text-red-400 text-minimal">
+            Danger Zone
+          </h2>
+          <p className="text-sm text-red-300 mt-1 text-minimal">
             Permanently delete your restaurant data and reset the system.
           </p>
         </div>
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-medium text-gray-900">
+              <h3 className="text-sm font-medium text-white text-minimal">
                 Delete Restaurant Data
               </h3>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-400 mt-1 text-minimal">
                 This will permanently delete all your restaurant data, calls,
                 and orders. This action cannot be undone.
               </p>
