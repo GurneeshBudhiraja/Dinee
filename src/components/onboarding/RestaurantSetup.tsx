@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import { motion } from "motion/react";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import Button from "@/components/ui/Button";
@@ -10,6 +11,7 @@ import { Restaurant, LanguagePreference } from "@/types/global";
 import MenuDetails from "./menu-details";
 import { useRouter } from "next/navigation";
 import { useRestaurantStorage } from "@/hooks/useRestaurantStorage";
+import { MinimalHeader } from "@/components/ui/Header";
 
 export interface RestaurantSetupProps {
   onComplete: (restaurantId: string) => void;
@@ -98,7 +100,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
     setPageLoading(false);
   }, []);
   // Validates the input of the current step
-  const validateCurrentStep = (): boolean => {
+  const validateCurrentStep = useCallback((): boolean => {
     const newErrors: FormErrors = {};
     const currentStepId = STEPS[currentStep].id;
 
@@ -145,7 +147,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  }, [currentStep, formData]);
 
   const handleInputChange = (
     field: keyof FormData,
@@ -160,19 +162,34 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
     }
   };
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (validateCurrentStep()) {
       if (currentStep < STEPS.length - 1) {
         setCurrentStep((prev) => prev + 1);
       }
     }
-  };
+  }, [currentStep, validateCurrentStep]);
 
   const handlePrevious = () => {
     if (currentStep > 0) {
       setCurrentStep((prev) => prev - 1);
     }
   };
+
+  // Handle Enter key navigation
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Enter" && !isSubmitting) {
+        event.preventDefault();
+        handleNext();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [currentStep, isSubmitting, handleNext]);
 
   const handleSubmit = async () => {
     if (!validateCurrentStep()) {
@@ -210,35 +227,71 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
     switch (currentStepId) {
       case "restaurant-name":
         return (
-          <Input
-            label="Restaurant Name"
-            value={formData.name}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              handleInputChange("name", e.target.value)
-            }
-            error={errors.name}
-            placeholder="Enter your restaurant name"
-            required
-            autoFocus
-            disabled={isSubmitting}
-          />
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-3">
+              Restaurant Name
+              <span className="text-red-400 ml-1" aria-label="required">
+                *
+              </span>
+            </label>
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleInputChange("name", e.target.value)
+              }
+              placeholder="Enter your restaurant name"
+              className={`input-dark w-full px-4 py-3 rounded-lg ${
+                errors.name
+                  ? "border-red-500/50 focus:ring-red-500/50 focus:border-red-500/50"
+                  : ""
+              }`}
+              required
+              autoFocus
+              disabled={isSubmitting}
+            />
+            {errors.name && (
+              <p className="mt-2 text-sm text-red-400" role="alert">
+                {errors.name}
+              </p>
+            )}
+          </div>
         );
 
       case "agent-name":
         return (
-          <Input
-            label="AI Agent Name"
-            value={formData.agentName}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              handleInputChange("agentName", e.target.value)
-            }
-            error={errors.agentName}
-            placeholder="Enter a name for your AI agent"
-            helperText="This is how your AI agent will introduce itself to customers"
-            required
-            autoFocus
-            disabled={isSubmitting}
-          />
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-3">
+              AI Agent Name
+              <span className="text-red-400 ml-1" aria-label="required">
+                *
+              </span>
+            </label>
+            <input
+              type="text"
+              value={formData.agentName}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleInputChange("agentName", e.target.value)
+              }
+              placeholder="Enter a name for your AI agent"
+              className={`input-dark w-full px-4 py-3 rounded-lg ${
+                errors.agentName
+                  ? "border-red-500/50 focus:ring-red-500/50 focus:border-red-500/50"
+                  : ""
+              }`}
+              required
+              autoFocus
+              disabled={isSubmitting}
+            />
+            {errors.agentName && (
+              <p className="mt-2 text-sm text-red-400" role="alert">
+                {errors.agentName}
+              </p>
+            )}
+            <p className="mt-2 text-sm text-gray-500">
+              This is how your AI agent will introduce itself to customers
+            </p>
+          </div>
         );
 
       case "menu-details":
@@ -246,10 +299,10 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
           <div>
             <label
               htmlFor="menu-details"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-gray-300 mb-3"
             >
               Menu Details
-              <span className="text-red-500 ml-1" aria-label="required">
+              <span className="text-red-400 ml-1" aria-label="required">
                 *
               </span>
             </label>
@@ -260,7 +313,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
             {errors.menuDetails && (
               <p
                 id="menu-details-error"
-                className="mt-2 text-sm text-red-500"
+                className="mt-2 text-sm text-red-400"
                 role="alert"
               >
                 {errors.menuDetails}
@@ -283,7 +336,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
           <div>
             <label
               htmlFor="special-instructions"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-gray-300 mb-3"
             >
               Special Instructions
               <span className="text-gray-500 ml-1">(Optional)</span>
@@ -295,10 +348,10 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
                 handleInputChange("specialInstructions", e.target.value)
               }
               placeholder="Any special handling instructions for your AI agent..."
-              className={`w-full h-32 px-3 py-2 border rounded-md text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:border-transparent resize-none ${
+              className={`input-dark w-full h-32 px-4 py-3 rounded-lg resize-none ${
                 errors.specialInstructions
-                  ? "border-red-500 focus:ring-red-500"
-                  : "border-gray-300 focus:ring-blue-500"
+                  ? "border-red-500/50 focus:ring-red-500/50 focus:border-red-500/50"
+                  : ""
               }`}
               autoFocus
               disabled={isSubmitting}
@@ -312,7 +365,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
             {errors.specialInstructions && (
               <p
                 id="special-instructions-error"
-                className="mt-2 text-sm text-red-500"
+                className="mt-2 text-sm text-red-400"
                 role="alert"
               >
                 {errors.specialInstructions}
@@ -334,9 +387,9 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
         return (
           <div>
             <fieldset>
-              <legend className="block text-sm font-medium text-gray-700 mb-4">
+              <legend className="block text-sm font-medium text-gray-300 mb-4">
                 Language Preference
-                <span className="text-red-500 ml-1" aria-label="required">
+                <span className="text-red-400 ml-1" aria-label="required">
                   *
                 </span>
               </legend>
@@ -344,7 +397,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
                 {LANGUAGE_OPTIONS.map((option) => (
                   <label
                     key={option.value}
-                    className="flex items-center cursor-pointer"
+                    className="flex items-center cursor-pointer p-3 rounded-lg bg-slate-800/30 hover:bg-slate-700/30 border border-slate-600/30 hover:border-slate-500/50 transition-all duration-200"
                   >
                     <input
                       type="radio"
@@ -357,10 +410,10 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
                           e.target.value as LanguagePreference
                         )
                       }
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                      className="h-4 w-4 text-emerald-500 focus:ring-emerald-500/50 border-slate-500 bg-slate-700"
                       disabled={isSubmitting}
                     />
-                    <span className="ml-3 text-sm text-gray-700">
+                    <span className="ml-3 text-sm text-gray-300">
                       {option.label}
                     </span>
                   </label>
@@ -368,7 +421,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
               </div>
             </fieldset>
             {errors.languagePreference && (
-              <p className="mt-2 text-sm text-red-500" role="alert">
+              <p className="mt-2 text-sm text-red-400" role="alert">
                 {errors.languagePreference}
               </p>
             )}
@@ -384,55 +437,85 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
 
   if (pageLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50/50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-black">
+        <MinimalHeader />
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-emerald-500/30 border-t-emerald-500"></div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-2xl w-full space-y-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">Restaurant Setup</h1>
-          <p className="mt-2 text-sm text-gray-600">
+    <div className="flex items-center justify-center min-h-screen px-6 py-20">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="max-w-2xl w-full space-y-8"
+      >
+        {/* Title */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="text-center"
+        >
+          <h1 className="text-3xl text-white mb-3 text-minimal">
+            Restaurant Setup
+          </h1>
+          <p className="text-gray-400 text-minimal">
             Let&apos;s configure your AI agent for your restaurant
           </p>
-        </div>
+        </motion.div>
 
         {/* Progress Indicator */}
-        <div className="bg-white rounded-lg p-6 shadow-sm">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="card-minimal rounded-xl p-6"
+        >
           <div className="flex items-center justify-between mb-4">
-            <span className="text-sm font-medium text-gray-500">
+            <span className="text-sm font-medium text-gray-300">
               Step {currentStep + 1} of {STEPS.length}
             </span>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-gray-400">
               {Math.round(((currentStep + 1) / STEPS.length) * 100)}% Complete
             </span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
             <div
-              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${((currentStep + 1) / STEPS.length) * 100}%` }}
+              className="bg-emerald-500 h-2 rounded-full transition-all duration-500 ease-out"
+              style={{
+                width: `${((currentStep + 1) / STEPS.length) * 100}%`,
+              }}
             />
           </div>
-        </div>
+        </motion.div>
 
-        <Card>
-          <CardHeader>
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900">
-                {STEPS[currentStep].title}
-              </h2>
-              <p className="text-sm text-gray-600 mt-1">
-                {STEPS[currentStep].description}
-              </p>
-            </div>
-          </CardHeader>
-          <CardContent>
+        {/* Main Form */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="card-minimal rounded-xl overflow-hidden"
+        >
+          {/* Header */}
+          <div className="px-6 py-6 border-b border-white/10">
+            <h2 className="text-xl text-white text-minimal">
+              {STEPS[currentStep].title}
+            </h2>
+            <p className="text-gray-400 mt-1 text-minimal">
+              {STEPS[currentStep].description}
+            </p>
+          </div>
+
+          {/* Content */}
+          <div className="p-6">
             {errors.general && (
               <div
-                className="bg-error-50 border border-error-200 text-error-700 px-4 py-3 rounded-md mb-6"
+                className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-lg mb-6"
                 role="alert"
                 aria-live="polite"
               >
@@ -442,39 +525,44 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
 
             <div className="space-y-6">{renderStepContent()}</div>
 
-            <div className="flex justify-between pt-6 mt-6 border-t border-gray-200">
-              <Button
-                className="cursor-pointer"
-                variant="outline"
+            {/* Navigation */}
+            <div className="flex justify-between pt-8 mt-8 border-t border-white/10">
+              <button
+                className="btn-minimal btn-secondary-minimal px-6 py-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={handlePrevious}
                 disabled={currentStep === 0 || isSubmitting}
               >
                 Previous
-              </Button>
+              </button>
 
               {isLastStep ? (
-                <Button
-                  variant="primary"
+                <button
+                  className="btn-minimal btn-primary-minimal px-8 py-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={handleSubmit}
-                  loading={isSubmitting}
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Setting up..." : "Complete Setup"}
-                </Button>
+                  {isSubmitting ? (
+                    <span className="flex items-center gap-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-emerald-500/30 border-t-emerald-500"></div>
+                      Setting up...
+                    </span>
+                  ) : (
+                    "Complete Setup"
+                  )}
+                </button>
               ) : (
-                <Button
-                  variant="primary"
+                <button
+                  className="btn-minimal btn-primary-minimal px-8 py-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={handleNext}
                   disabled={isSubmitting}
-                  className="bg-blue-600 cursor-pointer"
                 >
                   Next
-                </Button>
+                </button>
               )}
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };

@@ -6,16 +6,9 @@ import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 import { Header } from "@/components/ui/Header";
-import { Poppins } from "next/font/google";
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  display: "swap",
-});
 
 // Voice frequency animation component
-const VoiceFrequencyAnimation = () => {
+export const VoiceFrequencyAnimation = () => {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -130,7 +123,7 @@ export default function Home() {
   };
 
   return (
-    <div className="h-screen text-white overflow-hidden">
+    <div className="h-screen text-white overflow-hidden relative">
       <Header onTryNow={handleGetStarted} />
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-center justify-center h-full px-6 pt-16 pb-16">

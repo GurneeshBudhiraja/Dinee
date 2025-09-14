@@ -134,6 +134,8 @@
   --animate-slide-in-right: slideInRight 0.4s ease-out;
   --animate-message-appear: messageAppear 0.5s ease-out;
   --animate-typing-dots: typingDots 1.4s infinite ease-in-out;
+  --animate-glow-pulse: glowPulse 2s ease-in-out infinite alternate;
+  --animate-gradient-shift: gradientShift 3s ease-in-out infinite;
 }
 
 /* Define keyframes for animations */
@@ -243,6 +245,27 @@
   }
   50% {
     transform: translateY(-10px);
+  }
+}
+
+@keyframes glowPulse {
+  0% {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 40px rgba(16, 185, 129, 0.6);
+  }
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }
 
@@ -890,7 +913,168 @@
   }
 }
 
-/* Custom button hover effects */
+/* Glass morphism and minimal button styles */
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    var(--glass-inset-shadow),
+    0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.btn-minimal {
+  transition: all 200ms ease-out;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-minimal:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.btn-minimal:active {
+  transform: translateY(1px);
+}
+
+.btn-primary-minimal {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: rgb(16, 185, 129);
+}
+
+.btn-primary-minimal:hover {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.btn-secondary-minimal {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgb(156, 163, 175);
+}
+
+.btn-secondary-minimal:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgb(209, 213, 219);
+}
+
+/* Custom Scrollbar - Dark and Hidden by Default */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(75, 85, 99, 0.3);
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(75, 85, 99, 0.5);
+}
+
+/* Hide scrollbar by default, show on hover */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(75, 85, 99, 0.3) transparent;
+}
+
+*:hover {
+  scrollbar-color: rgba(75, 85, 99, 0.5) transparent;
+}
+
+/* Dark Theme Input Fields */
+.input-dark {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.input-dark:focus {
+  border-color: rgba(16, 185, 129, 0.5);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.input-dark::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Select Element Styling */
+select.input-dark,
+select.input {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: white;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+select.input-dark:focus,
+select.input:focus {
+  border-color: rgba(16, 185, 129, 0.5);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  background: rgba(16, 185, 129, 0.15);
+}
+
+select.input-dark option,
+select.input option {
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 8px 12px;
+}
+
+/* Custom Glass Shadow Property */
+:root {
+  --glass-inset-shadow: inset 0px 0px 10px 1px rgba(255, 255, 255, 0.24);
+}
+
+/* Enhanced Glass Cards */
+.glass-card-enhanced {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    var(--glass-inset-shadow),
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+/* Minimalistic Design Elements */
+.text-minimal {
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.text-minimal-bold {
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.card-minimal {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    var(--glass-inset-shadow),
+    0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.menu-item-card {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Homepage button hover effects */
 .btn-try-now {
   transition: all 300ms ease-out;
   position: relative;

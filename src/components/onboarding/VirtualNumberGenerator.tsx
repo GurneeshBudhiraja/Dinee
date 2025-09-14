@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
+import { motion } from "motion/react";
 import Button from "@/components/ui/Button";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
+import { MinimalHeader } from "@/components/ui/Header";
 
 interface RestaurantIdDisplayProps {
   restaurantId: string;
@@ -38,164 +40,184 @@ const RestaurantIdDisplay: React.FC<RestaurantIdDisplayProps> = ({
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">Setup Complete!</h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Your restaurant is now ready to receive AI-powered calls
+    <div className="flex items-center justify-center min-h-screen px-6 py-16">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="max-w-4xl w-full space-y-12"
+      >
+        {/* Title */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="text-center"
+        >
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-500/10 rounded-full mb-6">
+            <svg
+              className="w-8 h-8 text-emerald-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </div>
+          <h1 className="text-4xl text-minimal text-white mb-3">
+            Setup Complete
+          </h1>
+          <p className="text-gray-400 text-lg text-minimal">
+            Your restaurant is ready! Customers can now call your new virtual number.
           </p>
-        </div>
+        </motion.div>
 
-        <Card>
-          <CardHeader>
-            <h2 className="text-xl font-semibold text-gray-900">
-              Your Restaurant Details
-            </h2>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-              {error && (
-                <div
-                  className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md"
-                  role="alert"
-                  aria-live="polite"
+        {/* Main Content */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="card-minimal rounded-2xl p-8"
+        >
+          {error && (
+            <div
+              className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-lg backdrop-blur-sm mb-6"
+              role="alert"
+              aria-live="polite"
+            >
+              {error}
+            </div>
+          )}
+
+          {/* Restaurant Details */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            {/* Restaurant ID */}
+            <div className="text-center">
+              <div className="w-12 h-12 mx-auto mb-4 bg-blue-500/10 rounded-full flex items-center justify-center">
+                <svg
+                  className="w-6 h-6 text-blue-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                  {error}
-                </div>
-              )}
-
-              <div className="space-y-6">
-                {/* Restaurant ID */}
-                <div className="bg-blue-50 rounded-lg p-6 border border-blue-200">
-                  <div className="text-center">
-                    <svg
-                      className="mx-auto h-8 w-8 text-blue-600 mb-3"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                      />
-                    </svg>
-                    <p className="text-sm text-blue-700 mb-2">
-                      Your Restaurant ID
-                    </p>
-                    <p className="text-3xl font-mono font-bold text-blue-900 tracking-wider">
-                      {restaurantId}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Phone Number */}
-                <div className="bg-green-50 rounded-lg p-6 border border-green-200">
-                  <div className="text-center">
-                    <svg
-                      className="mx-auto h-8 w-8 text-green-600 mb-3"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                      />
-                    </svg>
-                    <p className="text-sm text-green-700 mb-2">
-                      AI Agent Phone Number
-                    </p>
-                    <p className="text-2xl font-mono font-bold text-green-900">
-                      {PHONE_NUMBER}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Instructions */}
-                <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
-                  <h3 className="text-sm font-medium text-amber-900 mb-3 flex items-center">
-                    <svg
-                      className="w-4 h-4 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                    Important Instructions for Your Customers
-                  </h3>
-                  <div className="text-sm text-amber-800 space-y-2">
-                    <p className="font-medium">Tell your customers to:</p>
-                    <ol className="list-decimal list-inside space-y-1 ml-2">
-                      <li>
-                        Call{" "}
-                        <span className="font-mono font-bold">
-                          {PHONE_NUMBER}
-                        </span>
-                      </li>
-                      <li>
-                        When prompted, provide Restaurant ID:{" "}
-                        <span className="font-mono font-bold">
-                          {restaurantId}
-                        </span>
-                      </li>
-                      <li>Place their order with the AI agent</li>
-                    </ol>
-                  </div>
-                </div>
-
-                {/* What happens next */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h3 className="text-sm font-medium text-gray-900 mb-2">
-                    What happens next?
-                  </h3>
-                  <ul className="text-sm text-gray-600 space-y-1">
-                    <li>
-                      • Customers call the number and provide your Restaurant ID
-                    </li>
-                    <li>• Your AI agent handles orders automatically</li>
-                    <li>• Monitor all calls and orders from your dashboard</li>
-                    <li>• Update menu and settings anytime</li>
-                  </ul>
-                </div>
-
-                <div className="flex space-x-3">
-                  <Button
-                    variant="primary"
-                    onClick={handleProceed}
-                    loading={isProceeding}
-                    disabled={isProceeding || loading}
-                    className="flex-1"
-                  >
-                    {isProceeding ? "Setting up..." : "Go to Dashboard"}
-                  </Button>
-                </div>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-sm text-blue-400 mb-2 text-minimal">
+                Restaurant ID
+              </h3>
+              <div className="text-2xl text-white font-mono text-minimal">
+                {restaurantId}
               </div>
             </div>
-          </CardContent>
-        </Card>
 
-        <div className="text-center">
-          <p className="text-xs text-gray-500">
+            {/* Phone Number */}
+            <div className="text-center">
+              <div className="w-12 h-12 mx-auto mb-4 bg-green-500/10 rounded-full flex items-center justify-center">
+                <svg
+                  className="w-6 h-6 text-green-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-sm text-green-400 mb-2 text-minimal">
+                AI Phone Number
+              </h3>
+              <div className="text-xl text-white font-mono text-minimal">
+                {PHONE_NUMBER}
+              </div>
+            </div>
+          </div>
+
+          {/* Instructions */}
+          <div className="border-t border-white/10 pt-6">
+            <h3 className="text-white text-minimal mb-4 text-center">
+              How it works
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-400">
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 bg-emerald-500/10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-emerald-400 text-xs">1</span>
+                </div>
+                <span>Customers call {PHONE_NUMBER}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 bg-blue-500/10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-blue-400 text-xs">2</span>
+                </div>
+                <span>
+                  They enter Restaurant ID:{" "}
+                  <span className="font-mono text-cyan-400">
+                    {restaurantId}
+                  </span>
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 bg-purple-500/10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-purple-400 text-xs">3</span>
+                </div>
+                <span>AI takes their order automatically</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 bg-yellow-500/10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-yellow-400 text-xs">4</span>
+                </div>
+                <span>Monitor everything in your dashboard</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Action Button */}
+          <div className="mt-8 text-center">
+            <button
+              onClick={handleProceed}
+              disabled={isProceeding || loading}
+              className="btn-minimal btn-primary-minimal px-8 py-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed text-minimal"
+            >
+              {isProceeding ? (
+                <span className="flex items-center justify-center gap-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-emerald-500/30 border-t-emerald-500"></div>
+                  Setting up...
+                </span>
+              ) : (
+                "Go to Dashboard"
+              )}
+            </button>
+          </div>
+        </motion.div>
+
+        {/* Footer note */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="text-center"
+        >
+          <p className="text-sm text-gray-500 text-minimal">
             Save your Restaurant ID{" "}
-            <span className="font-mono font-bold">{restaurantId}</span> -
-            you&apos;ll need it to access your dashboard and customers will need
-            it to place orders.
+            <span className="font-mono text-cyan-400">{restaurantId}</span> and
+            phone number {PHONE_NUMBER}
           </p>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };

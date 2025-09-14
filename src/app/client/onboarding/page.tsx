@@ -2,10 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "motion/react";
 import RestaurantSetup from "@/components/onboarding/RestaurantSetup";
 import RestaurantIdDisplay from "@/components/onboarding/VirtualNumberGenerator";
 import { useRestaurantStorage } from "@/hooks/useRestaurantStorage";
 import { Restaurant } from "@/types/global";
+import { BackgroundBeams } from "@/components/ui/background-beams";
+import { MinimalHeader } from "@/components/ui/Header";
 
 type OnboardingStep = "restaurant-setup" | "restaurant-id" | "complete";
 
@@ -22,6 +25,8 @@ export default function OnboardingPage() {
     if (restaurantId) {
       router.push("/client/dashboard");
     }
+    // Ensure page loads at top
+    window.scrollTo(0, 0);
   }, [restaurantId, router]);
 
   const handleRestaurantSetup = async (restaurantId: string) => {
@@ -53,36 +58,56 @@ export default function OnboardingPage() {
 
       case "complete":
         return (
-          <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full text-center space-y-8">
-              <div>
-                <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-6">
-                  <svg
-                    className="h-8 w-8 text-green-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true"
+          <div className="min-h-screen bg-black text-white overflow-hidden relative">
+            <BackgroundBeams />
+            <MinimalHeader />
+            <div className="flex items-center justify-center min-h-screen px-6 py-20">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="max-w-md w-full text-center space-y-8 relative z-10"
+              >
+                <div className="glass-card rounded-2xl p-8">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                    className="space-y-6"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
+                    <div className="w-16 h-16 mx-auto bg-emerald-500/20 rounded-full flex items-center justify-center">
+                      <svg
+                        className="w-8 h-8 text-emerald-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+
+                    <h1 className="text-3xl font-bold text-white">
+                      Setup Complete!
+                    </h1>
+                    <p className="text-gray-400 leading-relaxed">
+                      Your restaurant AI agent is now ready to handle calls.
+                      Redirecting you to the dashboard...
+                    </p>
+
+                    <div className="flex justify-center pt-4">
+                      <div className="relative">
+                        <div className="animate-spin rounded-full h-8 w-8 border-2 border-emerald-500/30 border-t-emerald-500"></div>
+                        <div className="absolute inset-0 rounded-full bg-emerald-500/20 animate-ping"></div>
+                      </div>
+                    </div>
+                  </motion.div>
                 </div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-4">
-                  Setup Complete!
-                </h1>
-                <p className="text-gray-600 mb-6">
-                  Your restaurant AI agent is now ready to handle calls.
-                  Redirecting you to the dashboard...
-                </p>
-                <div className="flex justify-center">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         );
@@ -92,5 +117,22 @@ export default function OnboardingPage() {
     }
   };
 
-  return renderCurrentStep();
+  return (
+    <div className="min-h-screen bg-black text-white overflow-hidden relative">
+      <BackgroundBeams />
+      <MinimalHeader />
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentStep}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+          className="relative z-10"
+        >
+          {renderCurrentStep()}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
 }

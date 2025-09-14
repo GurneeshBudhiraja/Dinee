@@ -253,7 +253,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
                 onChange={(e) =>
                   handleInputChange("languagePreference", e.target.value)
                 }
-                className="input"
+                className="input-dark w-full px-4 py-3 rounded-lg"
                 required
               >
                 {LANGUAGE_OPTIONS.map((option) => (

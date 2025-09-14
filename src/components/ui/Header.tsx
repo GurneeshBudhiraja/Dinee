@@ -21,6 +21,22 @@ interface HeaderProps {
   onTryNow?: () => void;
 }
 
+// Minimal header for onboarding pages
+export const MinimalHeader: React.FC = () => {
+  return (
+    <header className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-md">
+      <div className="max-w-7xl mx-auto px-6 py-4">
+        <Link
+          href={"/client"}
+          className={`text-xl font-semibold text-white ${poppins.className}`}
+        >
+          DINEE
+        </Link>
+      </div>
+    </header>
+  );
+};
+
 export const Header: React.FC<HeaderProps> = ({ onTryNow }) => {
   return (
     <motion.header
