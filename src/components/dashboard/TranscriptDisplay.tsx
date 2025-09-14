@@ -64,7 +64,7 @@ const TranscriptDisplay: React.FC<TranscriptDisplayProps> = ({
 
   if (loading) {
     return (
-      <div className="bg-black border border-gray-800 rounded-lg p-4 min-h-[200px]">
+      <div className="bg-black border border-white/10 rounded-lg p-4 min-h-[200px]">
         <div className="flex flex-col items-center justify-center h-full space-y-3">
           <div className="relative">
             <div className="w-8 h-8 rounded-full bg-emerald-500/20 animate-pulse"></div>
@@ -74,7 +74,7 @@ const TranscriptDisplay: React.FC<TranscriptDisplayProps> = ({
             <p className="text-white text-sm font-medium">
               Connecting to conversation...
             </p>
-            <p className="text-gray-400 text-xs mt-1">
+            <p className="text-white/70 text-xs mt-1">
               Loading transcript data
             </p>
           </div>
@@ -85,10 +85,10 @@ const TranscriptDisplay: React.FC<TranscriptDisplayProps> = ({
 
   if (transcripts.length === 0) {
     return (
-      <div className="bg-black border border-gray-800 rounded-lg p-6 min-h-[200px]">
+      <div className="bg-black border border-white/10 rounded-lg p-6 min-h-[200px]">
         <div className="flex flex-col items-center justify-center h-full text-center space-y-3">
-          <div className="w-12 h-12 rounded-full bg-gray-700/50 flex items-center justify-center border border-gray-600">
-            <MessageSquare className="w-6 h-6 text-gray-400" />
+          <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
+            <MessageSquare className="w-6 h-6 text-white/60" />
           </div>
           <div>
             <h4 className="text-white font-medium text-sm mb-1">
@@ -96,7 +96,7 @@ const TranscriptDisplay: React.FC<TranscriptDisplayProps> = ({
                 ? "Listening for conversation"
                 : "No transcripts available"}
             </h4>
-            <p className="text-gray-400 text-xs max-w-sm">
+            <p className="text-white/70 text-xs max-w-sm">
               {isActive
                 ? "The AI assistant is ready to engage with the customer. Transcript will appear here in real-time."
                 : "This call did not generate any transcript data."}
@@ -108,9 +108,9 @@ const TranscriptDisplay: React.FC<TranscriptDisplayProps> = ({
   }
 
   return (
-    <div className="bg-black border border-gray-800 rounded-lg overflow-hidden">
+    <div className="bg-black border border-white/10 rounded-lg overflow-hidden">
       {/* Header */}
-      <div className="bg-gray-900/50 border-b border-gray-800 px-3 py-2">
+      <div className="bg-white/5 border-b border-white/10 px-3 py-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="flex items-center space-x-1.5">
@@ -127,8 +127,8 @@ const TranscriptDisplay: React.FC<TranscriptDisplayProps> = ({
                 </span>
               )}
             </div>
-            <div className="h-3 w-px bg-gray-700"></div>
-            <div className="flex items-center space-x-1 text-gray-400 text-xs">
+            <div className="h-3 w-px bg-white/20"></div>
+            <div className="flex items-center space-x-1 text-white/60 text-xs">
               <Clock className="w-3 h-3" />
               <span>{transcripts.length} messages</span>
             </div>
@@ -176,7 +176,7 @@ const TranscriptDisplay: React.FC<TranscriptDisplayProps> = ({
                   <div
                     className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center border ${
                       isHuman
-                        ? "bg-gray-700 border-gray-600"
+                        ? "bg-white/10 border-white/20"
                         : "bg-emerald-500 border-emerald-400"
                     }`}
                   >
@@ -198,12 +198,12 @@ const TranscriptDisplay: React.FC<TranscriptDisplayProps> = ({
                     >
                       <span
                         className={`text-xs font-medium ${
-                          isHuman ? "text-gray-300" : "text-emerald-500"
+                          isHuman ? "text-white/60" : "text-emerald-500"
                         }`}
                       >
                         {isHuman ? "Customer" : "AI Assistant"}
                       </span>
-                      <span className="text-gray-400 text-xs">
+                      <span className="text-white/60 text-xs">
                         {formatMessageTime(transcript._creationTime)}
                       </span>
                     </div>
@@ -213,8 +213,8 @@ const TranscriptDisplay: React.FC<TranscriptDisplayProps> = ({
                   <div
                     className={`relative px-3 py-2 rounded-lg transition-all duration-200 ${
                       isHuman
-                        ? "bg-gray-800 text-white border border-gray-700"
-                        : "bg-black text-white border border-gray-800"
+                        ? "bg-white/5 text-white border border-white/10"
+                        : "bg-black text-white border border-white/10"
                     } ${
                       isFirstFromSpeaker
                         ? isHuman
@@ -236,9 +236,9 @@ const TranscriptDisplay: React.FC<TranscriptDisplayProps> = ({
 
       {/* Footer - Only show for active calls */}
       {isActive && (
-        <div className="bg-gray-900/50 border-t border-gray-800 px-3 py-1.5">
+        <div className="bg-white/5 border-t border-white/10 px-3 py-1.5">
           <div className="flex items-center justify-center">
-            <div className="flex items-center space-x-1.5 text-gray-400 text-xs">
+            <div className="flex items-center space-x-1.5 text-white/60 text-xs">
               <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
               <span>Real-time conversation monitoring</span>
             </div>

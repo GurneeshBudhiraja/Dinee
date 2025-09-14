@@ -6,8 +6,6 @@ import { motion, AnimatePresence } from "motion/react";
 import RestaurantSetup from "@/components/onboarding/RestaurantSetup";
 import RestaurantIdDisplay from "@/components/onboarding/VirtualNumberGenerator";
 import { useRestaurantStorage } from "@/hooks/useRestaurantStorage";
-import { Restaurant } from "@/types/global";
-import { BackgroundBeams } from "@/components/ui/background-beams";
 import { MinimalHeader } from "@/components/ui/Header";
 
 type OnboardingStep = "restaurant-setup" | "restaurant-id" | "complete";
@@ -59,7 +57,6 @@ export default function OnboardingPage() {
       case "complete":
         return (
           <div className="min-h-screen bg-black text-white overflow-hidden relative">
-            <BackgroundBeams />
             <MinimalHeader />
             <div className="flex items-center justify-center min-h-screen px-6 py-20">
               <motion.div
@@ -119,7 +116,6 @@ export default function OnboardingPage() {
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden relative">
-      <BackgroundBeams />
       <MinimalHeader />
       <AnimatePresence mode="wait">
         <motion.div

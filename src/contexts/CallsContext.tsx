@@ -30,6 +30,7 @@ type CallsAction =
   | { type: "ADD_CALL"; payload: Call }
   | { type: "UPDATE_CALL"; payload: Call }
   | { type: "DELETE_CALL"; payload: string }
+  | { type: "RESET" }
   | {
       type: "UPDATE_LIVE_TRANSCRIPT";
       payload: { callId: string; transcript: string };
@@ -130,6 +131,9 @@ function callsReducer(state: CallsState, action: CallsAction): CallsState {
       };
     }
 
+    case "RESET":
+      return initialState;
+
     default:
       return state;
   }
@@ -152,6 +156,7 @@ interface CallsContextType {
       orderId?: string,
       reason?: string
     ) => void;
+    reset: () => void;
   };
 }
 
@@ -165,6 +170,11 @@ interface CallsProviderProps {
 export function CallsProvider({ children }: CallsProviderProps) {
   const [state, dispatch] = useReducer(callsReducer, initialState);
   const { restaurantId } = useRestaurantStorage();
+
+  // Reset state when restaurantId changes
+  useEffect(() => {
+    dispatch({ type: "RESET" });
+  }, [restaurantId]);
 
   // Fetch calls from Convex
   const convexCalls = useQuery(
@@ -187,6 +197,9 @@ export function CallsProvider({ children }: CallsProviderProps) {
       dispatch({ type: "SET_LOADING", payload: true });
     } else if (restaurantId && convexCalls === null) {
       dispatch({ type: "SET_CALLS", payload: [] });
+    } else if (!restaurantId) {
+      // No restaurant ID available, set empty state
+      dispatch({ type: "SET_CALLS", payload: [] });
     }
   }, [convexCalls, restaurantId]);
 
@@ -207,6 +220,7 @@ export function CallsProvider({ children }: CallsProviderProps) {
         type: "UPDATE_LIVE_TRANSCRIPT",
         payload: { callId, transcript },
       }),
+    reset: () => dispatch({ type: "RESET" }),
 
     completeCall: (callId: string, orderId?: string) => {
       const call = state.calls.find((c) => c.callId === callId);

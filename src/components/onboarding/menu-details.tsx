@@ -90,7 +90,7 @@ function NoMenuDetails({
         </div>
         <ScanLine className="text-emerald-400 h-10 w-10 mb-4" />
         <h3 className="text-lg text-white text-minimal">Extract from Image</h3>
-        <p className="text-sm text-gray-400 mt-2 text-minimal">
+        <p className="text-sm text-white/70 mt-2 text-minimal">
           Upload a photo of your menu
         </p>
       </div>
@@ -100,9 +100,9 @@ function NoMenuDetails({
         className="group flex flex-col justify-center items-center h-full w-full card-minimal rounded-lg cursor-pointer hover:bg-white/5 transition-all duration-300 ease-in-out p-8 text-center"
         onClick={() => !loading && setShowManualEntry(true)}
       >
-        <BadgePlus className="text-gray-400 h-10 w-10 mb-4" />
+        <BadgePlus className="text-white/60 h-10 w-10 mb-4" />
         <h3 className="text-lg text-white text-minimal">Add Manually</h3>
-        <p className="text-sm text-gray-400 mt-2 text-minimal">
+        <p className="text-sm text-white/70 mt-2 text-minimal">
           Enter items one-by-one
         </p>
       </div>
@@ -139,7 +139,7 @@ function ManualEntryForm({
         <div>
           <label
             htmlFor="itemName"
-            className="block text-sm text-gray-300 mb-2 text-minimal"
+            className="block text-sm text-white/70 mb-2 text-minimal"
           >
             Item Name
           </label>
@@ -158,7 +158,7 @@ function ManualEntryForm({
         <div>
           <label
             htmlFor="itemPrice"
-            className="block text-sm text-gray-300 mb-2 text-minimal"
+            className="block text-sm text-white/70 mb-2 text-minimal"
           >
             Price
           </label>
@@ -178,7 +178,7 @@ function ManualEntryForm({
         <div>
           <label
             htmlFor="itemDescription"
-            className="block text-sm text-gray-300 mb-2 text-minimal"
+            className="block text-sm text-white/70 mb-2 text-minimal"
           >
             Optional Description
           </label>
@@ -227,7 +227,7 @@ function MenuItem({
         <div className="flex-1">
           <p className="text-white text-minimal">{item.name}</p>
           {item.description && (
-            <p className="text-sm text-gray-400 mt-1 text-minimal">
+            <p className="text-sm text-white/70 mt-1 text-minimal">
               {item.description}
             </p>
           )}
@@ -238,7 +238,7 @@ function MenuItem({
           </p>
           <button
             onClick={onDelete}
-            className="text-red-400 opacity-60 hover:opacity-100 hover:text-red-300 transition-all duration-200 p-1 rounded hover:bg-red-500/10"
+            className="text-red-400 opacity-60 hover:opacity-100 hover:text-red-300 transition-all duration-200 p-1 rounded hover:bg-red-500/10 cursor-pointer"
           >
             <Trash2 size={16} />
           </button>

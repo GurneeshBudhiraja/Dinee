@@ -39,10 +39,10 @@ const OrdersSection: React.FC<OrdersSectionProps> = ({ tabId }) => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <div className="p-2 bg-white/5 rounded-lg border border-gray-600">
+          <div className="p-2 bg-white/5 rounded-lg border border-white/10">
             <ShoppingBag className="w-5 h-5 text-white" />
           </div>
-          <h2 className="text-lg font-medium text-white">Orders</h2>
+          <h2 className="text-base font-semibold text-white">Orders</h2>
         </div>
         <div className="flex items-center space-x-2 bg-emerald-500/10 px-4 py-2 rounded-lg border border-emerald-500/20">
           <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
@@ -53,7 +53,7 @@ const OrdersSection: React.FC<OrdersSectionProps> = ({ tabId }) => {
       </div>
 
       {/* Sub-navigation for Orders */}
-      <div className="inline-flex bg-gray-900/30 border border-gray-800 rounded-md p-0.5">
+      <div className="inline-flex bg-black border border-white/10 rounded-lg p-0.5">
         <nav className="flex">
           {ordersTabs.map((tab) => {
             const Icon = tab.icon;
@@ -64,10 +64,10 @@ const OrdersSection: React.FC<OrdersSectionProps> = ({ tabId }) => {
                 className={cn(
                   "relative px-3 py-1.5 text-sm font-medium transition-all duration-200",
                   "focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-black",
-                  "cursor-pointer rounded-sm",
+                  "cursor-pointer rounded-md",
                   activeOrdersTab === tab.id
                     ? "bg-emerald-500/20 text-emerald-500 border border-emerald-500/30"
-                    : "text-gray-400 hover:text-white hover:bg-gray-800/30"
+                    : "text-white/70 hover:text-white hover:bg-white/5"
                 )}
               >
                 <div className="flex items-center space-x-1.5">
@@ -78,7 +78,7 @@ const OrdersSection: React.FC<OrdersSectionProps> = ({ tabId }) => {
                       "px-2 py-0.5 rounded-full text-xs font-medium",
                       activeOrdersTab === tab.id
                         ? "bg-emerald-500/20 text-emerald-500"
-                        : "bg-gray-700 text-gray-400"
+                        : "bg-white/10 text-white/60"
                     )}
                   >
                     {tab.count}

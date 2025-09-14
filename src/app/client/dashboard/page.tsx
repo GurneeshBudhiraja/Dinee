@@ -7,7 +7,6 @@ import {
   DashboardLayout,
   CallsSection,
   OrdersSection,
-  SettingsSection,
 } from "@/components/dashboard";
 import { useRestaurantStorage } from "@/hooks/useRestaurantStorage";
 
@@ -61,7 +60,6 @@ export default function DashboardPage() {
       <DashboardLayout restaurantName={restaurantName}>
         <CallsSection tabId="calls" />
         <OrdersSection tabId="orders" />
-        <SettingsSection tabId="settings" />
       </DashboardLayout>
     </div>
   );

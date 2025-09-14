@@ -31,7 +31,8 @@ type OrdersAction =
   | { type: "UPDATE_ORDER"; payload: Order }
   | { type: "DELETE_ORDER"; payload: string }
   | { type: "CANCEL_ORDER"; payload: { orderId: string; reason: string } }
-  | { type: "COMPLETE_ORDER"; payload: string };
+  | { type: "COMPLETE_ORDER"; payload: string }
+  | { type: "RESET" };
 
 // Helper function to categorize orders
 function categorizeOrders(orders: Order[]) {
@@ -153,6 +154,9 @@ function ordersReducer(state: OrdersState, action: OrdersAction): OrdersState {
       };
     }
 
+    case "RESET":
+      return initialState;
+
     default:
       return state;
   }
@@ -171,6 +175,7 @@ interface OrdersContextType {
     cancelOrder: (orderId: string, reason: string) => void;
     completeOrder: (orderId: string) => void;
     createOrder: (orderData: Omit<Order, "id" | "timestamp">) => void;
+    reset: () => void;
   };
 }
 
@@ -184,6 +189,11 @@ interface OrdersProviderProps {
 export function OrdersProvider({ children }: OrdersProviderProps) {
   const [state, dispatch] = useReducer(ordersReducer, initialState);
   const { restaurantId } = useRestaurantStorage();
+
+  // Reset state when restaurantId changes
+  useEffect(() => {
+    dispatch({ type: "RESET" });
+  }, [restaurantId]);
 
   // Convex queries and mutations
   const convexActiveOrders = useQuery(
@@ -266,6 +276,9 @@ export function OrdersProvider({ children }: OrdersProviderProps) {
       const allOrders = [...activeOrders, ...pastOrders];
 
       dispatch({ type: "SET_ORDERS", payload: allOrders });
+    } else if (!restaurantId) {
+      // No restaurant ID available, set empty state
+      dispatch({ type: "SET_ORDERS", payload: [] });
     }
   }, [convexActiveOrders, convexPastOrders, convexCalls, restaurantId]);
 
@@ -339,6 +352,8 @@ export function OrdersProvider({ children }: OrdersProviderProps) {
       };
       dispatch({ type: "ADD_ORDER", payload: newOrder });
     },
+
+    reset: () => dispatch({ type: "RESET" }),
   };
 
   return (

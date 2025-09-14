@@ -46,7 +46,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     danger: {
       icon: (
         <svg
-          className="w-6 h-6 text-red-600"
+          className="w-6 h-6 text-red-400"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -59,13 +59,13 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           />
         </svg>
       ),
-      bgColor: "bg-red-100",
+      bgColor: "bg-red-500/10 border border-red-500/20",
       buttonVariant: "destructive" as const,
     },
     warning: {
       icon: (
         <svg
-          className="w-6 h-6 text-yellow-600"
+          className="w-6 h-6 text-yellow-400"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -78,13 +78,13 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           />
         </svg>
       ),
-      bgColor: "bg-yellow-100",
+      bgColor: "bg-yellow-500/10 border border-yellow-500/20",
       buttonVariant: "primary" as const,
     },
     info: {
       icon: (
         <svg
-          className="w-6 h-6 text-blue-600"
+          className="w-6 h-6 text-emerald-400"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -97,7 +97,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           />
         </svg>
       ),
-      bgColor: "bg-blue-100",
+      bgColor: "bg-emerald-500/10 border border-emerald-500/20",
       buttonVariant: "primary" as const,
     },
   };
@@ -119,21 +119,19 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
         {/* Background overlay */}
         <div
-          className="fixed inset-0 bg-gray-500 bg-opacity-75"
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm"
           onClick={handleClose}
         />
 
         {/* Modal panel */}
         <div
           className={cn(
-            "inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full",
+            "inline-block align-bottom bg-black border border-white/20 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full",
             "duration-300",
-            isOpen
-              ? "sm:scale-100 opacity-100"
-              : "sm:scale-95 opacity-0"
+            isOpen ? "sm:scale-100 opacity-100" : "sm:scale-95 opacity-0"
           )}
         >
-          <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+          <div className="bg-black px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
             <div className="sm:flex sm:items-start">
               <div
                 className={cn(
@@ -144,16 +142,16 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                 {currentVariant.icon}
               </div>
               <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                <h3 className="text-lg leading-6 font-medium text-gray-900">
+                <h3 className="text-lg leading-6 font-medium text-white">
                   {title}
                 </h3>
                 <div className="mt-2">
-                  <p className="text-sm text-gray-500">{message}</p>
+                  <p className="text-sm text-white/70">{message}</p>
                 </div>
               </div>
             </div>
           </div>
-          <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+          <div className="bg-black border-t border-white/10 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
             <Button
               variant={currentVariant.buttonVariant}
               onClick={onConfirm}

@@ -5,6 +5,7 @@ import { CallsProvider } from "./CallsContext";
 import { OrdersProvider } from "./OrdersContext";
 import { RestaurantProvider } from "./RestaurantContext";
 import { Toaster } from "@/components/ui/sonner";
+import { useRestaurantStorage } from "@/hooks/useRestaurantStorage";
 
 interface AppProviderProps {
   children: ReactNode;
@@ -15,10 +16,12 @@ interface AppProviderProps {
  * This ensures all state management contexts are available throughout the app
  */
 export function AppProvider({ children }: AppProviderProps) {
+  const { restaurantId } = useRestaurantStorage();
+
   return (
     <RestaurantProvider>
-      <CallsProvider>
-        <OrdersProvider>
+      <CallsProvider key={`calls-${restaurantId || "no-id"}`}>
+        <OrdersProvider key={`orders-${restaurantId || "no-id"}`}>
           {children}
           <Toaster
             closeButton={true}

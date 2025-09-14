@@ -11,8 +11,12 @@
   --font-mono: "SFMono-Regular", "Consolas", monospace;
 
   /* custom shadow */
-  --shadow-button-inset-shadow: inset 0px 0px 8px 3px black;
-  --shadow-button-inset-shadow-mini: inset 0px 0px 8px 1px black;
+  --shadow-button-inset-shadow:
+    inset 0px 0px 10px 4px rgba(0, 0, 0, 0.8),
+    inset 0px 0px 4px 2px rgba(0, 0, 0, 0.6);
+  --shadow-button-inset-shadow-mini:
+    inset 0px 0px 6px 2px rgba(0, 0, 0, 0.7),
+    inset 0px 0px 2px 1px rgba(0, 0, 0, 0.5);
   --color-primary-50: #eff6ff; /* Primary colors - Blue theme */
   --color-primary-100: #dbeafe;
   --color-primary-200: #bfdbfe;
@@ -461,6 +465,7 @@
   font-size: 0.875rem;
   font-weight: 500;
   transition: all 0.2s;
+  cursor: pointer;
 
   &:focus-visible {
     outline: none;
@@ -799,7 +804,9 @@
 
   @keyframes button-shadow-fade {
     0% {
-      box-shadow: inset 0px 0px 8px 1px black;
+      box-shadow:
+        inset 0px 0px 6px 2px rgba(0, 0, 0, 0.7),
+        inset 0px 0px 2px 1px rgba(0, 0, 0, 0.5);
       filter: drop-shadow(0 0 0px transparent);
     }
     100% {
@@ -915,12 +922,17 @@
 
 /* Glass morphism and minimal button styles */
 .glass-card {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.75) 0%,
+    rgba(0, 0, 0, 0.55) 50%,
+    rgba(0, 0, 0, 0.85) 100%
+  );
+  backdrop-filter: blur(14px) saturate(1.15);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow:
-    var(--glass-inset-shadow),
-    0 8px 32px rgba(0, 0, 0, 0.2);
+    0 10px 36px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.07);
 }
 
 .btn-minimal {
@@ -1034,18 +1046,24 @@ select.input option {
 
 /* Custom Glass Shadow Property */
 :root {
-  --glass-inset-shadow: inset 0px 0px 10px 1px rgba(255, 255, 255, 0.24);
+  --glass-inset-shadow:
+    inset 0px 0px 12px 2px rgba(255, 255, 255, 0.15),
+    inset 0px 0px 6px 1px rgba(255, 255, 255, 0.08);
 }
 
 /* Enhanced Glass Cards */
 .glass-card-enhanced {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.8) 0%,
+    rgba(0, 0, 0, 0.6) 50%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  backdrop-filter: blur(16px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow:
-    var(--glass-inset-shadow),
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.05);
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 /* Minimalistic Design Elements */
@@ -1060,18 +1078,61 @@ select.input option {
 }
 
 .card-minimal {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.7) 0%,
+    rgba(0, 0, 0, 0.5) 50%,
+    rgba(0, 0, 0, 0.8) 100%
+  );
+  backdrop-filter: blur(12px) saturate(1.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow:
-    var(--glass-inset-shadow),
-    0 4px 16px rgba(0, 0, 0, 0.2);
+    0 6px 24px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 
 .menu-item-card {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0.4) 50%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+  backdrop-filter: blur(8px) saturate(1.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+/* Additional Glass Effect Variants */
+.glass-card-premium {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0, 0, 0, 0.7) 30%,
+    rgba(0, 0, 0, 0.5) 70%,
+    rgba(0, 0, 0, 0.95) 100%
+  );
+  backdrop-filter: blur(20px) saturate(1.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.glass-card-subtle {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0.4) 50%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+  backdrop-filter: blur(10px) saturate(1.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 
 /* Homepage button hover effects */
@@ -1124,7 +1185,9 @@ select.input option {
     filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.4));
   }
   100% {
-    box-shadow: inset 0px 0px 8px 1px black;
+    box-shadow:
+      inset 0px 0px 6px 2px rgba(0, 0, 0, 0.7),
+      inset 0px 0px 2px 1px rgba(0, 0, 0, 0.5);
     filter: drop-shadow(0 0 0px transparent);
   }
 }

@@ -113,16 +113,27 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
 
   if (loading) {
     return (
-      <div className="text-center py-12">
-        <div className="text-gray-400 mb-4">Loading restaurant settings...</div>
+      <div className="flex items-center justify-center py-16">
+        <div className="bg-black border border-gray-800 rounded-lg p-6 text-center">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="relative">
+              <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-700 border-t-emerald-500"></div>
+            </div>
+            <p className="text-gray-400 text-sm">
+              Loading restaurant settings...
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (!restaurant) {
     return (
-      <div className="text-center py-12">
-        <div className="text-gray-400 mb-4">No restaurant data available</div>
+      <div className="flex items-center justify-center py-16">
+        <div className="bg-black border border-gray-800 rounded-lg p-6 text-center">
+          <p className="text-gray-400 text-sm">No restaurant data available</p>
+        </div>
       </div>
     );
   }
@@ -183,68 +194,102 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6">
       {/* Restaurant Information Section */}
-      <div className="bg-gray-900/50 border border-gray-800 rounded-lg backdrop-blur-sm">
-        <div className="px-6 py-4 border-b border-gray-800">
-          <h2 className="text-lg font-medium text-white text-minimal">
+      <div className="card-minimal rounded-xl">
+        <div className="bg-white/5 border-b border-white/10 px-4 sm:px-6 py-4">
+          <h2 className="text-base font-semibold text-white">
             Restaurant Information
           </h2>
-          <p className="text-sm text-gray-400 mt-1 text-minimal">
+          <p className="text-sm text-white/70 mt-1">
             Update your restaurant&apos;s basic information.
           </p>
         </div>
-        <div className="px-6 py-6 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Input
-              label="Restaurant Name"
-              value={restaurant.name}
-              onChange={(e) => handleInputChange("name", e.target.value)}
-              placeholder="Enter restaurant name"
-              required
-            />
-            <Input
-              label="Restaurant ID"
-              value={restaurantId || "Not available"}
-              disabled
-              helperText="Customers need this ID when calling your AI agent"
-            />
+        <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+            <div>
+              <label className="block text-sm font-medium text-white mb-2">
+                Restaurant Name
+                <span className="text-red-400 ml-1" aria-label="required">
+                  *
+                </span>
+              </label>
+              <input
+                type="text"
+                value={restaurant.name}
+                onChange={(e) => handleInputChange("name", e.target.value)}
+                placeholder="Enter restaurant name"
+                className="w-full px-3 py-2.5 bg-white/5 border border-white/20 rounded-lg text-white text-sm placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-white/70 mb-2">
+                Restaurant ID
+              </label>
+              <input
+                type="text"
+                value={restaurantId || "Not available"}
+                disabled
+                className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white/60 text-sm cursor-not-allowed"
+              />
+              <p className="mt-2 text-sm text-white/50">
+                Customers need this ID when calling your AI agent
+              </p>
+            </div>
           </div>
-          <div className="grid grid-cols-1 gap-6">
-            <Input
-              label="AI Agent Phone Number"
+          <div>
+            <label className="block text-sm font-medium text-white/70 mb-2">
+              AI Agent Phone Number
+            </label>
+            <input
+              type="text"
               value={process.env.NEXT_PUBLIC_VIRTUAL_NUMBER || "Not configured"}
               disabled
-              helperText="Customers call this number and provide your Restaurant ID"
+              className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white/60 text-sm cursor-not-allowed"
             />
+            <p className="mt-2 text-sm text-white/50">
+              Customers call this number and provide your Restaurant ID
+            </p>
           </div>
         </div>
       </div>
 
       {/* AI Agent Configuration Section */}
-      <div className="bg-gray-900/50 border border-gray-800 rounded-lg backdrop-blur-sm">
-        <div className="px-6 py-4 border-b border-gray-800">
-          <h2 className="text-lg font-medium text-white text-minimal">
+      <div className="card-minimal rounded-xl">
+        <div className="bg-white/5 border-b border-white/10 px-4 sm:px-6 py-4">
+          <h2 className="text-base font-semibold text-white">
             AI Agent Configuration
           </h2>
-          <p className="text-sm text-gray-400 mt-1 text-minimal">
+          <p className="text-sm text-white/70 mt-1">
             Configure your AI agent&apos;s behavior and responses.
           </p>
         </div>
-        <div className="px-6 py-6 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Input
-              label="Agent Name"
-              value={restaurant.agentName}
-              onChange={(e) => handleInputChange("agentName", e.target.value)}
-              placeholder="Enter agent name"
-              required
-              helperText="This is how your AI agent will introduce itself to customers"
-            />
+        <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-white mb-2">
+                Agent Name
+                <span className="text-red-400 ml-1" aria-label="required">
+                  *
+                </span>
+              </label>
+              <input
+                type="text"
+                value={restaurant.agentName}
+                onChange={(e) => handleInputChange("agentName", e.target.value)}
+                placeholder="Enter agent name"
+                className="w-full px-3 py-2.5 bg-white/5 border border-white/20 rounded-lg text-white text-sm placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+                required
+              />
+              <p className="mt-2 text-sm text-white/50">
+                This is how your AI agent will introduce itself to customers
+              </p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-white mb-2">
                 Language Preference
-                <span className="text-red-500 ml-1" aria-label="required">
+                <span className="text-red-400 ml-1" aria-label="required">
                   *
                 </span>
               </label>
@@ -253,11 +298,15 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
                 onChange={(e) =>
                   handleInputChange("languagePreference", e.target.value)
                 }
-                className="input-dark w-full px-4 py-3 rounded-lg"
+                className="w-full px-3 py-2.5 bg-white/5 border border-white/20 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent cursor-pointer transition-all duration-200"
                 required
               >
                 {LANGUAGE_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
+                  <option
+                    key={option.value}
+                    value={option.value}
+                    className="bg-black text-white"
+                  >
                     {option.label}
                   </option>
                 ))}
@@ -266,52 +315,56 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-white mb-2 text-minimal">
+            <label className="block text-sm font-medium text-white mb-2">
               Menu Details
               <span className="text-red-400 ml-1" aria-label="required">
                 *
               </span>
             </label>
-            <div className="min-h-96 max-h-96 overflow-y-auto border border-gray-700 rounded-md p-4 bg-gray-800/50">
+            <div className="border border-white/20 rounded-lg bg-white/5">
               {Array.isArray(restaurant.menuDetails) &&
               restaurant.menuDetails.length > 0 ? (
-                <div className="space-y-3">
-                  {restaurant.menuDetails.map((item, index) => (
-                    <div
-                      key={index}
-                      className="bg-gray-800/50 p-4 rounded-lg border border-gray-700"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <h4 className="font-medium text-white text-minimal">
-                            {typeof item === "object" && item !== null
-                              ? item.name
-                              : String(item)}
-                          </h4>
+                <div className="max-h-80 overflow-y-auto">
+                  <div className="divide-y divide-white/10">
+                    {restaurant.menuDetails.map((item, index) => (
+                      <div
+                        key={index}
+                        className="p-3 sm:p-4 hover:bg-white/5 transition-colors cursor-pointer"
+                      >
+                        <div className="flex justify-between items-start gap-3">
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-medium text-white text-sm truncate">
+                              {typeof item === "object" && item !== null
+                                ? item.name
+                                : String(item)}
+                            </h4>
+                            {typeof item === "object" &&
+                              item !== null &&
+                              item.description && (
+                                <p className="text-sm text-white/60 mt-1 line-clamp-2">
+                                  {item.description}
+                                </p>
+                              )}
+                          </div>
                           {typeof item === "object" &&
                             item !== null &&
-                            item.description && (
-                              <p className="text-sm text-gray-400 mt-1 text-minimal">
-                                {item.description}
-                              </p>
+                            item.price && (
+                              <div className="flex-shrink-0">
+                                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                  ${item.price}
+                                </span>
+                              </div>
                             )}
                         </div>
-                        <div className="ml-4 text-right">
-                          <span className="text-lg font-semibold text-emerald-400">
-                            {typeof item === "object" && item !== null
-                              ? item.price
-                              : ""}
-                          </span>
-                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               ) : (
-                <div className="text-center py-12">
-                  <div className="text-gray-500 mb-4">
+                <div className="p-6 sm:p-8 text-center">
+                  <div className="w-12 h-12 mx-auto mb-4 bg-white/5 rounded-lg flex items-center justify-center">
                     <svg
-                      className="mx-auto h-12 w-12"
+                      className="w-6 h-6 text-white/40"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -324,24 +377,24 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
                       />
                     </svg>
                   </div>
-                  <p className="text-gray-400 text-minimal">
+                  <h3 className="text-sm font-medium text-white mb-1">
                     No menu items available
-                  </p>
-                  <p className="text-sm text-gray-500 mt-1 text-minimal">
+                  </h3>
+                  <p className="text-sm text-white/50">
                     Menu items will appear here once you complete the onboarding
                     process
                   </p>
                 </div>
               )}
             </div>
-            <p className="mt-2 text-sm text-gray-400 text-minimal">
+            <p className="mt-3 text-sm text-white/60">
               Your menu items are displayed here. To update them, you can
               re-upload your menu through the onboarding process.
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-white mb-2 text-minimal">
+            <label className="block text-sm font-medium text-white mb-2">
               Special Instructions
             </label>
             <textarea
@@ -350,10 +403,10 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
                 handleInputChange("specialInstructions", e.target.value)
               }
               placeholder="Any special instructions for the AI agent when handling calls..."
-              rows={4}
-              className="input-dark w-full px-3 py-2 rounded-md resize-none transition-colors duration-200 text-sm"
+              rows={3}
+              className="w-full px-3 py-2.5 bg-white/5 border border-white/20 rounded-lg text-white text-sm resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
             />
-            <p className="mt-2 text-sm text-gray-400 text-minimal">
+            <p className="mt-2 text-sm text-white/60">
               Include any specific guidelines, policies, or procedures the AI
               agent should follow.
             </p>
@@ -362,11 +415,11 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
       </div>
 
       {/* Customer Instructions */}
-      <div className="bg-emerald-500/10 rounded-lg border border-emerald-500/20">
-        <div className="px-6 py-4">
-          <h3 className="text-lg font-medium text-emerald-400 mb-3 flex items-center text-minimal">
+      <div className="bg-emerald-500/10 rounded-xl border border-emerald-500/20">
+        <div className="px-4 sm:px-6 py-4">
+          <h3 className="text-sm font-medium text-emerald-400 mb-3 flex items-center">
             <svg
-              className="w-5 h-5 mr-2"
+              className="w-4 h-4 mr-2 flex-shrink-0"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -380,18 +433,18 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
             </svg>
             Instructions for Your Customers
           </h3>
-          <div className="text-sm text-emerald-300 space-y-2 text-minimal">
+          <div className="text-xs sm:text-sm text-emerald-300 space-y-2">
             <p className="font-medium">Tell your customers to:</p>
-            <ol className="list-decimal list-inside space-y-1 ml-2">
+            <ol className="list-decimal list-inside space-y-2 ml-2">
               <li>
                 Call{" "}
-                <span className="font-mono font-medium">
+                <span className="font-mono font-medium bg-emerald-500/20 px-2 py-1 rounded text-emerald-400">
                   {process.env.NEXT_PUBLIC_VIRTUAL_NUMBER || "(555) 123-4567"}
                 </span>
               </li>
               <li>
                 When prompted, provide Restaurant ID:{" "}
-                <span className="font-mono font-medium bg-emerald-500/20 px-1 rounded text-emerald-400">
+                <span className="font-mono font-medium bg-emerald-500/20 px-2 py-1 rounded text-emerald-400">
                   {restaurantId}
                 </span>
               </li>
@@ -402,29 +455,30 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
       </div>
 
       {/* Save Section */}
-      <div className="bg-gray-900/50 border border-gray-800 rounded-lg backdrop-blur-sm">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-sm font-medium text-white text-minimal">
-                Save Changes
-              </h3>
-              <p className="text-sm text-gray-400 mt-1 text-minimal">
+      <div className="card-minimal rounded-xl">
+        <div className="px-4 sm:px-6 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex-1">
+              <h3 className="text-sm font-medium text-white">Save Changes</h3>
+              <p className="text-sm text-white/60 mt-1">
                 Make sure to save your changes before leaving this page.
               </p>
             </div>
-            <Button
-              onClick={handleSave}
-              loading={isLoading}
-              disabled={isLoading}
-            >
-              {isLoading ? "Saving..." : "Save Settings"}
-            </Button>
+            <div className="flex-shrink-0">
+              <Button
+                className="w-full sm:w-auto hover:opacity-80 hover:bg-zinc-800 cursor-pointer"
+                onClick={handleSave}
+                loading={isLoading}
+                disabled={isLoading}
+              >
+                {isLoading ? "Saving..." : "Save Settings"}
+              </Button>
+            </div>
           </div>
 
           {saveMessage && (
             <div
-              className={`mt-4 p-3 rounded-md ${
+              className={`mt-4 p-3 rounded-lg ${
                 saveMessage.type === "success"
                   ? "bg-emerald-500/10 border border-emerald-500/20"
                   : "bg-red-500/10 border border-red-500/20"
@@ -440,7 +494,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
                 >
                   {saveMessage.type === "success" ? (
                     <svg
-                      className="h-5 w-5"
+                      className="h-4 w-4"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -452,7 +506,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
                     </svg>
                   ) : (
                     <svg
-                      className="h-5 w-5"
+                      className="h-4 w-4"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -466,10 +520,10 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
                 </div>
                 <div className="ml-3">
                   <p
-                    className={`text-sm font-medium text-minimal ${
+                    className={`text-sm font-medium ${
                       saveMessage.type === "success"
-                        ? "text-emerald-300"
-                        : "text-red-300"
+                        ? "text-emerald-400"
+                        : "text-red-400"
                     }`}
                   >
                     {saveMessage.text}
@@ -482,33 +536,34 @@ const SettingsSection: React.FC<SettingsSectionProps> = () => {
       </div>
 
       {/* Danger Zone */}
-      <div className="bg-gray-900/50 border border-red-500/20 rounded-lg backdrop-blur-sm">
-        <div className="px-6 py-4 border-b border-red-500/20">
-          <h2 className="text-lg font-medium text-red-400 text-minimal">
-            Danger Zone
-          </h2>
-          <p className="text-sm text-red-300 mt-1 text-minimal">
+      <div className="bg-black border border-red-500/20 rounded-xl">
+        <div className="bg-red-500/5 border-b border-red-500/20 px-4 sm:px-6 py-4">
+          <h2 className="text-base font-semibold text-red-400">Danger Zone</h2>
+          <p className="text-sm text-red-300 mt-1">
             Permanently delete your restaurant data and reset the system.
           </p>
         </div>
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-sm font-medium text-white text-minimal">
+        <div className="px-4 sm:px-6 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex-1">
+              <h3 className="text-sm font-medium text-white">
                 Delete Restaurant Data
               </h3>
-              <p className="text-sm text-gray-400 mt-1 text-minimal">
+              <p className="text-sm text-white/70 mt-1">
                 This will permanently delete all your restaurant data, calls,
                 and orders. This action cannot be undone.
               </p>
             </div>
-            <Button
-              variant="destructive"
-              onClick={() => setShowDeleteModal(true)}
-              disabled={isDeleting}
-            >
-              Delete All Data
-            </Button>
+            <div className="flex-shrink-0">
+              <Button
+                variant="destructive"
+                onClick={() => setShowDeleteModal(true)}
+                disabled={isDeleting}
+                className="w-full sm:w-auto cursor-pointer"
+              >
+                Delete All Data
+              </Button>
+            </div>
           </div>
         </div>
       </div>

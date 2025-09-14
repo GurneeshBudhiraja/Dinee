@@ -7,6 +7,7 @@ import { api } from "../../../convex/_generated/api";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
+import CustomRadio from "@/components/ui/CustomRadio";
 import { Restaurant, LanguagePreference } from "@/types/global";
 import MenuDetails from "./menu-details";
 import { useRouter } from "next/navigation";
@@ -68,10 +69,26 @@ const STEPS = [
 ];
 
 // Agent supported language
-const LANGUAGE_OPTIONS: { value: LanguagePreference; label: string }[] = [
-  { value: "english", label: "English" },
-  { value: "spanish", label: "Spanish" },
-  { value: "french", label: "French" },
+const LANGUAGE_OPTIONS: {
+  value: LanguagePreference;
+  label: string;
+  description?: string;
+}[] = [
+  {
+    value: "english",
+    label: "English",
+    description: "Default language for customer interactions",
+  },
+  {
+    value: "spanish",
+    label: "Spanish",
+    description: "Español - Para clientes hispanohablantes",
+  },
+  {
+    value: "french",
+    label: "French",
+    description: "Français - Pour les clients francophones",
+  },
 ];
 
 // Main component
@@ -228,7 +245,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
       case "restaurant-name":
         return (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-3">
+            <label className="block text-sm font-medium text-white/70 mb-3">
               Restaurant Name
               <span className="text-red-400 ml-1" aria-label="required">
                 *
@@ -261,7 +278,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
       case "agent-name":
         return (
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-3">
+            <label className="block text-sm font-medium text-white/70 mb-3">
               AI Agent Name
               <span className="text-red-400 ml-1" aria-label="required">
                 *
@@ -288,7 +305,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
                 {errors.agentName}
               </p>
             )}
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm text-white/60">
               This is how your AI agent will introduce itself to customers
             </p>
           </div>
@@ -299,7 +316,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
           <div>
             <label
               htmlFor="menu-details"
-              className="block text-sm font-medium text-gray-300 mb-3"
+              className="block text-sm font-medium text-white/70 mb-3"
             >
               Menu Details
               <span className="text-red-400 ml-1" aria-label="required">
@@ -322,7 +339,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
             {!errors.menuDetails && (
               <p
                 id="menu-details-helper"
-                className="mt-2 text-sm text-gray-500"
+                className="mt-2 text-sm text-white/60"
               >
                 Include popular items, prices, and any special categories or
                 dietary options
@@ -336,10 +353,10 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
           <div>
             <label
               htmlFor="special-instructions"
-              className="block text-sm font-medium text-gray-300 mb-3"
+              className="block text-sm font-medium text-white/70 mb-3"
             >
               Special Instructions
-              <span className="text-gray-500 ml-1">(Optional)</span>
+              <span className="text-white/60 ml-1">(Optional)</span>
             </label>
             <textarea
               id="special-instructions"
@@ -374,7 +391,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
             {!errors.specialInstructions && (
               <p
                 id="special-instructions-helper"
-                className="mt-2 text-sm text-gray-500"
+                className="mt-2 text-sm text-white/60"
               >
                 Examples: &quot;Always ask for pickup time&quot;, &quot;Mention
                 daily specials&quot;, &quot;Check for allergies&quot;
@@ -387,7 +404,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
         return (
           <div>
             <fieldset>
-              <legend className="block text-sm font-medium text-gray-300 mb-4">
+              <legend className="block text-sm font-medium text-white/70 mb-4">
                 Language Preference
                 <span className="text-red-400 ml-1" aria-label="required">
                   *
@@ -395,28 +412,23 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
               </legend>
               <div className="space-y-3">
                 {LANGUAGE_OPTIONS.map((option) => (
-                  <label
+                  <CustomRadio
                     key={option.value}
-                    className="flex items-center cursor-pointer p-3 rounded-lg bg-slate-800/30 hover:bg-slate-700/30 border border-slate-600/30 hover:border-slate-500/50 transition-all duration-200"
-                  >
-                    <input
-                      type="radio"
-                      name="languagePreference"
-                      value={option.value}
-                      checked={formData.languagePreference === option.value}
-                      onChange={(e) =>
-                        handleInputChange(
-                          "languagePreference",
-                          e.target.value as LanguagePreference
-                        )
-                      }
-                      className="h-4 w-4 text-emerald-500 focus:ring-emerald-500/50 border-slate-500 bg-slate-700"
-                      disabled={isSubmitting}
-                    />
-                    <span className="ml-3 text-sm text-gray-300">
-                      {option.label}
-                    </span>
-                  </label>
+                    id={`language-${option.value}`}
+                    name="languagePreference"
+                    value={option.value}
+                    checked={formData.languagePreference === option.value}
+                    onChange={(value) =>
+                      handleInputChange(
+                        "languagePreference",
+                        value as LanguagePreference
+                      )
+                    }
+                    label={option.label}
+                    description={option.description}
+                    disabled={isSubmitting}
+                    variant="detailed"
+                  />
                 ))}
               </div>
             </fieldset>
@@ -464,7 +476,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
           <h1 className="text-3xl text-white mb-3 text-minimal">
             Restaurant Setup
           </h1>
-          <p className="text-gray-400 text-minimal">
+          <p className="text-white/70 text-minimal">
             Let&apos;s configure your AI agent for your restaurant
           </p>
         </motion.div>
@@ -477,10 +489,10 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
           className="card-minimal rounded-xl p-6"
         >
           <div className="flex items-center justify-between mb-4">
-            <span className="text-sm font-medium text-gray-300">
+            <span className="text-sm font-medium text-white/70">
               Step {currentStep + 1} of {STEPS.length}
             </span>
-            <span className="text-sm text-gray-400">
+            <span className="text-sm text-white/60">
               {Math.round(((currentStep + 1) / STEPS.length) * 100)}% Complete
             </span>
           </div>
@@ -506,7 +518,7 @@ const RestaurantSetup: React.FC<RestaurantSetupProps> = ({ onComplete }) => {
             <h2 className="text-xl text-white text-minimal">
               {STEPS[currentStep].title}
             </h2>
-            <p className="text-gray-400 mt-1 text-minimal">
+            <p className="text-white/70 mt-1 text-minimal">
               {STEPS[currentStep].description}
             </p>
           </div>

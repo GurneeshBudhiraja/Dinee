@@ -129,8 +129,14 @@ export function useRestaurantStorage() {
   }, [restaurantId, deleteRestaurantData, clearRestaurantId]);
 
   useEffect(() => {
-    getRestaurantId();
-    setLoading(false);
+    const id = getRestaurantId();
+    // If we have a restaurant ID, we're not loading anymore
+    if (id) {
+      setLoading(false);
+    } else {
+      // If no restaurant ID, we're still loading until we confirm there isn't one
+      setLoading(false);
+    }
   }, [getRestaurantId]);
 
   // Convert Convex data to our Restaurant type

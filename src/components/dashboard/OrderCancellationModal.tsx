@@ -119,27 +119,27 @@ const OrderCancellationModal: React.FC<OrderCancellationModalProps> = ({
     >
       {step === "confirm" && (
         <div className="space-y-6">
-          <div className="bg-white/5 border border-gray-600 rounded-lg p-4">
+          <div className="bg-white/5 border border-white/10 rounded-lg p-4">
             <h4 className="text-sm font-medium text-white mb-3">
               Order Information
             </h4>
             <div className="text-sm space-y-2">
               <div className="flex items-center space-x-2">
-                <span className="font-medium text-gray-300">Customer:</span>
+                <span className="font-medium text-white/60">Customer:</span>
                 <span className="text-white">{order.customerName}</span>
               </div>
               <div className="flex items-center space-x-2">
-                <span className="font-medium text-gray-300">Phone:</span>
+                <span className="font-medium text-white/60">Phone:</span>
                 <span className="text-emerald-400">{order.phoneNumber}</span>
               </div>
               <div className="flex items-center space-x-2">
-                <span className="font-medium text-gray-300">Total:</span>
+                <span className="font-medium text-white/60">Total:</span>
                 <span className="text-emerald-400">
                   ${order.totalAmount.toFixed(2)}
                 </span>
               </div>
               <div className="flex items-start space-x-2">
-                <span className="font-medium text-gray-300">Items:</span>
+                <span className="font-medium text-white/60">Items:</span>
                 <span className="text-white text-xs">
                   {order.items
                     .map((item) => `${item.quantity}x ${item.name}`)
@@ -171,18 +171,18 @@ const OrderCancellationModal: React.FC<OrderCancellationModalProps> = ({
               <button
                 onClick={() => handleCustomerCallDecision(false)}
                 disabled={isSubmitting}
-                className="px-4 py-2 bg-white/5 border border-gray-600 text-white hover:bg-white/10 hover:border-gray-500 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:border-white/20 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 No, Cancel Without Calling
               </button>
             </div>
           </div>
 
-          <div className="flex gap-2 justify-end pt-4 border-t border-gray-700">
+          <div className="flex gap-2 justify-end pt-4 border-t border-white/10">
             <button
               onClick={handleClose}
               disabled={isSubmitting}
-              className="px-4 py-2 bg-white/5 border border-gray-600 text-white hover:bg-white/10 hover:border-gray-500 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:border-white/20 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Keep Order Active
             </button>
@@ -192,17 +192,17 @@ const OrderCancellationModal: React.FC<OrderCancellationModalProps> = ({
 
       {step === "reason" && (
         <form onSubmit={handleReasonSubmit} className="space-y-6">
-          <div className="bg-white/5 border border-gray-600 rounded-lg p-4">
+          <div className="bg-white/5 border border-white/10 rounded-lg p-4">
             <h4 className="text-sm font-medium text-white mb-3">
               Order Information
             </h4>
             <div className="text-sm space-y-2">
               <div className="flex items-center space-x-2">
-                <span className="font-medium text-gray-300">Customer:</span>
+                <span className="font-medium text-white/60">Customer:</span>
                 <span className="text-white">{order.customerName}</span>
               </div>
               <div className="flex items-center space-x-2">
-                <span className="font-medium text-gray-300">Phone:</span>
+                <span className="font-medium text-white/60">Phone:</span>
                 <span className="text-emerald-400">{order.phoneNumber}</span>
               </div>
             </div>
@@ -220,7 +220,7 @@ const OrderCancellationModal: React.FC<OrderCancellationModalProps> = ({
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               placeholder="Please provide a detailed reason for the cancellation that will be communicated to the customer (minimum 10 characters)..."
-              className="w-full h-32 px-3 py-2 bg-black border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 resize-none"
+              className="w-full h-32 px-3 py-2 bg-black border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 resize-none"
               disabled={isSubmitting}
               required
             />
@@ -242,12 +242,12 @@ const OrderCancellationModal: React.FC<OrderCancellationModalProps> = ({
             </div>
           </div>
 
-          <div className="flex gap-2 justify-end pt-4 border-t border-gray-700">
+          <div className="flex gap-2 justify-end pt-4 border-t border-white/10">
             <button
               type="button"
               onClick={() => setStep("confirm")}
               disabled={isSubmitting}
-              className="px-4 py-2 bg-white/5 border border-gray-600 text-white hover:bg-white/10 hover:border-gray-500 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:border-white/20 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Back
             </button>

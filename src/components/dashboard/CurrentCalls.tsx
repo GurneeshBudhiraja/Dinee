@@ -64,15 +64,15 @@ const CurrentCalls: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <div className="bg-black border border-gray-800 rounded-lg p-6 text-center">
+        <div className="bg-black border border-white/10 rounded-lg p-6 text-center">
           <div className="flex flex-col items-center space-y-4">
             <div className="relative">
-              <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-700 border-t-emerald-500"></div>
+              <div className="animate-spin rounded-full h-6 w-6 border-2 border-white/20 border-t-emerald-500"></div>
               <div className="absolute inset-0 flex items-center justify-center">
                 <PhoneCall className="w-3 h-3 text-emerald-500" />
               </div>
             </div>
-            <p className="text-gray-400 text-sm">Loading active calls...</p>
+            <p className="text-white/70 text-sm">Loading active calls...</p>
           </div>
         </div>
       </div>
@@ -81,14 +81,14 @@ const CurrentCalls: React.FC = () => {
 
   if (error) {
     return (
-      <div className="bg-black border border-red-500/30 rounded-lg p-8 text-center">
-        <div className="w-16 h-16 mx-auto mb-4 bg-red-500/10 rounded-lg flex items-center justify-center">
+      <div className="bg-black border border-red-500/20 rounded-lg p-8 text-center">
+        <div className="w-16 h-16 mx-auto mb-4 bg-red-500/10 rounded-lg flex items-center justify-center border border-red-500/20">
           <Phone className="w-8 h-8 text-red-400" />
         </div>
-        <h3 className="text-lg font-medium text-white mb-2">
+        <h3 className="text-base font-semibold text-white mb-2">
           Connection Error
         </h3>
-        <p className="text-gray-400 text-sm">
+        <p className="text-white/70 text-sm">
           Unable to load active calls: {error}
         </p>
       </div>
@@ -97,15 +97,15 @@ const CurrentCalls: React.FC = () => {
 
   if (calls.length === 0) {
     return (
-      <div className="bg-gray-900/30 border border-gray-700 rounded-xl p-12">
+      <div className="bg-black border border-white/10 rounded-xl p-12">
         <div className="text-center">
-          <div className="w-20 h-20 mx-auto mb-6 bg-white/5 rounded-xl flex items-center justify-center border border-gray-600">
-            <ChefHat className="w-10 h-10 text-gray-300" />
+          <div className="w-20 h-20 mx-auto mb-6 bg-white/5 rounded-xl flex items-center justify-center border border-white/10">
+            <ChefHat className="w-10 h-10 text-white/60" />
           </div>
-          <h3 className="text-lg font-medium text-white mb-2">
+          <h3 className="text-base font-semibold text-white mb-2">
             Ready to Serve Customers
           </h3>
-          <p className="text-gray-300 max-w-md mx-auto mb-6 leading-relaxed text-sm">
+          <p className="text-white/70 max-w-md mx-auto mb-6 leading-relaxed text-sm">
             Your AI assistant is standing by to take orders, answer questions,
             and help customers. Active calls will appear here in real-time.
           </p>
@@ -124,10 +124,10 @@ const CurrentCalls: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <div className="p-2 bg-white/5 rounded-lg border border-gray-600">
+          <div className="p-2 bg-white/5 rounded-lg border border-white/10">
             <Activity className="w-5 h-5 text-white" />
           </div>
-          <h2 className="text-lg font-medium text-white">
+          <h2 className="text-base font-semibold text-white">
             Active Customer Calls
           </h2>
         </div>
@@ -144,8 +144,8 @@ const CurrentCalls: React.FC = () => {
 
         return (
           <div key={call.callId}>
-            <Card className="bg-gray-900/30 border border-gray-700 hover:border-gray-600 transition-all duration-200 rounded-xl overflow-hidden">
-              <CardHeader className="bg-white/5 border-b border-gray-700">
+            <Card className="bg-black border border-white/10 hover:border-white/20 transition-all duration-200 rounded-xl overflow-hidden">
+              <CardHeader className="bg-white/5 border-b border-white/10">
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
                   <div className="flex items-center space-x-4">
                     <Badge
@@ -155,8 +155,8 @@ const CurrentCalls: React.FC = () => {
                       <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full mr-1.5 animate-pulse"></div>
                       LIVE CALL
                     </Badge>
-                    <div className="flex items-center space-x-1.5 bg-white/5 px-2.5 py-1 rounded-lg border border-gray-600">
-                      <Clock className="w-3.5 h-3.5 text-gray-300" />
+                    <div className="flex items-center space-x-1.5 bg-white/5 px-2.5 py-1 rounded-lg border border-white/10">
+                      <Clock className="w-3.5 h-3.5 text-white/60" />
                       <span className="font-mono text-xs font-medium text-white">
                         {formatDuration(callDuration)}
                       </span>
@@ -174,7 +174,7 @@ const CurrentCalls: React.FC = () => {
                         )}
                       </span>
                     </div>
-                    <div className="flex items-center space-x-1.5 text-gray-300">
+                    <div className="flex items-center space-x-1.5 text-white/60">
                       <Clock className="w-3.5 h-3.5" />
                       <span className="font-medium">
                         Started {formatCallStartTime(call._creationTime)}
@@ -189,7 +189,7 @@ const CurrentCalls: React.FC = () => {
                   {/* Live Transcript Section */}
                   <div>
                     <div className="flex items-center space-x-2 mb-3">
-                      <div className="p-1.5 bg-white/5 rounded-lg border border-gray-600">
+                      <div className="p-1.5 bg-white/5 rounded-lg border border-white/10">
                         <MessageSquare className="w-3.5 h-3.5 text-white" />
                       </div>
                       <h4 className="text-sm font-medium text-white">
@@ -205,10 +205,10 @@ const CurrentCalls: React.FC = () => {
 
                   {/* Call Details Grid */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <div className="bg-white/5 border border-gray-600 rounded-lg p-3">
+                    <div className="bg-white/5 border border-white/10 rounded-lg p-3">
                       <div className="flex items-center space-x-1.5 mb-1.5">
-                        <Phone className="w-3.5 h-3.5 text-gray-300" />
-                        <span className="font-medium text-gray-300 text-xs">
+                        <Phone className="w-3.5 h-3.5 text-white/60" />
+                        <span className="font-medium text-white/60 text-xs">
                           Customer Phone
                         </span>
                       </div>
@@ -217,10 +217,10 @@ const CurrentCalls: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="bg-white/5 border border-gray-600 rounded-lg p-3">
+                    <div className="bg-white/5 border border-white/10 rounded-lg p-3">
                       <div className="flex items-center space-x-1.5 mb-1.5">
-                        <Clock className="w-3.5 h-3.5 text-gray-300" />
-                        <span className="font-medium text-gray-300 text-xs">
+                        <Clock className="w-3.5 h-3.5 text-white/60" />
+                        <span className="font-medium text-white/60 text-xs">
                           Call Duration
                         </span>
                       </div>
@@ -243,7 +243,7 @@ const CurrentCalls: React.FC = () => {
                   </div>
 
                   {/* Quick Actions */}
-                  <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-700">
+                  <div className="flex flex-wrap gap-2 pt-3 border-t border-white/10">
                     <button
                       disabled={!call.orderId}
                       className={cn(
