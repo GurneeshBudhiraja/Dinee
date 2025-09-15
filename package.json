@@ -12,7 +12,8 @@
     "type-check": "tsc --noEmit",
     "convex:dev": "npx convex dev",
     "ngrok:start": "ngrok http",
-    "server:start": "nodemon src/app/ws-server/index.ts"
+    "server:start:dev": "nodemon src/app/ws-server/index.ts",
+    "server:start": "node src/app/ws-server/index.ts"
   },
   "keywords": [],
   "author": "",
