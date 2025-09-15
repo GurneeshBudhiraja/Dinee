@@ -18,7 +18,10 @@
     "server:build": "tsc -p tsconfig.server.json",
     "server:build:prod": "npm run server:build && cp package.json dist/",
     "server:deploy": "npm run server:build:simple && cp package.json dist/",
-    "server:build:simple": "tsc src/app/ws-server/index.ts src/app/ws-server/tools.ts src/app/ws-server/server-constants.ts --outDir dist --target es2020 --module commonjs --moduleResolution node --esModuleInterop --allowSyntheticDefaultImports --skipLibCheck --noImplicitAny false --lib es2020,dom"
+    "server:build:simple": "tsc src/app/ws-server/index.ts src/app/ws-server/tools.ts src/app/ws-server/server-constants.ts --outDir dist --target es2020 --module commonjs --moduleResolution node --esModuleInterop --allowSyntheticDefaultImports --skipLibCheck --noImplicitAny false --lib es2020,dom",
+    "docker:build": "docker build -t kiro-ws-server .",
+    "docker:run": "docker run -p 8000:8000 --env-file .env kiro-ws-server",
+    "docker:dev": "docker-compose up --build"
   },
   "keywords": [],
   "author": "",
