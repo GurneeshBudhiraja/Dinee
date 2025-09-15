@@ -88,7 +88,7 @@ fastify.all("/callback", async (request: any, reply) => {
     CALLBACK_CONTEXT = {
       reason: reason[0],
       phoneNumber,
-      data,
+      data: JSON.stringify(data),
       isCallback: true
     };
 
@@ -139,7 +139,6 @@ fastify.register(async (fastify) => {
         },
       },
     );
-    console.log(SYSTEM_PROMPT)
     const initializeSession = () => {
       oaWs.send(
         JSON.stringify({
@@ -197,7 +196,7 @@ fastify.register(async (fastify) => {
                   type: "object",
                   properties: {
                     dialogue: { type: "string", description: "Make sure not to change anything in the dialogues, direct as it is said to the user." },
-                    speaker: { type: "string", enum: ["ai"] }
+                    speaker: { type: "string", enum: ["ai", "human"] }
                   },
                   required: ["dialogue", "speaker"]
                 }
@@ -255,7 +254,7 @@ fastify.register(async (fastify) => {
             content: [
               {
                 type: "input_text",
-                text: "Greet the caller and ask for their restaurant ID.",
+                text: "Greet the caller and follow the system prompt.",
               },
             ],
           },
@@ -667,6 +666,9 @@ fastify.register(async (fastify) => {
     } else if (CALLBACK_CONTEXT.reason === "cancellation") {
       systemPrompt = CANCELLATION_SYSTEM_PROMPT
     }
+
+    console.log(CALLBACK_CONTEXT.reason)
+    console.log(systemPrompt)
 
     console.log("Agent tools")
     console.log(agentTools)
