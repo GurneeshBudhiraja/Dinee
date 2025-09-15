@@ -26,7 +26,7 @@ const CallbackModal: React.FC<CallbackModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!order || reason.trim().length < TOTAL_CHAR_COUNT) {
+    if (!order || reason.trim().length < TOTAL_CHAR_COUNT || !restaurantData) {
       return;
     }
 

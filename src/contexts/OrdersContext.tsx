@@ -9,7 +9,7 @@ import React, {
 } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { Order, OrderItem } from "@/types/global";
+import { Order, OrderItem, Call } from "@/types/global";
 import { useRestaurantStorage } from "@/hooks/useRestaurantStorage";
 import { Doc, Id } from "convex/_generated/dataModel";
 
@@ -213,7 +213,7 @@ export function OrdersProvider({ children }: OrdersProviderProps) {
   const completeOrderMutation = useMutation(api.orders.completeOrder);
 
   // Helper function to convert Convex order to our Order type
-  const convertOrder = (order: any, calls: any[]) => {
+  const convertOrder = (order: Doc<"orders">, calls: Call[]) => {
     const associatedCall = calls.find((call) => call.callId === order.callId);
 
     return {
@@ -221,17 +221,20 @@ export function OrdersProvider({ children }: OrdersProviderProps) {
       callId: order.callId,
       phoneNumber: associatedCall?.phoneNumber || "Unknown",
       customerName: order.customerName,
-      items: order.items.map((item: any, index: number) => ({
-        id: `${order.orderId}-${index}`,
-        name: item.name,
-        quantity: item.quantity,
-        price: item.price,
-        specialInstructions: undefined, // Not in Convex schema yet
-      })),
+      items: order.items.map(
+        (item: Doc<"orders">["items"][0], index: number) => ({
+          id: `${order.orderId}-${index}`,
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+          specialInstructions: undefined, // Not in Convex schema yet
+        })
+      ),
       totalAmount:
         order.totalAmount ||
         order.items.reduce(
-          (sum: number, item: any) => sum + item.price * item.quantity,
+          (sum: number, item: Doc<"orders">["items"][0]) =>
+            sum + item.price * item.quantity,
           0
         ),
       specialInstructions: order.specialInstructions,

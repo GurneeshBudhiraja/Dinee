@@ -56,7 +56,7 @@ const OrderCancellationModal: React.FC<OrderCancellationModalProps> = ({
   const handleReasonSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (reason.trim().length < CHARS_COUNT) {
+    if (reason.trim().length < CHARS_COUNT || !restaurantData || !order) {
       return;
     }
     await handleFinalConfirmation(true, reason.trim());
