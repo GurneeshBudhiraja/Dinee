@@ -13,8 +13,8 @@ export const PROMPT_READ_MENU = `{
 
 // Server configuration
 export const SERVER_URL = `http://localhost:${process.env.NEXT_PUBLIC_BACKEND_PORT}`;
-// NOTE: NGROK URL HERE
-export const NGROK_URL = "https://7ee8b123a3a9.ngrok-free.app";
+// NOTE: NGROK URL/ Backend HERE
+export const NGROK_URL = "https://dinee-hch0.onrender.com";
 export const SAMPLE_ORDER_ITEMS: OrderItem[] = [
   {
     id: 'item-001',

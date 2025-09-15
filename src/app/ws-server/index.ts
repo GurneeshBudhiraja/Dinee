@@ -935,7 +935,7 @@ fastify.register(async (fastify) => {
   });
 });
 
-fastify.listen({ port: PORT }, (err, url) => {
+fastify.listen({ port: PORT, host: '0.0.0.0' }, (err, url) => {
   if (err) {
     console.error(err);
     process.exit(1);
