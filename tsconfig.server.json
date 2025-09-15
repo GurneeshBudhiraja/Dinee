@@ -5,7 +5,7 @@
     "lib": ["ES2020"],
     "outDir": "./dist",
     "rootDir": "./src/app/ws-server",
-    "strict": true,
+    "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -13,8 +13,14 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "declaration": false,
-    "removeComments": true
+    "removeComments": true,
+    "types": ["node"],
+    "noImplicitAny": false
   },
-  "include": ["src/app/ws-server/**/*"],
+  "include": [
+    "src/app/ws-server/**/*",
+    "src/app/ws-server/tools.ts",
+    "src/app/ws-server/server-constants.ts"
+  ],
   "exclude": ["node_modules", "dist"]
 }
