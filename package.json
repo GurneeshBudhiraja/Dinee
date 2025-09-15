@@ -6,8 +6,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "build:clean": "npm run lint && npm run type-check && next build",
+    "build": "npx convex deploy --prod && next build",
+    "build:clean": "npm run lint && npm run type-check && npx convex deploy --prod && next build",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
