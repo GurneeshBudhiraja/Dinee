@@ -17,7 +17,8 @@
     "server:start:prod": "node dist/index.js",
     "server:build": "tsc -p tsconfig.server.json",
     "server:build:prod": "npm run server:build && cp package.json dist/",
-    "server:deploy": "npm run server:build:prod"
+    "server:deploy": "npm run server:build:simple && cp package.json dist/",
+    "server:build:simple": "tsc src/app/ws-server/index.ts src/app/ws-server/tools.ts src/app/ws-server/server-constants.ts --outDir dist --target es2020 --module commonjs --moduleResolution node --esModuleInterop --allowSyntheticDefaultImports --skipLibCheck --noImplicitAny false --lib es2020,dom"
   },
   "keywords": [],
   "author": "",
