@@ -1,6 +1,6 @@
 import otpGenerator from "otp-generator";
 
-const NEXT_APP_URL = "http://localhost:3000";
+const NEXT_APP_URL = process.env.NEXT_APP_URL || "http://localhost:3000";
 
 /**
  * Fetches restaurant details from the API

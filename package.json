@@ -13,7 +13,11 @@
     "convex:dev": "npx convex dev",
     "ngrok:start": "ngrok http",
     "server:start:dev": "nodemon src/app/ws-server/index.ts",
-    "server:start": "node src/app/ws-server/index.ts"
+    "server:start": "node src/app/ws-server/index.ts",
+    "server:start:prod": "node dist/index.js",
+    "server:build": "tsc -p tsconfig.server.json",
+    "server:build:prod": "npm run server:build && cp package.json dist/",
+    "server:deploy": "npm run server:build:prod"
   },
   "keywords": [],
   "author": "",

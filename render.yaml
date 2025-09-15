@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: kiro-ws-server
+    env: node
+    plan: starter
+    buildCommand: npm run server:deploy
+    startCommand: npm run server:start:prod
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_BACKEND_PORT
+        value: 8000
+      - key: NEXT_OPENAI_KEY
+        sync: false
+      - key: NEXT_TWILIO_SID
+        sync: false
+      - key: NEXT_TWILIO_AUTH_TOKEN
+        sync: false
+      - key: NEXT_VIRTUAL_NUMBER
+        sync: false
+      - key: NEXT_APP_URL
+        sync: false
+      - key: NEXT_PUBLIC_CONVEX_URL
+        sync: false
+      - key: NEXT_GEMINI_API_KEY
+        sync: false
