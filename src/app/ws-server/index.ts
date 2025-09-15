@@ -19,6 +19,7 @@ import {
   wrapperUpsertOrders,
   generateOrderId,
 } from "./tools.ts";
+import twilio from "twilio";
 
 dotenv.config({ path: ".env.local" });
 const PORT = (process.env.NEXT_BACKEND_PORT || 8000) as number | undefined;
@@ -40,9 +41,12 @@ const fastify = Fastify({ logger: true });
 fastify.register(fastifyFormBody);
 fastify.register(fastifyWs);
 fastify.register(cors, {
+  // NOTE: Change in production
   origin: ["*"],
-  methods: ['GET', 'POST'],
+  methods: ["GET", "POST"],
 });
+
+
 
 /* test route */
 fastify.all("/testing", async (_req, reply) => {
@@ -62,48 +66,50 @@ fastify.all("/incoming-call", async (request: any, reply) => {
   CALL_SID = callSid;
   FROM_NUMBER = fromNumber;
   const twiml = `<?xml version="1.0" encoding="UTF-8"?>
-  <Response>
+    <Response>
     <Pause length="1"/>
     <Connect>
-      <Stream url="wss://${request.headers.host}/media-stream?callSid=${callSid}&amp;from=${fromNumber || ''}" />
+    <Stream url="wss://${request.headers.host}/media-stream?callSid=${callSid}&amp;from=${fromNumber || ''}" />
     </Connect>
-  </Response>`;
+    </Response>
+  `;
   reply.type("text/xml").send(twiml);
 });
 
 
 
 /* Twilio entry-point for callback calls */
-fastify.all("/callback-webhook", async (request: any, reply) => {
-  const callSid = request.body?.CallSid || request.query?.CallSid;
-  const toNumber = request.body?.To || request.query?.To;
-  const reason = request.query?.reason || "General inquiry";
-  const phoneNumber = request.query?.phoneNumber;
-  const data = request.query?.data || ""
+fastify.all("/callback", async (request: any, reply) => {
+  try {
+    const reason = request.body?.reason || request.query?.reason || "General inquiry";
+    const phoneNumber = request.body?.phoneNumber || request.query?.phoneNumber;
+    const data = request.body?.data || request.query?.data
 
-  console.log("Reason")
-  console.log(reason)
-  CALL_SID = callSid;
-  FROM_NUMBER = toNumber;
-  CALLBACK_CONTEXT = {
-    reason: reason[0],
-    phoneNumber,
-    data,
-    isCallback: true
-  };
-  console.log("Another reason")
-  console.log(reason)
+    CALLBACK_CONTEXT = {
+      reason: reason[0],
+      phoneNumber,
+      data,
+      isCallback: true
+    };
 
-  console.log(`Callback answered by ${toNumber} for reason: ${reason}`);
-
-  const twiml = `<?xml version="1.0" encoding="UTF-8"?>
-  <Response>
-    <Pause length="1"/>
-    <Connect>
+    const client = twilio(process.env.NEXT_TWILIO_SID, process.env.NEXT_TWILIO_AUTH_TOKEN);
+    const twiml = `<?xml version="1.0" encoding="UTF-8"?>
+    <Response>
+      <Pause length="1"/>
+      <Connect>
       <Stream url="wss://${request.headers.host}/media-stream-callback" />
-    </Connect>
-  </Response>`;
-  reply.type("text/xml").send(twiml);
+      </Connect>
+    </Response>`;
+    const call = await client.calls.create({
+      from: process.env.NEXT_VIRTUAL_NUMBER,
+      to: phoneNumber,
+      twiml,
+    });
+    console.log(call.sid);
+  } catch (error) {
+    console.log(error.message!)
+  }
+  return
 });
 
 /* websocket */
@@ -133,7 +139,7 @@ fastify.register(async (fastify) => {
         },
       },
     );
-
+    console.log(SYSTEM_PROMPT)
     const initializeSession = () => {
       oaWs.send(
         JSON.stringify({
@@ -593,31 +599,31 @@ fastify.register(async (fastify) => {
         },
         // Upsert call data tool
         // {
-        //   type: "function",
-        //   name: "upsert_call_data",
-        //   description: "Insert or update a call row in the Convex `calls` table",
-        //   parameters: {
-        //     type: "object",
-        //     properties: {
-        //       restaurantId: { type: "string", description: "5-digit restaurant ID. This will be the same restaurant id provided by the user." },
-        //       orderId: { type: "string", description: "The generated order id." },
-        //     },
-        //     required: ["restaurantId"]
-        //   }
+        // type: "function",
+        // name: "upsert_call_data",
+        // description: "Insert or update a call row in the Convex `calls` table",
+        // parameters: {
+        // type: "object",
+        // properties: {
+        // restaurantId: { type: "string", description: "5-digit restaurant ID. This will be the same restaurant id provided by the user." },
+        // orderId: { type: "string", description: "The generated order id." },
+        // },
+        // required: ["restaurantId"]
+        // }
         // },
         // Add transcription dialogue tool
         // {
-        //   type: "function",
-        //   name: "add_transcript_dialogue",
-        //   description: `Use this tool always for appending the ai message. This ai message is the one that you speak to the user. Take a moment, think what to speak and then use this tool to add the response that you provided to the user. Make sure to use this tool. Once the restaurant id is confirmed and validated use this tool to update the messages you convey to the user.`,
-        //   parameters: {
-        //     type: "object",
-        //     properties: {
-        //       dialogue: { type: "string", description: "Make sure not to change anything in the dialogues, direct as it is said to the user." },
-        //       speaker: { type: "string", enum: ["ai"] }
-        //     },
-        //     required: ["dialogue", "speaker"]
-        //   }
+        // type: "function",
+        // name: "add_transcript_dialogue",
+        // description: `Use this tool always for appending the ai message. This ai message is the one that you speak to the user. Take a moment, think what to speak and then use this tool to add the response that you provided to the user. Make sure to use this tool. Once the restaurant id is confirmed and validated use this tool to update the messages you convey to the user.`,
+        // parameters: {
+        // type: "object",
+        // properties: {
+        // dialogue: { type: "string", description: "Make sure not to change anything in the dialogues, direct as it is said to the user." },
+        // speaker: { type: "string", enum: ["ai"] }
+        // },
+        // required: ["dialogue", "speaker"]
+        // }
         // },
         // Upsert the order tool
         {
@@ -627,8 +633,8 @@ fastify.register(async (fastify) => {
           parameters: {
             type: "object",
             properties: {
-              orderId: { type: "string", description: "4-digit ID you gave to the caller" },
-              restaurantId: { type: "string", description: "Restaurant ID" },
+              orderId: { type: "string", description: "4-digit order ID" },
+              restaurantId: { type: "string", description: "4 digit restaurant ID" },
               customerName: { type: "string", description: "Customer's name" },
               items: {
                 type: "array",
@@ -651,10 +657,10 @@ fastify.register(async (fastify) => {
         },
         // Generate unique order id
         // {
-        //   type: "function",
-        //   name: "generate_order_id",
-        //   description: "Generate a 4-digit numeric order ID",
-        //   parameters: { type: "object", properties: {}, required: [] }
+        // type: "function",
+        // name: "generate_order_id",
+        // description: "Generate a 4-digit numeric order ID",
+        // parameters: { type: "object", properties: {}, required: [] }
         // },
       ]
       systemPrompt = FOLLOWUP_SYSTEM_PROMPT

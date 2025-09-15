@@ -35,11 +35,11 @@ const CallbackModal: React.FC<CallbackModalProps> = ({
       onConfirm(order.id, reason.trim());
       const requestBody = {
         phoneNumber: order.phoneNumber,
-        data: `<agent_name>${restaurantData.agentName}</agent_name>
-        <restaurant_name>${restaurantData.name}</restaurant_name>
-        <restaurant_id>${restaurantData.id}</restaurant_id>
-        <order_details>${order.items}</order_details>
-        <order_id>${order.id}</order_id>
+        data: `<agent_name>${JSON.stringify(restaurantData.agentName)}</agent_name>
+        <restaurant_name>${JSON.stringify(restaurantData.name)}</restaurant_name>
+        <restaurant_id>${JSON.stringify(restaurantData.id)}</restaurant_id>
+        <order_details>${JSON.stringify(order.items)}</order_details>
+        <order_id>${JSON.stringify(order.id)}</order_id>
         <customer_name>${order.customerName}</customer_name>
         <reason>${reason}</reason>`,
         reason: "followup",
